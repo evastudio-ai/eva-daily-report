@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EVA STUDIO 每日销售日报</title>
+    <style>
+        :root {
+            --primary-color: #2c2c2c;
+            --accent-color: #8c7662;
+            --bg-color: #fcfbfa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --text-light: #777777;
+            --border-color: #e8e6e2;
+            --success-color: #5a7261;
+            --danger-color: #964f4f;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; padding: 16px; padding-bottom: 40px; }
+        .container { max-width: 500px; margin: 0 auto; }
+        header { text-align: center; padding: 16px 0; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        header h1 { font-size: 22px; font-weight: 600; letter-spacing: 2px; color: var(--primary-color); }
+        header p { font-size: 11px; color: var(--text-light); letter-spacing: 1px; }
+        .card { background: var(--card-bg); border-radius: 12px; padding: 18px; box-shadow: 0 4px 12px rgba(140, 118, 98, 0.04); margin-bottom: 16px; border: 1px solid rgba(232, 230, 226, 0.6); }
+        .section-title { font-size: 14px; font-weight: 600; color: var(--accent-color); margin-bottom: 14px; padding-left: 8px; border-left: 3px solid var(--accent-color); }
+        .form-group { margin-bottom: 14px; }
+        label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: var(--primary-color); }
+        input, select { width: 100%; padding: 12px; font-size: 16px; border: 1px solid var(--border-color); border-radius: 8px; background-color: #faf9f7; color: var(--text-color); outline: none; -webkit-appearance: none; }
+        input:focus, select:focus { border-color: var(--accent-color); background-color: #fff; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .btn-group { display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-top: 20px; }
+        button { border: none; border-radius: 8px; padding: 14px; font-size: 15px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+        .btn-primary { background-color: var(--primary-color); color: #fff; }
+        .btn-secondary { background-color: transparent; color: var(--text-light); border: 1px solid var(--border-color); }
+        .btn-success { background-color: var(--success-color); color: #fff; width: 100%; margin-top: 12px; }
+        .btn-danger { background-color: var(--danger-color); color: #fff; width: 100%; margin-top: 10px; }
+        #resultContainer { display: none; }
+        .preview-box { background: #fcfbfa; border: 1px dashed var(--accent-color); border-radius: 8px; padding: 14px; font-family: monospace; font-size: 14px; white-space: pre-wrap; word-break: break-all; color: #333; }
+        .toast { position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.8); color: #fff; padding: 12px 24px; border-radius: 24px; font-size: 14px; z-index: 9999; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>EVA STUDIO</h1>
+        <p>DAILY SALES REPORT V1.0</p>
+    </header>
+
+    <form id="reportForm">
+        <div class="card">
+            <div class="section-title">基本信息</div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="date">日期</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="store">门店</label>
+                    <select id="store" required>
+                        <option value="崇宁路店">崇宁路店</option>
+                        <option value="永丰路店">永丰路店</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: 12px;">
+                <label for="reporter">营业人员</label>
+                <input type="text" id="reporter" placeholder="请输入姓名" required>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-title">今日销售业绩</div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="todayTarget">今日目标 (元)</label>
+                    <input type="number" id="todayTarget" min="0" placeholder="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="salesAmount">今日实际销售 (元)</label>
+                    <input type="number" id="salesAmount" step="0.01" min="0" placeholder="0.00" required>
+                </div>
+            </div>
+            <div class="grid-2" style="margin-top: 12px;">
+                <div class="form-group">
+                    <label for="monthAccumulate">本月累计销售 (元)</label>
+                    <input type="number" id="monthAccumulate" step="0.01" min="0" placeholder="0.00" required>
+                </div>
+                <div class="form-group">
+                    <label for="monthTarget">本月整体目标 (元)</label>
+                    <input type="number" id="monthTarget" min="0" placeholder="0" required>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button type="submit" class="btn-primary">生成微信日报</button>
+            <button type="button" class="btn-secondary" id="resetBtn">清空</button>
+        </div>
+    </form>
+
+    <div id="resultContainer" class="card" style="margin-top: 20px;">
+        <div class="section-title">微信群日报预览</div>
+        <div class="preview-box" id="previewBox"></div>
+        <button type="button" class="btn-success" id="copyBtn">一键复制日报</button>
+        <button type="button" class="btn-danger" id="copyAndClearBtn">复制后清空表单</button>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    const form = document.getElementById('reportForm');
+    const resultContainer = document.getElementById('resultContainer');
+    const previewBox = document.getElementById('previewBox');
+    const resetBtn = document.getElementById('resetBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const copyAndClearBtn = document.getElementById('copyAndClearBtn');
+    const toast = document.getElementById('toast');
+
+    const fields = ['date', 'store', 'reporter', 'todayTarget', 'salesAmount', 'monthAccumulate', 'monthTarget'];
+
+    function getLocalDateString() {
+        const d = new Date();
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('date').value = getLocalDateString();
+        fields.forEach(field => {
+            const savedValue = localStorage.getItem('eva_temp_' + field);
+            if (savedValue !== null) {
+                if (field === 'date' && !savedValue) return;
+                document.getElementById(field).value = savedValue;
+            }
+        });
+    });
+
+    fields.forEach(field => {
+        document.getElementById(field).addEventListener('input', (e) => {
+            localStorage.setItem('eva_temp_' + field, e.target.value);
+        });
+    });
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const date = document.getElementById('date').value;
+        const store = document.getElementById('store').value;
+        const reporter = document.getElementById('reporter').value;
+        const todayTarget = parseFloat(document.getElementById('todayTarget').value) || 0;
+        const salesAmount = parseFloat(document.getElementById('salesAmount').value) || 0;
+        const monthAccumulate = parseFloat(document.getElementById('monthAccumulate').value) || 0;
+        const monthTarget = parseFloat(document.getElementById('monthTarget').value) || 0;
+
+        const todayProgress = todayTarget > 0 ? ((salesAmount / todayTarget) * 100).toFixed(2) + '%' : '100%';
+        const monthProgress = monthTarget > 0 ? ((monthAccumulate / monthTarget) * 100).toFixed(2) + '%' : '100%';
+        
+        const monthGap = monthTarget - monthAccumulate;
+        const monthGapText = monthGap > 0 ? `${monthGap.toFixed(2)} 元` : '已达标 🎉';
+
+        const now = new Date();
+        const totalDays = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+        const remainingDays = totalDays - now.getDate() + 1;
+        const dailyRequired = (monthGap > 0 && remainingDays > 0) ? (monthGap / remainingDays).toFixed(2) + ' 元' : '0.00 元';
+
+        const reportText = `【EVA每日销售日报】
+日期：${date}
+门店：${store}
+填报人：${reporter}
+
+一、今日业绩
+今日目标：${todayTarget} 元
+今日销售：${salesAmount} 元
+今日达成率：${todayProgress}
+
+二、月度数据
+本月目标：${monthTarget} 元
+本月累计：${monthAccumulate} 元
+本月达成率：${monthProgress}
+目前还差：${monthGapText}
+日均需完成：${dailyRequired}`;
+
+        previewBox.textContent = reportText;
+        resultContainer.style.display = 'block';
+        resultContainer.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    function executeCopy() {
+        const text = previewBox.textContent;
+        return new Promise((resolve, reject) => {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(resolve).catch(() => fallbackCopy(text) ? resolve() : reject());
+            } else {
+                fallbackCopy(text) ? resolve() : reject();
+            }
+        });
+    }
+
+    function fallbackCopy(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        document.body.appendChild(textArea);
+        textArea.focus(); textArea.select();
+        const success = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        return success;
+    }
+
+    copyBtn.addEventListener('click', () => {
+        executeCopy().then(() => showToast('复制成功！快去群里粘贴吧~'));
+    });
+
+    copyAndClearBtn.addEventListener('click', () => {
+        executeCopy().then(() => {
+            showToast('复制成功并重置！');
+            setTimeout(() => { clearForm(); }, 600);
+        });
+    });
+
+    resetBtn.addEventListener('click', () => {
+        if (confirm('确定要清空所有数据吗？')) {
+            clearForm();
+            showToast('已清空');
+        }
+    });
+
+    function clearForm() {
+        form.reset();
+        fields.forEach(field => localStorage.removeItem('eva_temp_' + field));
+        document.getElementById('date').value = getLocalDateString();
+        resultContainer.style.display = 'none';
+        previewBox.textContent = '';
+    }
+
+    function showToast(msg) {
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2000);
+    }
+</script>
+</body>
+</html>
