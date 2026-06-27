@@ -51,6 +51,7 @@
     </header>
 
     <form id="reportForm">
+        <!-- 基础信息 -->
         <div class="card">
             <div class="section-title">📍 基础信息</div>
             <div class="grid-2">
@@ -68,6 +69,7 @@
             </div>
         </div>
 
+        <!-- 进店漏斗数据 -->
         <div class="card">
             <div class="section-title">📊 漏斗数据转化</div>
             <div class="grid-3">
@@ -86,6 +88,7 @@
             </div>
         </div>
 
+        <!-- 销售业绩 -->
         <div class="card">
             <div class="section-title">💰 销售业绩 (元)</div>
             <div class="grid-2">
@@ -100,24 +103,27 @@
             </div>
         </div>
 
+        <!-- 现场客人情况与当班交接 -->
         <div class="card">
-            <div class="section-title">🔥 货品与现场动态</div>
+            <div class="section-title">📝 现场动态与当班交接</div>
             <div class="form-group">
-                <label for="hotItem">主推商品 / 爆款</label>
-                <input type="text" id="hotItem" placeholder="例如：法式醋酸连衣裙 / 复古西装外套" required>
+                <label for="customerDetail">现场客人情况 (客流特征/试穿反馈/私域加微)</label>
+                <textarea id="customerDetail" placeholder="例如：今日进店多为精准老客。新品醋酸系列试穿反馈极高，老客普遍反响质感好，有两名新客成功加了微信..." required></textarea>
             </div>
             <div class="form-group" style="margin-bottom: 0;">
-                <label for="events">补充说明 (客流动态/试穿反响)</label>
-                <textarea id="events" placeholder="例如：今日虽然街区整体客流偏少，但老客精准到店。新品醋酸系列试穿率极高，老客基本人手一件，连带表现不错..." required></textarea>
+                <label for="handover">当班交接事项 (留版跟进/未尽事宜)</label>
+                <textarea id="handover" placeholder="例如：刘姐留版了一件M码黑色西装，约了明天下午来试穿；后仓A区挂版需要明天上午重新做局部调整..." required></textarea>
             </div>
         </div>
 
+        <!-- 动作按钮 -->
         <div class="btn-group">
             <button type="submit" class="btn-primary">生成营业日报</button>
             <button type="button" class="btn-secondary" id="resetBtn">清空表单</button>
         </div>
     </form>
 
+    <!-- 微信群预览区域 -->
     <div id="resultContainer" class="card">
         <div class="section-title">📱 微信群日报预览</div>
         <div class="preview-box" id="previewBox"></div>
@@ -152,7 +158,167 @@
         const orders = parseInt(document.getElementById('orders').value) || 0;
         const salesAmount = parseFloat(document.getElementById('salesAmount').value) || 0;
         const todayTarget = parseFloat(document.getElementById('todayTarget').value) || 1;
-        const hotItem = document.getElementById('hotItem').value.trim();
-        const events = document.getElementById('events').value.trim();
+        const customerDetail = document.getElementById('customerDetail').value.trim();
+        const handover = document.getElementById('handover').value.trim();
 
-        // 1. 核心数据
+        // 1. 核心数据自动转化计算
+        const tryRate = customers > 0 ? ((tryOns / customers) * 100).toFixed(1) + '%' : '0.0%';
+        const orderRate = tryOns > 0 ? ((orders / tryOns) * 100).toFixed(1) + '%' : '0.0%';
+        const totalConversion = customers > 0 ? ((orders / customers) * 100).toFixed(1) + '%' : '0.0%';
+        const targetRate = ((salesAmount / todayTarget) * 100);
+        const targetRateText = targetRate.toFixed(1) + '%';
+
+        // 2. 经营状态智能判断
+        let statusJudgment = "";
+        if (targetRate < 80) {
+            statusJudgment = "🔴 未达标（今日进店转化或客流基数未达预期，需拉回销售节奏）";
+        } else if (targetRate >= 80 && targetRate <= 100) {
+            statusJudgment = "🟡 接近目标（整体动销平稳，临门一脚的连带或大单尚有突破空间）";
+        } else {
+            statusJudgment = "🟢 超额完成（今日发挥出色，货品触达与粉丝精准转化效率极高）";
+        }
+
+        // 3. 智能本地规则引擎：自动提炼亮点、问题和建议
+        let highlights = "";
+        let problems = [];
+        let suggestions = [];
+        let singleSummary = "";
+
+        const hasOldClient = customerDetail.includes("老客") || customerDetail.includes("熟客") || customerDetail.includes("微信");
+        const hasLowTraffic = customerDetail.includes("少") || customerDetail.includes("没人") || customerDetail.includes("冷清") || customerDetail.includes("天气") || customers < 15;
+        const hasHighTryOn = tryOns / (customers || 1) >= 0.5;
+        const hasLowOrder = orders / (tryOns || 1) < 0.3;
+
+        // 亮点提炼
+        if (targetRate >= 100) {
+            highlights = `销售爆发力强，今日营业额达到 ${salesAmount} 元，新客转化及连带表现亮眼，有效拉动了大盘业绩。`;
+        } else if (hasOldClient) {
+            highlights = `私域及老客黏性高，在外部大盘波动下，核心熟客的高精准到店和复购支撑起了今日业绩基本盘。`;
+        } else {
+            highlights = `团队状态在线，在现有进店客流中积极寻找突破口，现场服务及质感成衣触达表现良好。`;
+        }
+
+        // 问题与明日建议提炼
+        if (hasLowTraffic) {
+            problems.push("商圈或街区日常街面自然进店客流量出现结构性下滑。");
+            suggestions.push("通过私域朋友圈定向发布店内主推成衣的搭配视频，主动向2-3名核心老客发起线上下单或到店邀约。");
+        }
+        if (hasHighTryOn && hasLowOrder) {
+            problems.push("试穿率表现不错，但成交转化率偏低，试穿后的核心痛点（如尺码/版型/价格）未被完全解除。");
+            suggestions.push("在试衣间服务环节加强逼单及搭配示范，利用“搭配满减”或限时福利提高临门一脚的成交率。");
+        } else if (!hasHighTryOn) {
+            problems.push("今日进店顾客的试穿开口率偏低，视觉陈列或首轮话术对顾客的消费冲动刺激不够。");
+            suggestions.push("重新微调前区核心挂板陈列，将主打吸睛爆款置于第一视角位，提升进店视觉驻足率。");
+        }
+
+        if (problems.length === 0) problems.push("私域导流及后续深度连带动作仍有空间，高客单大单的挖掘需更主动。");
+        if (suggestions.length === 0) suggestions.push("继续保持当前高水平服务，针对今日试穿但未成交的客人做好线上随访。");
+
+        // 一句话总结
+        if (targetRate >= 100) {
+            singleSummary = "货品精准触达配合粉丝精准转化，是一次高效的高客单狙击战。";
+        } else {
+            singleSummary = "客流不足时拼私域与转化，明日需重点突破进店客人的试穿与连带率。";
+        }
+
+        // 4. 组装最终标准微信群日报格式
+        const reportText = `【EVA每日营业日报】
+
+📍门店：${store}
+📅日期：${date}
+
+📊 一、核心数据
+- 来客数：${customers} 人
+- 试穿数：${tryOns} 人
+- 成交数：${orders} 单
+- 今日营业额：${salesAmount} 元
+- 营业额目标：${todayTarget} 元
+
+📈 二、转化分析
+- 试穿率：${tryRate}
+- 成交率：${orderRate}
+- 客流转化率：${totalConversion}
+- 目标达成率：${targetRateText}
+
+🧠 三、经营状态判断
+${statusJudgment}
+
+🔥 四、亮点
+${highlights}
+
+⚠️ 五、问题
+${problems.map((p, i) => `${i + 1}. ${p}`).join('\n')}
+
+🚀 六、明日建议
+${suggestions.slice(0, 3).map((s, i) => `${i + 1}. ${s}`).join('\n')}
+
+🧠 七、一句话总结
+${singleSummary}
+
+💬 现场客人情况：
+${customerDetail}
+
+📋 当班交接事项：
+${handover}`;
+
+        previewBox.textContent = reportText;
+        resultContainer.style.display = 'block';
+        resultContainer.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // 🌟 强兼容性复制功能
+    copyBtn.addEventListener('click', () => {
+        const text = previewBox.textContent;
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        
+        textArea.style.position = "fixed";
+        textArea.style.top = "0";
+        textArea.style.left = "0";
+        textArea.style.width = "2em";
+        textArea.style.height = "2em";
+        textArea.style.padding = "0";
+        textArea.style.border = "none";
+        textArea.style.outline = "none";
+        textArea.style.boxShadow = "none";
+        textArea.style.background = "transparent";
+        
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        textArea.setSelectionRange(0, 99999); 
+
+        try {
+            const successful = document.execCommand('copy');
+            if(successful) {
+                showToast('已复制！快去微信群粘贴吧 🎉');
+            } else {
+                showToast('复制失败，请长按文本框手动复制');
+            }
+        } catch (err) {
+            showToast('浏览器不支持快捷复制，请长按手动复制');
+        }
+
+        document.body.removeChild(textArea);
+    });
+
+    // 重置功能
+    resetBtn.addEventListener('click', () => {
+        if (confirm('确定要清空所有数据吗？')) {
+            form.reset();
+            resultContainer.style.display = 'none';
+            previewBox.textContent = '';
+            const d = new Date();
+            document.getElementById('date').value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            showToast('已清空');
+        }
+    });
+
+    function showToast(msg) {
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2000);
+    }
+</script>
+</body>
+</html>
