@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EVA日报 V1.2</title>
+<title>EVA日报 V2</title>
 
 <style>
 body{
@@ -39,9 +39,10 @@ h1{
     font-size:14px;
     font-weight:600;
     margin-bottom:6px;
+    color:#333;
 }
 
-input, select, textarea{
+input, select{
     width:100%;
     padding:8px;
     margin-top:4px;
@@ -56,7 +57,7 @@ input, select, textarea{
     gap:10px;
 }
 
-.row > div{
+.row div{
     flex:1;
 }
 
@@ -70,7 +71,7 @@ button{
 }
 
 .primary{
-    background:#222;
+    background:#111;
     color:#fff;
 }
 
@@ -78,11 +79,13 @@ button{
     background:#eee;
 }
 
-.small{
-    font-size:12px;
-    color:#888;
-    margin-top:8px;
-    text-align:center;
+.output{
+    white-space:pre-wrap;
+    background:#fafafa;
+    padding:12px;
+    border-radius:10px;
+    margin-top:10px;
+    font-size:14px;
 }
 </style>
 </head>
@@ -92,14 +95,11 @@ button{
 <div class="container">
 <div class="card">
 
-<h1>EVA DAILY REPORT V1.2</h1>
+<h1>💜 EVA日报 V2</h1>
 
-<!-- 基础信息 -->
+<!-- 基础 -->
 <div class="section">
 <div class="title">基础信息</div>
-
-<label>日期（自动）</label>
-<input id="date" readonly>
 
 <label>门店</label>
 <select id="store">
@@ -107,11 +107,11 @@ button{
     <option>永丰路店</option>
 </select>
 
-<label>当班人员</label>
-<select id="staff">
-    <option>楠楠</option>
-    <option>萍萍</option>
-</select>
+<label>人员</label>
+<input id="staff" placeholder="当班人员">
+
+<label>日期（自动）</label>
+<input id="date" readonly>
 </div>
 
 <!-- 流量 -->
@@ -121,15 +121,15 @@ button{
 <div class="row">
 <div>
 <label>来客</label>
-<input type="number" id="customers">
+<input type="number" id="c">
 </div>
 <div>
 <label>试穿</label>
-<input type="number" id="tryons">
+<input type="number" id="t">
 </div>
 <div>
 <label>成交</label>
-<input type="number" id="sales">
+<input type="number" id="s">
 </div>
 </div>
 </div>
@@ -141,11 +141,11 @@ button{
 <div class="row">
 <div>
 <label>营业额</label>
-<input type="number" id="revenue">
+<input type="number" id="r">
 </div>
 <div>
 <label>目标</label>
-<input type="number" id="target">
+<input type="number" id="g">
 </div>
 </div>
 </div>
@@ -157,91 +157,67 @@ button{
 <div class="row">
 <div>
 <label>新客</label>
-<input type="number" id="newcust">
+<input type="number" id="n">
 </div>
 <div>
 <label>老客</label>
-<input type="number" id="oldcust">
+<input type="number" id="o">
 </div>
 </div>
 </div>
 
-<!-- 收款 -->
-<div class="section">
-<div class="title">收款结构</div>
+<button class="primary" onclick="gen()">生成日报</button>
+<button class="secondary" onclick="copy()">复制微信</button>
 
-<div class="row">
-<div>
-<label>支付宝</label>
-<input type="number" id="alipay">
-</div>
-<div>
-<label>银行卡</label>
-<input type="number" id="bank">
-</div>
-</div>
-</div>
-
-<!-- 问题 -->
-<div class="section">
-<div class="title">重点 / 问题</div>
-<textarea rows="3"></textarea>
-</div>
-
-<!-- 计划 -->
-<div class="section">
-<div class="title">明日计划（≤3）</div>
-<textarea rows="3"></textarea>
-</div>
-
-<button class="primary" onclick="generate()">生成微信日报</button>
-<button class="secondary" onclick="clearAll()">清空</button>
-
-<div class="small">EVA SYSTEM V1.2</div>
+<div class="output" id="out"></div>
 
 </div>
 </div>
 
 <script>
+
 // 自动日期
-document.getElementById("date").value = new Date().toISOString().split("T")[0];
+document.getElementById("date").value =
+new Date().toISOString().split("T")[0];
 
-// 生成微信文本
-function generate(){
-    const text =
-`💜 EVA日报
+function safe(v){ return isNaN(+v)?0:+v }
 
-门店：${store.value}
-人员：${staff.value}
-日期：${date.value}
+function gen(){
 
-——流量——
-来客：${customers.value || 0}
-试穿：${tryons.value || 0}
-成交：${sales.value || 0}
+let c = safe(c.value);
+let t = safe(t.value);
+let s = safe(s.value);
+let r = safe(r.value);
+let g = safe(g.value);
 
-——销售——
-营业额：${revenue.value || 0}
-目标：${target.value || 0}
+let cr = c ? (s/c*100).toFixed(1) : 0;
+let tr = c ? (t/c*100).toFixed(1) : 0;
+let rate = g ? (r/g*100).toFixed(1) : 0;
 
-——客户——
-新客：${newcust.value || 0}
-老客：${oldcust.value || 0}
+let status = "未达标";
+if(rate >= 100) status="超额完成";
+else if(rate >= 80) status="接近目标";
 
-——收款——
-支付宝：${alipay.value || 0}
-银行卡：${bank.value || 0}
-`;
+let text =
+`💜 EVA日报｜${store.value}｜${staff.value}｜${date.value}
 
-    navigator.clipboard.writeText(text);
-    alert("已复制微信日报");
+流量：来客${c}｜试穿${t}｜成交${s}
+销售：${r}｜目标${g}｜达成${rate}%
+
+指标：CR${cr}%｜试穿率${tr}%
+
+客户：新${n.value||0}｜老${o.value||0}
+
+状态：${status}`;
+
+out.innerText = text;
 }
 
-// 清空
-function clearAll(){
-    document.querySelectorAll("input").forEach(i=>i.value="");
-    document.querySelectorAll("textarea").forEach(t=>t.value="");
+function copy(){
+navigator.clipboard.writeText(out.innerText);
+alert("已复制");
 }
+
 </script>
 
 </body>
