@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EVA日报</title>
+<title>EVA日报 V1.2</title>
 
 <style>
 body{
     margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
     background:#f6f6f6;
     color:#222;
 }
@@ -23,13 +23,12 @@ body{
     background:#fff;
     border-radius:12px;
     padding:16px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.05);
 }
 
 h1{
     font-size:18px;
-    margin:0 0 10px 0;
     text-align:center;
+    margin-bottom:10px;
 }
 
 .section{
@@ -40,32 +39,9 @@ h1{
     font-size:14px;
     font-weight:600;
     margin-bottom:6px;
-    color:#444;
 }
 
-.row{
-    display:flex;
-    justify-content:space-between;
-    font-size:14px;
-    padding:4px 0;
-}
-
-.label{
-    color:#666;
-}
-
-.value{
-    color:#111;
-    font-weight:500;
-}
-
-hr{
-    border:none;
-    border-top:1px solid #eee;
-    margin:10px 0;
-}
-
-textarea,input{
+input, select, textarea{
     width:100%;
     padding:8px;
     margin-top:4px;
@@ -73,6 +49,15 @@ textarea,input{
     border-radius:8px;
     font-size:14px;
     box-sizing:border-box;
+}
+
+.row{
+    display:flex;
+    gap:10px;
+}
+
+.row > div{
+    flex:1;
 }
 
 button{
@@ -96,9 +81,9 @@ button{
 .small{
     font-size:12px;
     color:#888;
-    margin-top:6px;
+    margin-top:8px;
+    text-align:center;
 }
-
 </style>
 </head>
 
@@ -107,67 +92,157 @@ button{
 <div class="container">
 <div class="card">
 
-<h1>EVA DAILY REPORT</h1>
+<h1>EVA DAILY REPORT V1.2</h1>
 
+<!-- 基础信息 -->
 <div class="section">
 <div class="title">基础信息</div>
-<input placeholder="日期">
-<input placeholder="门店">
-<input placeholder="营业员">
+
+<label>日期（自动）</label>
+<input id="date" readonly>
+
+<label>门店</label>
+<select id="store">
+    <option>崇宁路店</option>
+    <option>永丰路店</option>
+</select>
+
+<label>当班人员</label>
+<select id="staff">
+    <option>楠楠</option>
+    <option>萍萍</option>
+</select>
 </div>
 
-<hr>
-
+<!-- 流量 -->
 <div class="section">
 <div class="title">流量数据</div>
-<div class="row"><span class="label">来客</span><span class="value">0</span></div>
-<div class="row"><span class="label">试穿</span><span class="value">0</span></div>
-<div class="row"><span class="label">成交</span><span class="value">0</span></div>
+
+<div class="row">
+<div>
+<label>来客</label>
+<input type="number" id="customers">
+</div>
+<div>
+<label>试穿</label>
+<input type="number" id="tryons">
+</div>
+<div>
+<label>成交</label>
+<input type="number" id="sales">
+</div>
+</div>
 </div>
 
-<hr>
-
+<!-- 销售 -->
 <div class="section">
 <div class="title">销售数据</div>
-<div class="row"><span class="label">营业额</span><span class="value">0</span></div>
-<div class="row"><span class="label">目标</span><span class="value">0</span></div>
+
+<div class="row">
+<div>
+<label>营业额</label>
+<input type="number" id="revenue">
+</div>
+<div>
+<label>目标</label>
+<input type="number" id="target">
+</div>
+</div>
 </div>
 
-<hr>
-
+<!-- 客户 -->
 <div class="section">
 <div class="title">客户结构</div>
-<div class="row"><span class="label">新客</span><span class="value">0</span></div>
-<div class="row"><span class="label">老客</span><span class="value">0</span></div>
+
+<div class="row">
+<div>
+<label>新客</label>
+<input type="number" id="newcust">
+</div>
+<div>
+<label>老客</label>
+<input type="number" id="oldcust">
+</div>
+</div>
 </div>
 
-<hr>
-
+<!-- 收款 -->
 <div class="section">
 <div class="title">收款结构</div>
-<div class="row"><span class="label">支付宝</span><span class="value">0</span></div>
-<div class="row"><span class="label">银行卡</span><span class="value">0</span></div>
+
+<div class="row">
+<div>
+<label>支付宝</label>
+<input type="number" id="alipay">
+</div>
+<div>
+<label>银行卡</label>
+<input type="number" id="bank">
+</div>
+</div>
 </div>
 
-<hr>
-
+<!-- 问题 -->
 <div class="section">
 <div class="title">重点 / 问题</div>
-<textarea rows="3" placeholder="填写今日重点问题"></textarea>
+<textarea rows="3"></textarea>
 </div>
 
+<!-- 计划 -->
 <div class="section">
-<div class="title">明日计划</div>
-<textarea rows="3" placeholder="≤3条"></textarea>
+<div class="title">明日计划（≤3）</div>
+<textarea rows="3"></textarea>
 </div>
 
-<button class="primary">生成日报</button>
-<button class="secondary">清空</button>
+<button class="primary" onclick="generate()">生成微信日报</button>
+<button class="secondary" onclick="clearAll()">清空</button>
 
-<div class="small">EVA SYSTEM V1.1</div>
+<div class="small">EVA SYSTEM V1.2</div>
 
 </div>
 </div>
+
+<script>
+// 自动日期
+document.getElementById("date").value = new Date().toISOString().split("T")[0];
+
+// 生成微信文本
+function generate(){
+    const text =
+`💜 EVA日报
+
+门店：${store.value}
+人员：${staff.value}
+日期：${date.value}
+
+——流量——
+来客：${customers.value || 0}
+试穿：${tryons.value || 0}
+成交：${sales.value || 0}
+
+——销售——
+营业额：${revenue.value || 0}
+目标：${target.value || 0}
+
+——客户——
+新客：${newcust.value || 0}
+老客：${oldcust.value || 0}
+
+——收款——
+支付宝：${alipay.value || 0}
+银行卡：${bank.value || 0}
+`;
+
+    navigator.clipboard.writeText(text);
+    alert("已复制微信日报");
+}
+
+// 清空
+function clearAll(){
+    document.querySelectorAll("input").forEach(i=>i.value="");
+    document.querySelectorAll("textarea").forEach(t=>t.value="");
+}
+</script>
 
 </body>
 </html>
