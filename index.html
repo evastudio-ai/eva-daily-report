@@ -18,25 +18,33 @@
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; padding: 16px; padding-bottom: 40px; }
         .container { max-width: 500px; margin: 0 auto; }
-        header { text-align: center; padding: 20px 0; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); }
-        header h1 { font-size: 20px; font-weight: 600; letter-spacing: 2px; color: var(--primary-color); }
-        header p { font-size: 10px; color: var(--text-light); letter-spacing: 1px; margin-top: 4px; }
-        .card { background: var(--card-bg); border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(140, 118, 98, 0.03); margin-bottom: 16px; border: 1px solid rgba(232, 230, 226, 0.7); }
+        header { text-align: center; padding: 15px 0; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); }
+        header h1 { font-size: 18px; font-weight: 600; letter-spacing: 2px; color: var(--primary-color); }
+        header p { font-size: 9px; color: var(--text-light); letter-spacing: 1px; margin-top: 2px; }
+        .card { background: var(--card-bg); border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(140, 118, 98, 0.03); margin-bottom: 14px; border: 1px solid rgba(232, 230, 226, 0.7); }
         .section-title { font-size: 13px; font-weight: 600; color: var(--accent-color); margin-bottom: 12px; letter-spacing: 1px; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; }
-        .form-group { margin-bottom: 14px; }
+        .form-group { margin-bottom: 12px; }
         label { display: block; font-size: 12px; font-weight: 500; margin-bottom: 6px; color: var(--primary-color); }
+        
+        /* 快捷选择标签样式 */
+        .tag-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+        .tag-btn { background: #faf9f7; border: 1px solid var(--border-color); padding: 8px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text-color); transition: all 0.2s; text-align: center; flex: 1; min-width: 70px; }
+        .tag-btn.active { background: var(--accent-color); color: #fff; border-color: var(--accent-color); font-weight: 500; }
+
         input, select, textarea { width: 100%; padding: 12px; font-size: 15px; border: 1px solid var(--border-color); border-radius: 8px; background-color: #faf9f7; color: var(--text-color); outline: none; -webkit-appearance: none; }
-        textarea { resize: none; height: 80px; font-family: inherit; line-height: 1.5; }
+        textarea { resize: none; height: 75px; font-family: inherit; line-height: 1.5; }
         input:focus, select:focus, textarea:focus { border-color: var(--accent-color); background-color: #fff; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-        .btn-group { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 24px; }
-        button { border: none; border-radius: 8px; padding: 16px; font-size: 15px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; width: 100%; }
+        
+        .btn-group { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 20px; }
+        button.action-btn { border: none; border-radius: 8px; padding: 16px; font-size: 15px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; width: 100%; }
         .btn-primary { background-color: var(--primary-color); color: #fff; }
-        .btn-primary:active { background-color: #333; }
-        .btn-secondary { background-color: transparent; color: var(--text-light); border: 1px solid var(--border-color); margin-top: 8px; }
-        .btn-success { background-color: var(--success-color); color: #fff; margin-top: 14px; font-weight: 600; }
+        .btn-primary:active { opacity: 0.8; }
+        .btn-secondary { background-color: transparent; color: var(--text-light); border: 1px solid var(--border-color); margin-top: 4px; }
+        .btn-success { background-color: var(--success-color); color: #fff; margin-top: 12px; font-weight: 600; }
         .btn-success:active { opacity: 0.9; }
+        
         #resultContainer { display: none; background: #fff; }
         .preview-box { background: #faf9f7; border: 1px dashed var(--accent-color); border-radius: 8px; padding: 16px; font-size: 14px; white-space: pre-wrap; word-break: break-all; color: #222; line-height: 1.7; }
         .toast { position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: #fff; padding: 12px 24px; border-radius: 24px; font-size: 13px; z-index: 9999; display: none; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
@@ -51,37 +59,49 @@
     </header>
 
     <form id="reportForm">
+        <!-- 基础客流归属 -->
         <div class="card">
-            <div class="section-title">📍 基础信息</div>
-            <div class="grid-2">
-                <div class="form-group">
+            <div class="section-title">📍 基础与班次信息</div>
+            <div class="grid-2" style="margin-bottom: 12px;">
+                <div class="form-group" style="margin-bottom:0;">
                     <label for="store">门店名称</label>
                     <select id="store" required>
                         <option value="崇宁路店">崇宁路店</option>
                         <option value="永丰路店">永丰路店</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="date">日期</label>
-                    <input type="date" id="date" required>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>今日日期</label>
+                    <input type="text" id="dateDisplay" readonly style="background-color:#eee; color:#666; cursor:not-allowed;">
                 </div>
             </div>
-            <div class="grid-3">
-                <div class="form-group">
-                    <label for="weather">天气 (例: 晴天/雨天)</label>
-                    <input type="text" id="weather" placeholder="晴天" required>
+
+            <!-- 天气快速选择 -->
+            <div class="form-group">
+                <label>选择今日天气</label>
+                <div class="tag-group" id="weatherGroup">
+                    <button type="button" class="tag-btn active" data-val="晴天">☀️ 晴天</button>
+                    <button type="button" class="tag-btn" data-val="阴天">☁️ 阴天</button>
+                    <button type="button" class="tag-btn" data-val="雨天">🌧️ 雨天</button>
+                    <button type="button" class="tag-btn" data-val="下雪">❄️ 下雪</button>
                 </div>
-                <div class="form-group">
-                    <label for="shift">班次 (例: C:丽丽)</label>
-                    <input type="text" id="shift" placeholder="C:丽丽" required>
-                </div>
-                <div class="form-group">
-                    <label for="staffName">填表人</label>
-                    <input type="text" id="staffName" placeholder="丽丽" required>
+            </div>
+
+            <!-- 班次与填表人快速选择 -->
+            <div class="form-group" style="margin-bottom:0;">
+                <label>选择当前当班人 (自动关联最下方填表人)</label>
+                <div class="tag-group" id="shiftGroup">
+                    <button type="button" class="tag-btn active" data-shift="C:丽丽" data-name="丽丽">C:丽丽</button>
+                    <button type="button" class="tag-btn" data-shift="A:丽丽" data-name="丽丽">A:丽丽</button>
+                    <button type="button" class="tag-btn" data-shift="B:丽丽" data-name="丽丽">B:丽丽</button>
+                    <button type="button" class="tag-btn" data-shift="C:其他" data-name="其他员工">C:其他</button>
+                    <button type="button" class="tag-btn" data-shift="A:其他" data-name="其他员工">A:其他</button>
+                    <button type="button" class="tag-btn" data-shift="B:其他" data-name="其他员工">B:其他</button>
                 </div>
             </div>
         </div>
 
+        <!-- 客流与试穿 -->
         <div class="card">
             <div class="section-title">👥 来客与试穿 (人)</div>
             <div class="grid-2">
@@ -94,18 +114,19 @@
                     <input type="number" id="oldCust" min="0" value="0" required>
                 </div>
             </div>
-            <div class="grid-2">
-                <div class="form-group">
+            <div class="grid-2" style="margin-bottom:0;">
+                <div class="form-group" style="margin-bottom:0;">
                     <label style="color:var(--success-color)">新客试穿数</label>
                     <input type="number" id="newTry" min="0" value="0" required>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="margin-bottom:0;">
                     <label style="color:var(--success-color)">老客试穿数</label>
                     <input type="number" id="oldTry" min="0" value="0" required>
                 </div>
             </div>
         </div>
 
+        <!-- 成交详情 -->
         <div class="card">
             <div class="section-title">🛍️ 成交情况 (人数/件数)</div>
             <div class="grid-2">
@@ -116,12 +137,13 @@
                 <div class="form-group"><label>老客成交人数</label><input type="number" id="oldPayPeople" min="0" value="0" required></div>
                 <div class="form-group"><label>老客成交件数</label><input type="number" id="oldPayCount" min="0" value="0" required></div>
             </div>
-            <div class="grid-2">
-                <div class="form-group"><label>线上成交人数</label><input type="number" id="onlinePayPeople" min="0" value="0" required></div>
-                <div class="form-group"><label>线上成交件数</label><input type="number" id="onlinePayCount" min="0" value="0" required></div>
+            <div class="grid-2" style="margin-bottom:0;">
+                <div class="form-group" style="margin-bottom:0;"><label>线上成交人数</label><input type="number" id="onlinePayPeople" min="0" value="0" required></div>
+                <div class="form-group" style="margin-bottom:0;"><label>线上成交件数</label><input type="number" id="onlinePayCount" min="0" value="0" required></div>
             </div>
         </div>
 
+        <!-- 财务与目标 -->
         <div class="card">
             <div class="section-title">💰 营业额与收款渠道</div>
             <div class="grid-2">
@@ -134,21 +156,23 @@
                     <input type="number" id="targetAmount" min="1" placeholder="今日业绩目标" required>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom:0;">
                 <label>收款渠道与金额 (例: 微信1793)</label>
                 <input type="text" id="payChannel" placeholder="微信1793" required>
             </div>
         </div>
 
+        <!-- 私域新增 -->
         <div class="card">
             <div class="section-title">📱 粉丝/私域新增 (人)</div>
-            <div class="grid-3">
-                <div class="form-group"><label>微信新增</label><input type="number" id="addWx" min="0" value="0" required></div>
-                <div class="form-group"><label>小红书</label><input type="number" id="addXhs" min="0" value="0" required></div>
-                <div class="form-group"><label>抖音</label><input type="number" id="addDy" min="0" value="0" required></div>
+            <div class="grid-3" style="margin-bottom:0;">
+                <div class="form-group" style="margin-bottom:0;"><label>微信新增</label><input type="number" id="addWx" min="0" value="0" required></div>
+                <div class="form-group" style="margin-bottom:0;"><label>小红书</label><input type="number" id="addXhs" min="0" value="0" required></div>
+                <div class="form-group" style="margin-bottom:0;"><label>抖音</label><input type="number" id="addDy" min="0" value="0" required></div>
             </div>
         </div>
 
+        <!-- 现场与交接 -->
         <div class="card">
             <div class="section-title">📝 文本记录</div>
             <div class="form-group">
@@ -157,17 +181,202 @@
             </div>
             <div class="form-group" style="margin-bottom: 0;">
                 <label for="handover">交接事项</label>
-                <textarea id="handover" placeholder="请输入需要跟进的衣服调换、未取或明天当班需要注意的事项..." required></textarea>
+                <textarea id="handover" placeholder="请输入需要跟进的衣服调换、未取等事项..." required></textarea>
             </div>
         </div>
 
+        <!-- 动作按钮 -->
         <div class="btn-group">
-            <button type="submit" class="btn-primary">生成标准营业日报</button>
-            <button type="button" class="btn-secondary" id="resetBtn">清空表单</button>
+            <button type="submit" class="action-btn btn-primary">生成标准营业日报</button>
+            <button type="button" class="action-btn btn-secondary" id="resetBtn">清空表单</button>
         </div>
     </form>
 
+    <!-- 预览区域 -->
     <div id="resultContainer" class="card">
         <div class="section-title">📱 微信群日报预览</div>
         <div class="preview-box" id="previewBox"></div>
-        <button type="
+        <button type="button" class="action-btn btn-success" id="copyBtn">一键复制完整日报</button>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    // 全局动态变量库
+    let selectedWeather = "晴天";
+    let selectedShift = "C:丽丽";
+    let selectedStaffName = "丽丽";
+
+    // 初始化运行：日期自动填入并显示锁定
+    window.addEventListener('DOMContentLoaded', () => {
+        const d = new Date();
+        document.getElementById('dateDisplay').value = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+        
+        // 天气快捷键绑定
+        const weatherBtns = document.querySelectorAll('#weatherGroup .tag-btn');
+        weatherBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                weatherBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedWeather = btn.getAttribute('data-val');
+            });
+        });
+
+        // 班次快捷键绑定
+        const shiftBtns = document.querySelectorAll('#shiftGroup .tag-btn');
+        shiftBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                shiftBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedShift = btn.getAttribute('data-shift');
+                selectedStaffName = btn.getAttribute('data-name');
+            });
+        });
+    });
+
+    const form = document.getElementById('reportForm');
+    const resultContainer = document.getElementById('resultContainer');
+    const previewBox = document.getElementById('previewBox');
+    const resetBtn = document.getElementById('resetBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const toast = document.getElementById('toast');
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        try {
+            // 解析核心字段
+            const store = document.getElementById('store').value;
+            const dateText = document.getElementById('dateDisplay').value;
+
+            const newCust = parseInt(document.getElementById('newCust').value) || 0;
+            const oldCust = parseInt(document.getElementById('oldCust').value) || 0;
+            const totalCust = newCust + oldCust;
+
+            const newTry = parseInt(document.getElementById('newTry').value) || 0;
+            const oldTry = parseInt(document.getElementById('oldTry').value) || 0;
+            const totalTry = newTry + oldTry;
+
+            const newPayPeople = parseInt(document.getElementById('newPayPeople').value) || 0;
+            const newPayCount = parseInt(document.getElementById('newPayCount').value) || 0;
+            const oldPayPeople = parseInt(document.getElementById('oldPayPeople').value) || 0;
+            const oldPayCount = parseInt(document.getElementById('oldPayCount').value) || 0;
+            const onlinePayPeople = parseInt(document.getElementById('onlinePayPeople').value) || 0;
+            const onlinePayCount = parseInt(document.getElementById('onlinePayCount').value) || 0;
+            
+            // 总计计算
+            const totalPayPeople = newPayPeople + oldPayPeople + onlinePayPeople;
+            const totalPayCount = newPayCount + oldPayCount + onlinePayCount;
+
+            const salesAmount = parseFloat(document.getElementById('salesAmount').value) || 0;
+            const targetAmount = parseFloat(document.getElementById('targetAmount').value) || 1;
+            const payChannel = document.getElementById('payChannel').value.trim();
+
+            const addWx = document.getElementById('addWx').value || 0;
+            const addXhs = document.getElementById('addXhs').value || 0;
+            const addDy = document.getElementById('addDy').value || 0;
+
+            const customerDetail = document.getElementById('customerDetail').value.trim();
+            const handover = document.getElementById('handover').value.trim();
+
+            // 数据分析转换层（融入防御保护机制，防止分母为0导致崩溃）
+            const cr = totalCust > 0 ? Math.round((totalPayPeople / totalCust) * 100) + '%' : '0%';
+            const upt = totalPayPeople > 0 ? (totalPayCount / totalPayPeople).toFixed(1) : '0.0';
+            const atp = totalPayPeople > 0 ? Math.round(salesAmount / totalPayPeople) + '元' : '0元';
+            
+            const totalStorePayPeople = newPayPeople + oldPayPeople; 
+            const newCustRate = totalStorePayPeople > 0 ? Math.round((newPayPeople / totalStorePayPeople) * 100) + '%' : '0%';
+            const oldCustRate = totalStorePayPeople > 0 ? Math.round((oldPayPeople / totalStorePayPeople) * 100) + '%' : '0%';
+            
+            const targetRate = ((salesAmount / targetAmount) * 100).toFixed(1) + '%';
+
+            // 标准文本拼接
+            const reportText = `💜 EVA【${store}】日报
+${dateText} ☁️ ${selectedWeather}
+
+【班次】${selectedShift}
+
+【来客】新${newCust} 老${oldCust} 共${totalCust}人
+【试穿】新${newTry} 老${oldTry} 共${totalTry}人
+【成交】新${newPayPeople}人${newPayCount}件 | 老${oldPayPeople}人${oldPayCount}件 | 线上${onlinePayPeople}人${onlinePayCount}件
+【分析】CR ${cr} | UPT ${upt} | ATP ${atp}
+新客率${newCustRate} | 老客率${oldCustRate}
+【营业额】${salesAmount}元
+【营业目标】${targetAmount}元
+【目标达成率】${targetRate}
+【收款】${payChannel}
+【新】微信${addWx}人 | 小红书${addXhs}人 | 抖音${addDy}人
+
+【今日客户情况】
+${customerDetail}
+
+【交接事项】
+${handover}
+
+【填表人】${selectedStaffName}`;
+
+            previewBox.textContent = reportText;
+            resultContainer.style.display = 'block';
+            resultContainer.scrollIntoView({ behavior: 'smooth' });
+
+        } catch (error) {
+            alert("数据处理有误，请检查输入项是否正确！");
+            console.error(error);
+        }
+    });
+
+    // 强力跨平台复制功能
+    copyBtn.addEventListener('click', () => {
+        const text = previewBox.textContent;
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        
+        textArea.style.position = "fixed";
+        textArea.style.top = "0";
+        textArea.style.left = "0";
+        textArea.style.width = "2em";
+        textArea.style.height = "2em";
+        textArea.style.padding = "0";
+        textArea.style.border = "none";
+        textArea.style.outline = "none";
+        textArea.style.boxShadow = "none";
+        textArea.style.background = "transparent";
+        
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        textArea.setSelectionRange(0, 99999); 
+
+        try {
+            const successful = document.execCommand('copy');
+            if(successful) {
+                showToast('已复制！快去微信群粘贴吧 🎉');
+            } else {
+                showToast('复制失败，请长按文本框手动复制');
+            }
+        } catch (err) {
+            showToast('浏览器不支持快捷复制，请长按手动复制');
+        }
+
+        document.body.removeChild(textArea);
+    });
+
+    // 重置按钮
+    resetBtn.addEventListener('click', () => {
+        if (confirm('确定要清空所有数据吗？')) {
+            form.reset();
+            resultContainer.style.display = 'none';
+            previewBox.textContent = '';
+            showToast('已清空');
+        }
+    });
+
+    function showToast(msg) {
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2000);
+    }
+</script>
+</body>
+</html>
