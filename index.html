@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EVA STUDIO 营业日报生成器</title>
+    <title>EVA日报生成器 V1</title>
     <style>
         :root {
             --primary-color: #111111;
@@ -25,14 +25,8 @@
         .section-title { font-size: 13px; font-weight: 600; color: var(--accent-color); margin-bottom: 12px; letter-spacing: 1px; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; }
         .form-group { margin-bottom: 12px; }
         label { display: block; font-size: 12px; font-weight: 500; margin-bottom: 6px; color: var(--primary-color); }
-        
-        /* 快捷选择标签样式 */
-        .tag-group { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
-        .tag-btn { background: #faf9f7; border: 1px solid var(--border-color); padding: 8px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text-color); transition: all 0.2s; text-align: center; flex: 1; min-width: 70px; }
-        .tag-btn.active { background: var(--accent-color); color: #fff; border-color: var(--accent-color); font-weight: 500; }
-
         input, select, textarea { width: 100%; padding: 12px; font-size: 15px; border: 1px solid var(--border-color); border-radius: 8px; background-color: #faf9f7; color: var(--text-color); outline: none; -webkit-appearance: none; }
-        textarea { resize: none; height: 75px; font-family: inherit; line-height: 1.5; }
+        textarea { resize: none; height: 85px; font-family: inherit; line-height: 1.5; }
         input:focus, select:focus, textarea:focus { border-color: var(--accent-color); background-color: #fff; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
@@ -55,144 +49,116 @@
 <div class="container">
     <header>
         <h1>EVA STUDIO</h1>
-        <p>DAILY REPORT GENERATOR</p>
+        <p>DAILY REPORT GENERATOR V1</p>
     </header>
 
     <form id="reportForm">
-        <!-- 基础客流归属 -->
+        <!-- 🟢 基础信息 -->
         <div class="card">
-            <div class="section-title">📍 基础与班次信息</div>
-            <div class="grid-2" style="margin-bottom: 12px;">
-                <div class="form-group" style="margin-bottom:0;">
-                    <label for="store">门店名称</label>
+            <div class="section-title">🟢 基础信息</div>
+            <div class="grid-3">
+                <div class="form-group">
+                    <label for="store">门店</label>
                     <select id="store" required>
                         <option value="崇宁路店">崇宁路店</option>
                         <option value="永丰路店">永丰路店</option>
                     </select>
                 </div>
-                <div class="form-group" style="margin-bottom:0;">
-                    <label>今日日期</label>
+                <div class="form-group">
+                    <label>日期</label>
                     <input type="text" id="dateDisplay" readonly style="background-color:#eee; color:#666; cursor:not-allowed;">
                 </div>
-            </div>
-
-            <!-- 天气快速选择 -->
-            <div class="form-group">
-                <label>选择今日天气</label>
-                <div class="tag-group" id="weatherGroup">
-                    <button type="button" class="tag-btn active" data-val="晴天">☀️ 晴天</button>
-                    <button type="button" class="tag-btn" data-val="阴天">☁️ 阴天</button>
-                    <button type="button" class="tag-btn" data-val="雨天">🌧️ 雨天</button>
-                    <button type="button" class="tag-btn" data-val="下雪">❄️ 下雪</button>
-                </div>
-            </div>
-
-            <!-- 班次与填表人快速选择 -->
-            <div class="form-group" style="margin-bottom:0;">
-                <label>选择当前当班人 (自动关联最下方填表人)</label>
-                <div class="tag-group" id="shiftGroup">
-                    <button type="button" class="tag-btn active" data-shift="C:丽丽" data-name="丽丽">C:丽丽</button>
-                    <button type="button" class="tag-btn" data-shift="A:丽丽" data-name="丽丽">A:丽丽</button>
-                    <button type="button" class="tag-btn" data-shift="B:丽丽" data-name="丽丽">B:丽丽</button>
-                    <button type="button" class="tag-btn" data-shift="C:其他" data-name="其他员工">C:其他</button>
-                    <button type="button" class="tag-btn" data-shift="A:其他" data-name="其他员工">A:其他</button>
-                    <button type="button" class="tag-btn" data-shift="B:其他" data-name="其他员工">B:其他</button>
+                <div class="form-group">
+                    <label for="shiftStaff">当班人员</label>
+                    <input type="text" id="shiftStaff" placeholder="当班人员" required>
                 </div>
             </div>
         </div>
 
-        <!-- 客流与试穿 -->
+        <!-- 🔵 核心KPI -->
         <div class="card">
-            <div class="section-title">👥 来客与试穿 (人)</div>
+            <div class="section-title">🔵 核心KPI</div>
             <div class="grid-2">
                 <div class="form-group">
-                    <label style="color:var(--accent-color)">新客来客数</label>
-                    <input type="number" id="newCust" min="0" value="0" required>
+                    <label for="targetAmount">营业目标 (元)</label>
+                    <input type="number" id="targetAmount" min="1" placeholder="核心业绩目标" required>
                 </div>
                 <div class="form-group">
-                    <label style="color:var(--accent-color)">老客来客数</label>
+                    <label for="salesAmount">营业额 (元)</label>
+                    <input type="number" id="salesAmount" step="0.01" min="0" placeholder="0.00" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🟡 流量数据 -->
+        <div class="card">
+            <div class="section-title">🟡 流量数据</div>
+            <div class="grid-3">
+                <div class="form-group">
+                    <label for="customers">来客数</label>
+                    <input type="number" id="customers" min="0" value="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="tryOns">试穿数</label>
+                    <input type="number" id="tryOns" min="0" value="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="orders">成交数 (人数)</label>
+                    <input type="number" id="orders" min="0" value="0" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🟣 销售结构 -->
+        <div class="card">
+            <div class="section-title">🟣 销售结构</div>
+            <div class="form-group" style="margin-bottom:0;">
+                <label for="itemCount">成交件数 (件)</label>
+                <input type="number" id="itemCount" min="0" value="0" required>
+            </div>
+        </div>
+
+        <!-- 🟤 客户结构 -->
+        <div class="card">
+            <div class="section-title">🟤 客户结构</div>
+            <div class="grid-2" style="margin-bottom:0;">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="newCust">新客数</label>
+                    <input type="number" id="newCust" min="0" value="0" required>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label for="oldCust">老客数</label>
                     <input type="number" id="oldCust" min="0" value="0" required>
                 </div>
             </div>
-            <div class="grid-2" style="margin-bottom:0;">
-                <div class="form-group" style="margin-bottom:0;">
-                    <label style="color:var(--success-color)">新客试穿数</label>
-                    <input type="number" id="newTry" min="0" value="0" required>
-                </div>
-                <div class="form-group" style="margin-bottom:0;">
-                    <label style="color:var(--success-color)">老客试穿数</label>
-                    <input type="number" id="oldTry" min="0" value="0" required>
-                </div>
-            </div>
         </div>
 
-        <!-- 成交详情 -->
+        <!-- ⚫ 收款结构 -->
         <div class="card">
-            <div class="section-title">🛍️ 成交情况 (人数/件数)</div>
-            <div class="grid-2">
-                <div class="form-group"><label>新客成交人数</label><input type="number" id="newPayPeople" min="0" value="0" required></div>
-                <div class="form-group"><label>新客成交件数</label><input type="number" id="newPayCount" min="0" value="0" required></div>
-            </div>
-            <div class="grid-2">
-                <div class="form-group"><label>老客成交人数</label><input type="number" id="oldPayPeople" min="0" value="0" required></div>
-                <div class="form-group"><label>老客成交件数</label><input type="number" id="oldPayCount" min="0" value="0" required></div>
-            </div>
-            <div class="grid-2" style="margin-bottom:0;">
-                <div class="form-group" style="margin-bottom:0;"><label>线上成交人数</label><input type="number" id="onlinePayPeople" min="0" value="0" required></div>
-                <div class="form-group" style="margin-bottom:0;"><label>线上成交件数</label><input type="number" id="onlinePayCount" min="0" value="0" required></div>
-            </div>
-        </div>
-
-        <!-- 财务与目标 -->
-        <div class="card">
-            <div class="section-title">💰 营业额与收款渠道</div>
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>今日营业额 (元)</label>
-                    <input type="number" id="salesAmount" step="0.01" min="0" placeholder="0.00" required>
-                </div>
-                <div class="form-group">
-                    <label>今日目标额 (元)</label>
-                    <input type="number" id="targetAmount" min="1" placeholder="今日业绩目标" required>
-                </div>
-            </div>
-            <div class="form-group" style="margin-bottom:0;">
-                <label>收款渠道与金额 (例: 微信1793)</label>
-                <input type="text" id="payChannel" placeholder="微信1793" required>
-            </div>
-        </div>
-
-        <!-- 私域新增 -->
-        <div class="card">
-            <div class="section-title">📱 粉丝/私域新增 (人)</div>
+            <div class="section-title">⚫ 收款结构 (元)</div>
             <div class="grid-3" style="margin-bottom:0;">
-                <div class="form-group" style="margin-bottom:0;"><label>微信新增</label><input type="number" id="addWx" min="0" value="0" required></div>
-                <div class="form-group" style="margin-bottom:0;"><label>小红书</label><input type="number" id="addXhs" min="0" value="0" required></div>
-                <div class="form-group" style="margin-bottom:0;"><label>抖音</label><input type="number" id="addDy" min="0" value="0" required></div>
+                <div class="form-group" style="margin-bottom:0;"><label>微信</label><input type="number" id="payWx" step="0.01" min="0" value="0" required></div>
+                <div class="form-group" style="margin-bottom:0;"><label>支付宝</label><input type="number" id="payAlipay" step="0.01" min="0" value="0" required></div>
+                <div class="form-group" style="margin-bottom:0;"><label>银行卡</label><input type="number" id="payCard" step="0.01" min="0" value="0" required></div>
             </div>
         </div>
 
-        <!-- 现场与交接 -->
+        <!-- 📝 备注 -->
         <div class="card">
-            <div class="section-title">📝 文本记录</div>
-            <div class="form-group">
-                <label for="customerDetail">今日客户情况</label>
-                <textarea id="customerDetail" placeholder="请输入具体客户服务状态、反馈或欠款信息..." required></textarea>
-            </div>
+            <div class="section-title">📝 备注栏</div>
             <div class="form-group" style="margin-bottom: 0;">
-                <label for="handover">交接事项</label>
-                <textarea id="handover" placeholder="请输入需要跟进的衣服调换、未取等事项..." required></textarea>
+                <textarea id="remark" placeholder="请手动输入备注信息..."></textarea>
             </div>
         </div>
 
         <!-- 动作按钮 -->
         <div class="btn-group">
-            <button type="submit" class="action-btn btn-primary">生成标准营业日报</button>
+            <button type="submit" class="action-btn btn-primary">生成微信标准日报</button>
             <button type="button" class="action-btn btn-secondary" id="resetBtn">清空表单</button>
         </div>
     </form>
 
-    <!-- 预览区域 -->
+    <!-- 预览与复制区域 -->
     <div id="resultContainer" class="card">
         <div class="section-title">📱 微信群日报预览</div>
         <div class="preview-box" id="previewBox"></div>
@@ -203,36 +169,10 @@
 <div class="toast" id="toast"></div>
 
 <script>
-    // 全局动态变量库
-    let selectedWeather = "晴天";
-    let selectedShift = "C:丽丽";
-    let selectedStaffName = "丽丽";
-
-    // 初始化运行：日期自动填入并显示锁定
+    // 强制锁定当天日期自动渲染
     window.addEventListener('DOMContentLoaded', () => {
         const d = new Date();
         document.getElementById('dateDisplay').value = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
-        
-        // 天气快捷键绑定
-        const weatherBtns = document.querySelectorAll('#weatherGroup .tag-btn');
-        weatherBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                weatherBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                selectedWeather = btn.getAttribute('data-val');
-            });
-        });
-
-        // 班次快捷键绑定
-        const shiftBtns = document.querySelectorAll('#shiftGroup .tag-btn');
-        shiftBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                shiftBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                selectedShift = btn.getAttribute('data-shift');
-                selectedStaffName = btn.getAttribute('data-name');
-            });
-        });
     });
 
     const form = document.getElementById('reportForm');
@@ -246,87 +186,78 @@
         e.preventDefault();
         
         try {
-            // 解析核心字段
+            // 获取表单源数据
             const store = document.getElementById('store').value;
             const dateText = document.getElementById('dateDisplay').value;
+            const shiftStaff = document.getElementById('shiftStaff').value.trim();
+
+            const targetAmount = parseFloat(document.getElementById('targetAmount').value) || 1;
+            const salesAmount = parseFloat(document.getElementById('salesAmount').value) || 0;
+
+            const customers = parseInt(document.getElementById('customers').value) || 0;
+            const tryOns = parseInt(document.getElementById('tryOns').value) || 0;
+            const orders = parseInt(document.getElementById('orders').value) || 0;
+
+            const itemCount = parseInt(document.getElementById('itemCount').value) || 0;
 
             const newCust = parseInt(document.getElementById('newCust').value) || 0;
             const oldCust = parseInt(document.getElementById('oldCust').value) || 0;
-            const totalCust = newCust + oldCust;
 
-            const newTry = parseInt(document.getElementById('newTry').value) || 0;
-            const oldTry = parseInt(document.getElementById('oldTry').value) || 0;
-            const totalTry = newTry + oldTry;
+            const payWx = parseFloat(document.getElementById('payWx').value) || 0;
+            const payAlipay = parseFloat(document.getElementById('payAlipay').value) || 0;
+            const payCard = parseFloat(document.getElementById('payCard').value) || 0;
 
-            const newPayPeople = parseInt(document.getElementById('newPayPeople').value) || 0;
-            const newPayCount = parseInt(document.getElementById('newPayCount').value) || 0;
-            const oldPayPeople = parseInt(document.getElementById('oldPayPeople').value) || 0;
-            const oldPayCount = parseInt(document.getElementById('oldPayCount').value) || 0;
-            const onlinePayPeople = parseInt(document.getElementById('onlinePayPeople').value) || 0;
-            const onlinePayCount = parseInt(document.getElementById('onlinePayCount').value) || 0;
-            
-            // 总计计算
-            const totalPayPeople = newPayPeople + oldPayPeople + onlinePayPeople;
-            const totalPayCount = newPayCount + oldPayCount + onlinePayCount;
+            const remark = document.getElementById('remark').value.trim();
 
-            const salesAmount = parseFloat(document.getElementById('salesAmount').value) || 0;
-            const targetAmount = parseFloat(document.getElementById('targetAmount').value) || 1;
-            const payChannel = document.getElementById('payChannel').value.trim();
-
-            const addWx = document.getElementById('addWx').value || 0;
-            const addXhs = document.getElementById('addXhs').value || 0;
-            const addDy = document.getElementById('addDy').value || 0;
-
-            const customerDetail = document.getElementById('customerDetail').value.trim();
-            const handover = document.getElementById('handover').value.trim();
-
-            // 数据分析转换层（融入防御保护机制，防止分母为0导致崩溃）
-            const cr = totalCust > 0 ? Math.round((totalPayPeople / totalCust) * 100) + '%' : '0%';
-            const upt = totalPayPeople > 0 ? (totalPayCount / totalPayPeople).toFixed(1) : '0.0';
-            const atp = totalPayPeople > 0 ? Math.round(salesAmount / totalPayPeople) + '元' : '0元';
-            
-            const totalStorePayPeople = newPayPeople + oldPayPeople; 
-            const newCustRate = totalStorePayPeople > 0 ? Math.round((newPayPeople / totalStorePayPeople) * 100) + '%' : '0%';
-            const oldCustRate = totalStorePayPeople > 0 ? Math.round((oldPayPeople / totalStorePayPeople) * 100) + '%' : '0%';
-            
+            // 基础数理计算（做防零死锁保护）
             const targetRate = ((salesAmount / targetAmount) * 100).toFixed(1) + '%';
+            const upt = orders > 0 ? (itemCount / orders).toFixed(1) : '0.0';
 
-            // 标准文本拼接
-            const reportText = `💜 EVA【${store}】日报
-${dateText} ☁️ ${selectedWeather}
+            // 纯结构文本组装 - 严丝合缝匹配冻结模板
+            const reportText = `💜 EVA日报 | ${store} | ${dateText}
 
-【班次】${selectedShift}
+【🔥 核心KPI】
+营业额：${salesAmount}元
+营业目标：${targetAmount}元
+达成率：${targetRate}
 
-【来客】新${newCust} 老${oldCust} 共${totalCust}人
-【试穿】新${newTry} 老${oldTry} 共${totalTry}人
-【成交】新${newPayPeople}人${newPayCount}件 | 老${oldPayPeople}人${oldPayCount}件 | 线上${onlinePayPeople}人${onlinePayCount}件
-【分析】CR ${cr} | UPT ${upt} | ATP ${atp}
-新客率${newCustRate} | 老客率${oldCustRate}
-【营业额】${salesAmount}元
-【营业目标】${targetAmount}元
-【目标达成率】${targetRate}
-【收款】${payChannel}
-【新】微信${addWx}人 | 小红书${addXhs}人 | 抖音${addDy}人
+────────────────
 
-【今日客户情况】
-${customerDetail}
+【流量】
+来客：${customers}
+试穿：${tryOns}
+成交：${orders}
 
-【交接事项】
-${handover}
+【销售结构】
+成交人数：${orders}
+成交件数：${itemCount}
+UPT：${upt}
 
-【填表人】${selectedStaffName}`;
+【客户结构】
+新客：${newCust}
+老客：${oldCust}
+
+【收款结构】
+微信：${payWx}元
+支付宝：${payAlipay}元
+银行卡：${payCard}元
+
+────────────────
+
+【备注】
+${remark || '无'}`;
 
             previewBox.textContent = reportText;
             resultContainer.style.display = 'block';
             resultContainer.scrollIntoView({ behavior: 'smooth' });
 
         } catch (error) {
-            alert("数据处理有误，请检查输入项是否正确！");
+            alert("生成失败，请确认输入数据是否完整有效。");
             console.error(error);
         }
     });
 
-    // 强力跨平台复制功能
+    // 复制核心组件
     copyBtn.addEventListener('click', () => {
         const text = previewBox.textContent;
         const textArea = document.createElement("textarea");
@@ -353,16 +284,16 @@ ${handover}
             if(successful) {
                 showToast('已复制！快去微信群粘贴吧 🎉');
             } else {
-                showToast('复制失败，请长按文本框手动复制');
+                showToast('复制失败，请长按下方文本框手动复制');
             }
         } catch (err) {
-            showToast('浏览器不支持快捷复制，请长按手动复制');
+            showToast('设备不支持快捷复制，请长按手动复制');
         }
 
         document.body.removeChild(textArea);
     });
 
-    // 重置按钮
+    // 表单清空
     resetBtn.addEventListener('click', () => {
         if (confirm('确定要清空所有数据吗？')) {
             form.reset();
