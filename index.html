@@ -1,29 +1,158 @@
-💜 EVA【崇宁路店】日报
-2026年6月26日 ☁️ 晴天
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EVA STUDIO 每日营业日报 V1.1</title>
+    <style>
+        :root {
+            --primary-color: #111111;
+            --accent-color: #8c7662;
+            --bg-color: #fcfbfa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --text-light: #777777;
+            --border-color: #e8e6e2;
+            --success-color: #5a7261;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; padding: 16px; padding-bottom: 40px; }
+        .container { max-width: 500px; margin: 0 auto; }
+        header { text-align: center; padding: 20px 0; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); }
+        header h1 { font-size: 20px; font-weight: 600; letter-spacing: 2px; color: var(--primary-color); }
+        header p { font-size: 10px; color: var(--text-light); letter-spacing: 1px; margin-top: 4px; }
+        .card { background: var(--card-bg); border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(140, 118, 98, 0.03); margin-bottom: 16px; border: 1px solid rgba(232, 230, 226, 0.7); }
+        .section-title { font-size: 13px; font-weight: 600; color: var(--accent-color); margin-bottom: 16px; letter-spacing: 1px; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 12px; font-weight: 500; margin-bottom: 6px; color: var(--primary-color); }
+        input, select, textarea { width: 100%; padding: 14px; font-size: 16px; border: 1px solid var(--border-color); border-radius: 8px; background-color: #faf9f7; color: var(--text-color); outline: none; -webkit-appearance: none; }
+        textarea { resize: none; height: 90px; font-family: inherit; line-height: 1.5; }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent-color); background-color: #fff; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        .btn-group { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 24px; }
+        button { border: none; border-radius: 8px; padding: 16px; font-size: 15px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; width: 100%; }
+        .btn-primary { background-color: var(--primary-color); color: #fff; }
+        .btn-primary:active { background-color: #333; }
+        .btn-secondary { background-color: transparent; color: var(--text-light); border: 1px solid var(--border-color); margin-top: 8px; }
+        .btn-success { background-color: var(--success-color); color: #fff; margin-top: 14px; font-weight: 600; }
+        .btn-success:active { opacity: 0.9; }
+        #resultContainer { display: none; background: #fff; }
+        .preview-box { background: #faf9f7; border: 1px dashed var(--accent-color); border-radius: 8px; padding: 16px; font-size: 14px; white-space: pre-wrap; word-break: break-all; color: #222; line-height: 1.7; }
+        .toast { position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: #fff; padding: 12px 24px; border-radius: 24px; font-size: 13px; z-index: 9999; display: none; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body>
 
-【班次】C:丽丽
+<div class="container">
+    <header>
+        <h1>EVA STUDIO</h1>
+        <p>DAILY REPORT GENERATOR V1.1</p>
+    </header>
 
-【来客】新1 老2 共3人
-【试穿】新1 老2 共3人
-【成交】新0人0件 | 老2人3件 | 线上0人0件
+    <form id="reportForm">
+        <div class="card">
+            <div class="section-title">📍 基础信息</div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="store">门店名称</label>
+                    <select id="store" required>
+                        <option value="崇宁路店">崇宁路店</option>
+                        <option value="永丰路店">永丰路店</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="date">日期</label>
+                    <input type="date" id="date" required>
+                </div>
+            </div>
+        </div>
 
-【分析】CR 67% | UPT 1.5 | ATP 897元
-新客率0% | 老客率100%
+        <div class="card">
+            <div class="section-title">📊 漏斗数据转化</div>
+            <div class="grid-3">
+                <div class="form-group">
+                    <label for="customers">来客数 (人)</label>
+                    <input type="number" id="customers" min="0" placeholder="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="tryOns">试穿数 (人)</label>
+                    <input type="number" id="tryOns" min="0" placeholder="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="orders">成交数 (单)</label>
+                    <input type="number" id="orders" min="0" placeholder="0" required>
+                </div>
+            </div>
+        </div>
 
-【营业额】1793元 | 目标5000 | 达成35.9%
+        <div class="card">
+            <div class="section-title">💰 销售业绩 (元)</div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="salesAmount">今日营业额</label>
+                    <input type="number" id="salesAmount" step="0.01" min="0" placeholder="0.00" required>
+                </div>
+                <div class="form-group">
+                    <label for="todayTarget">营业额目标</label>
+                    <input type="number" id="todayTarget" min="1" placeholder="今日目标金额" required>
+                </div>
+            </div>
+        </div>
 
-【收款】微信1793
+        <div class="card">
+            <div class="section-title">🔥 货品与现场动态</div>
+            <div class="form-group">
+                <label for="hotItem">主推商品 / 爆款</label>
+                <input type="text" id="hotItem" placeholder="例如：法式醋酸连衣裙 / 复古西装外套" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="events">补充说明 (客流动态/试穿反响)</label>
+                <textarea id="events" placeholder="例如：今日虽然街区整体客流偏少，但老客精准到店。新品醋酸系列试穿率极高，老客基本人手一件，连带表现不错..." required></textarea>
+            </div>
+        </div>
 
-【客户结构】新1 | 老2
+        <div class="btn-group">
+            <button type="submit" class="btn-primary">生成营业日报</button>
+            <button type="button" class="btn-secondary" id="resetBtn">清空表单</button>
+        </div>
+    </form>
 
-【重点】老客驱动
+    <div id="resultContainer" class="card">
+        <div class="section-title">📱 微信群日报预览</div>
+        <div class="preview-box" id="previewBox"></div>
+        <button type="button" class="btn-success" id="copyBtn">一键复制完整日报</button>
+    </div>
+</div>
 
-【问题】新客转化不足
+<div class="toast" id="toast"></div>
 
-【今日客户情况】
-许蓉欠款-3543
+<script>
+    const form = document.getElementById('reportForm');
+    const resultContainer = document.getElementById('resultContainer');
+    const previewBox = document.getElementById('previewBox');
+    const resetBtn = document.getElementById('resetBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const toast = document.getElementById('toast');
 
-【交接事项】
-丁总条纹衫已做调换，未取
+    // 初始化自动设置今天日期
+    window.addEventListener('DOMContentLoaded', () => {
+        const d = new Date();
+        document.getElementById('date').value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    });
 
-【填表人】丽丽
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // 获取数据
+        const store = document.getElementById('store').value;
+        const date = document.getElementById('date').value;
+        const customers = parseInt(document.getElementById('customers').value) || 0;
+        const tryOns = parseInt(document.getElementById('tryOns').value) || 0;
+        const orders = parseInt(document.getElementById('orders').value) || 0;
+        const salesAmount = parseFloat(document.getElementById('salesAmount').value) || 0;
+        const todayTarget = parseFloat(document.getElementById('todayTarget').value) || 1;
+        const hotItem = document.getElementById('hotItem').value.trim();
+        const events = document.getElementById('events').value.trim();
+
+        // 1. 核心数据
