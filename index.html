@@ -31,6 +31,10 @@
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
         
+        .staff-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        .staff-btn { background: #faf9f7; border: 1px solid var(--border-color); padding: 10px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; color: var(--text-color); flex: 1; min-width: 65px; text-align: center; transition: all 0.2s; }
+        .staff-btn.active { background: var(--accent-color); color: #fff; border-color: var(--accent-color); font-weight: 500; }
+
         .btn-group { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 20px; }
         button.action-btn { border: none; border-radius: 8px; padding: 16px; font-size: 15px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; width: 100%; }
         .btn-primary { background-color: var(--primary-color); color: #fff; }
@@ -56,21 +60,26 @@
         <!-- 🟢 基础信息 -->
         <div class="card">
             <div class="section-title">🟢 基础信息</div>
-            <div class="grid-3">
-                <div class="form-group">
+            <div class="grid-2" style="margin-bottom: 12px;">
+                <div class="form-group" style="margin-bottom: 0;">
                     <label for="store">门店</label>
                     <select id="store" required>
                         <option value="崇宁路店">崇宁路店</option>
                         <option value="永丰路店">永丰路店</option>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" style="margin-bottom: 0;">
                     <label>日期</label>
                     <input type="text" id="dateDisplay" readonly style="background-color:#eee; color:#666; cursor:not-allowed;">
                 </div>
-                <div class="form-group">
-                    <label for="shiftStaff">当班人员</label>
-                    <input type="text" id="shiftStaff" placeholder="当班人员" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>当班人员</label>
+                <div class="staff-group" id="staffGroup">
+                    <button type="button" class="staff-btn active" data-name="楠楠">楠楠</button>
+                    <button type="button" class="staff-btn" data-name="萍萍">萍萍</button>
+                    <button type="button" class="staff-btn" data-name="丽丽">丽丽</button>
+                    <button type="button" class="staff-btn" data-name="EVA">EVA</button>
                 </div>
             </div>
         </div>
@@ -143,11 +152,11 @@
             </div>
         </div>
 
-        <!-- 📝 备注 -->
+        <!-- 📝 交接事项及备注 -->
         <div class="card">
-            <div class="section-title">📝 备注栏</div>
+            <div class="section-title">📝 交接事项及备注</div>
             <div class="form-group" style="margin-bottom: 0;">
-                <textarea id="remark" placeholder="请手动输入备注信息..."></textarea>
+                <textarea id="remark" placeholder="请手动输入交接事项及备注信息..."></textarea>
             </div>
         </div>
 
@@ -160,7 +169,7 @@
 
     <!-- 预览与复制区域 -->
     <div id="resultContainer" class="card">
-        <div class="section-title">📱 微信群日报预览</div>
+        <div class="section-title">📱 微信群日报预览 (极紧凑版)</div>
         <div class="preview-box" id="previewBox"></div>
         <button type="button" class="action-btn btn-success" id="copyBtn">一键复制完整日报</button>
     </div>
@@ -169,10 +178,20 @@
 <div class="toast" id="toast"></div>
 
 <script>
-    // 强制锁定当天日期自动渲染
+    let currentStaff = "楠楠";
+
     window.addEventListener('DOMContentLoaded', () => {
         const d = new Date();
         document.getElementById('dateDisplay').value = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+
+        const staffBtns = document.querySelectorAll('#staffGroup .staff-btn');
+        staffBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                staffBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentStaff = btn.getAttribute('data-name');
+            });
+        });
     });
 
     const form = document.getElementById('reportForm');
@@ -186,10 +205,8 @@
         e.preventDefault();
         
         try {
-            // 获取表单源数据
             const store = document.getElementById('store').value;
             const dateText = document.getElementById('dateDisplay').value;
-            const shiftStaff = document.getElementById('shiftStaff').value.trim();
 
             const targetAmount = parseFloat(document.getElementById('targetAmount').value) || 1;
             const salesAmount = parseFloat(document.getElementById('salesAmount').value) || 0;
@@ -209,42 +226,21 @@
 
             const remark = document.getElementById('remark').value.trim();
 
-            // 基础数理计算（做防零死锁保护）
             const targetRate = ((salesAmount / targetAmount) * 100).toFixed(1) + '%';
             const upt = orders > 0 ? (itemCount / orders).toFixed(1) : '0.0';
 
-            // 纯结构文本组装 - 严丝合缝匹配冻结模板
+            // 微信极致压缩排版，单行承载更多字段，干掉冗余空行
             const reportText = `💜 EVA日报 | ${store} | ${dateText}
-
 【🔥 核心KPI】
-营业额：${salesAmount}元
-营业目标：${targetAmount}元
-达成率：${targetRate}
-
+营业额：${salesAmount}元 | 目标：${targetAmount}元 | 达成率：${targetRate}
 ────────────────
-
-【流量】
-来客：${customers}
-试穿：${tryOns}
-成交：${orders}
-
-【销售结构】
-成交人数：${orders}
-成交件数：${itemCount}
-UPT：${upt}
-
-【客户结构】
-新客：${newCust}
-老客：${oldCust}
-
-【收款结构】
-微信：${payWx}元
-支付宝：${payAlipay}元
-银行卡：${payCard}元
-
+【流量数据】来客：${customers} | 试穿：${tryOns} | 成交：${orders}
+【销售结构】成交人数：${orders} | 件数：${itemCount} | UPT：${upt}
+【客户结构】新客：${newCust} | 老客：${oldCust}
+【收款结构】微信：${payWx} | 支付宝：${payAlipay} | 银行卡：${payCard}
 ────────────────
-
-【备注】
+【交接事项及备注】
+当班人员：${currentStaff}
 ${remark || '无'}`;
 
             previewBox.textContent = reportText;
@@ -257,7 +253,6 @@ ${remark || '无'}`;
         }
     });
 
-    // 复制核心组件
     copyBtn.addEventListener('click', () => {
         const text = previewBox.textContent;
         const textArea = document.createElement("textarea");
@@ -293,10 +288,14 @@ ${remark || '无'}`;
         document.body.removeChild(textArea);
     });
 
-    // 表单清空
     resetBtn.addEventListener('click', () => {
         if (confirm('确定要清空所有数据吗？')) {
             form.reset();
+            const staffBtns = document.querySelectorAll('#staffGroup .staff-btn');
+            staffBtns.forEach((b, i) => {
+                if(i === 0) { b.classList.add('active'); currentStaff = "楠楠"; }
+                else { b.classList.remove('active'); }
+            });
             resultContainer.style.display = 'none';
             previewBox.textContent = '';
             showToast('已清空');
