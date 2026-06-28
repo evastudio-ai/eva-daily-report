@@ -24,15 +24,17 @@
         .card { background: var(--card-bg); border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(140, 118, 98, 0.03); margin-bottom: 14px; border: 1px solid rgba(232, 230, 226, 0.7); }
         .section-title { font-size: 13px; font-weight: 600; color: var(--accent-color); margin-bottom: 12px; letter-spacing: 1px; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; }
         .form-group { margin-bottom: 12px; }
-        label { display: block; font-size: 12px; font-weight: 500; margin-bottom: 6px; color: var(--primary-color); }
-        input, select, textarea { width: 100%; padding: 12px; font-size: 15px; border: 1px solid var(--border-color); border-radius: 8px; background-color: #faf9f7; color: var(--text-color); outline: none; -webkit-appearance: none; }
-        textarea { resize: none; height: 85px; font-family: inherit; line-height: 1.5; }
+        label { display: block; font-size: 11px; font-weight: 500; margin-bottom: 4px; color: var(--primary-color); text-align: center; white-space: nowrap; }
+        input, select, textarea { width: 100%; padding: 10px; font-size: 14px; border: 1px solid var(--border-color); border-radius: 8px; background-color: #faf9f7; color: var(--text-color); outline: none; -webkit-appearance: none; text-align: center; }
+        textarea { resize: none; height: 85px; font-family: inherit; line-height: 1.5; text-align: left; }
         input:focus, select:focus, textarea:focus { border-color: var(--accent-color); background-color: #fff; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
         
-        .staff-group { display: flex; gap: 8px; flex-wrap: wrap; }
-        .staff-btn { background: #faf9f7; border: 1px solid var(--border-color); padding: 10px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; color: var(--text-color); flex: 1; min-width: 65px; text-align: center; transition: all 0.2s; }
+        .grid-compact { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px; }
+
+        .staff-group { display: flex; gap: 6px; flex-wrap: wrap; }
+        .staff-btn { background: #faf9f7; border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text-color); flex: 1; min-width: 60px; text-align: center; transition: all 0.2s; }
         .staff-btn.active { background: var(--accent-color); color: #fff; border-color: var(--accent-color); font-weight: 500; }
 
         .btn-group { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 20px; }
@@ -44,7 +46,7 @@
         .btn-success:active { opacity: 0.9; }
         
         #resultContainer { display: none; background: #fff; }
-        .preview-box { background: #faf9f7; border: 1px dashed var(--accent-color); border-radius: 8px; padding: 16px; font-size: 14px; white-space: pre-wrap; word-break: break-all; color: #222; line-height: 1.7; }
+        .preview-box { background: #faf9f7; border: 1px dashed var(--accent-color); border-radius: 8px; padding: 16px; font-size: 14px; white-space: pre-wrap; word-break: break-all; color: #222; line-height: 1.6; }
         .toast { position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: #fff; padding: 12px 24px; border-radius: 24px; font-size: 13px; z-index: 9999; display: none; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
     </style>
 </head>
@@ -57,24 +59,23 @@
     </header>
 
     <form id="reportForm">
-        <!-- 🟢 基础信息 -->
         <div class="card">
             <div class="section-title">🟢 基础信息</div>
-            <div class="grid-2" style="margin-bottom: 12px;">
+            <div class="grid-2" style="margin-bottom: 10px;">
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label for="store">门店</label>
-                    <select id="store" required>
+                    <label style="text-align:left;">门店</label>
+                    <select id="store" required style="text-align-last: center;">
                         <option value="崇宁路店">崇宁路店</option>
                         <option value="永丰路店">永丰路店</option>
                     </select>
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label>日期</label>
+                    <label style="text-align:left;">日期</label>
                     <input type="text" id="dateDisplay" readonly style="background-color:#eee; color:#666; cursor:not-allowed;">
                 </div>
             </div>
             <div class="form-group" style="margin-bottom: 0;">
-                <label>当班人员</label>
+                <label style="text-align:left;">当班人员</label>
                 <div class="staff-group" id="staffGroup">
                     <button type="button" class="staff-btn active" data-name="楠楠">楠楠</button>
                     <button type="button" class="staff-btn" data-name="萍萍">萍萍</button>
@@ -84,75 +85,63 @@
             </div>
         </div>
 
-        <!-- 🔵 核心KPI -->
         <div class="card">
             <div class="section-title">🔵 核心KPI</div>
             <div class="grid-2">
-                <div class="form-group">
-                    <label for="targetAmount">营业目标 (元)</label>
-                    <input type="number" id="targetAmount" min="1" placeholder="核心业绩目标" required>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>营业目标 (元)</label>
+                    <input type="number" id="targetAmount" min="1" placeholder="目标金额" required>
                 </div>
-                <div class="form-group">
-                    <label for="salesAmount">营业额 (元)</label>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>营业额 (元)</label>
                     <input type="number" id="salesAmount" step="0.01" min="0" placeholder="0.00" required>
                 </div>
             </div>
         </div>
 
-        <!-- 🟡 流量数据 -->
         <div class="card">
-            <div class="section-title">🟡 流量数据</div>
-            <div class="grid-3">
-                <div class="form-group">
-                    <label for="customers">来客数</label>
-                    <input type="number" id="customers" min="0" value="0" required>
-                </div>
-                <div class="form-group">
-                    <label for="tryOns">试穿数</label>
-                    <input type="number" id="tryOns" min="0" value="0" required>
-                </div>
-                <div class="form-group">
-                    <label for="orders">成交数 (人数)</label>
-                    <input type="number" id="orders" min="0" value="0" required>
-                </div>
-            </div>
-        </div>
-
-        <!-- 🟣 销售结构 -->
-        <div class="card">
-            <div class="section-title">🟣 销售结构</div>
-            <div class="form-group" style="margin-bottom:0;">
-                <label for="itemCount">成交件数 (件)</label>
-                <input type="number" id="itemCount" min="0" value="0" required>
-            </div>
-        </div>
-
-        <!-- 🟤 客户结构 -->
-        <div class="card">
-            <div class="section-title">🟤 客户结构</div>
-            <div class="grid-2" style="margin-bottom:0;">
+            <div class="section-title">📊 营业数据 (流量 / 结构 / 客户)</div>
+            
+            <div class="grid-compact">
                 <div class="form-group" style="margin-bottom:0;">
-                    <label for="newCust">新客数</label>
-                    <input type="number" id="newCust" min="0" value="0" required>
+                    <label>来客数</label>
+                    <input type="number" id="customers" min="0" placeholder="0" required>
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
-                    <label for="oldCust">老客数</label>
-                    <input type="number" id="oldCust" min="0" value="0" required>
+                    <label>试穿数</label>
+                    <input type="number" id="tryOns" min="0" placeholder="0" required>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>成交(人)</label>
+                    <input type="number" id="orders" min="0" placeholder="0" required>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>件数(件)</label>
+                    <input type="number" id="itemCount" min="0" placeholder="0" required>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>新客数</label>
+                    <input type="number" id="newCust" min="0" placeholder="0" required>
+                </div>
+                <div class="form-group" style="margin-bottom:0;">
+                    <label>老客数</label>
+                    <input type="number" id="oldCust" min="0" placeholder="0" required>
                 </div>
             </div>
         </div>
 
-        <!-- ⚫ 收款结构 -->
         <div class="card">
             <div class="section-title">⚫ 收款结构 (元)</div>
             <div class="grid-3" style="margin-bottom:0;">
-                <div class="form-group" style="margin-bottom:0;"><label>微信</label><input type="number" id="payWx" step="0.01" min="0" value="0" required></div>
-                <div class="form-group" style="margin-bottom:0;"><label>支付宝</label><input type="number" id="payAlipay" step="0.01" min="0" value="0" required></div>
-                <div class="form-group" style="margin-bottom:0;"><label>银行卡</label><input type="number" id="payCard" step="0.01" min="0" value="0" required></div>
+                <div class="form-group" style="margin-bottom:0;"><label>微信</label><input type="number" id="payWx" step="0.01" min="0" placeholder="0" required></div>
+                <div class="form-group" style="margin-bottom:0;"><label>支付宝</label><input type="number" id="payAlipay" step="0.01" min="0" placeholder="0" required></div>
+                <div class="form-group" style="margin-bottom:0;"><label>银行卡</label><input type="number" id="payCard" step="0.01" min="0" placeholder="0" required></div>
             </div>
         </div>
 
-        <!-- 📝 交接事项及备注 -->
         <div class="card">
             <div class="section-title">📝 交接事项及备注</div>
             <div class="form-group" style="margin-bottom: 0;">
@@ -160,14 +149,12 @@
             </div>
         </div>
 
-        <!-- 动作按钮 -->
         <div class="btn-group">
             <button type="submit" class="action-btn btn-primary">生成微信标准日报</button>
             <button type="button" class="action-btn btn-secondary" id="resetBtn">清空表单</button>
         </div>
     </form>
 
-    <!-- 预览与复制区域 -->
     <div id="resultContainer" class="card">
         <div class="section-title">📱 微信群日报预览 (极紧凑版)</div>
         <div class="preview-box" id="previewBox"></div>
@@ -229,7 +216,6 @@
             const targetRate = ((salesAmount / targetAmount) * 100).toFixed(1) + '%';
             const upt = orders > 0 ? (itemCount / orders).toFixed(1) : '0.0';
 
-            // 微信极致压缩排版，单行承载更多字段，干掉冗余空行
             const reportText = `💜 EVA日报 | ${store} | ${dateText}
 【🔥 核心KPI】
 营业额：${salesAmount}元 | 目标：${targetAmount}元 | 达成率：${targetRate}
