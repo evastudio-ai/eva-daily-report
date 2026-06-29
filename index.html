@@ -5,91 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EVA STUDIO 日报系统</title>
     <style>
-        body { font-family: -apple-system, sans-serif; background-color: #f4f4f9; padding: 15px; color: #333; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; line-height: 1.5; }
         .container { max-width: 500px; margin: 0 auto; }
-        h2 { text-align: center; color: #7c3aed; margin-bottom: 20px; }
-        .card { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .card-title { font-weight: bold; color: #7c3aed; margin-bottom: 12px; border-left: 4px solid #7c3aed; padding-left: 8px; font-size: 15px; }
-        .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
-        .select-row { display: flex; gap: 5px; margin-bottom: 10px; }
-        select { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px; }
-        input { padding: 8px; border: 1px solid #ddd; border-radius: 6px; width: 70px; text-align: center; }
-        textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; margin-bottom: 10px; cursor: pointer; color: #fff; }
-        .btn-gen { background: #7c3aed; } .btn-copy { background: #a855f7; }
-        #previewBox { background: #fff; border: 1px dashed #7c3aed; padding: 15px; border-radius: 8px; white-space: pre-wrap; font-size: 14px; display: none; margin-top: 15px; line-height: 1.6; }
+        h2 { text-align: center; color: #7c3aed; margin-bottom: 20px; font-size: 20px; }
+        .card { background: #fff; padding: 16px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .card-title { font-weight: bold; color: #7c3aed; margin-bottom: 12px; border-left: 4px solid #7c3aed; padding-left: 8px; font-size: 15px; display: flex; align-items: center; }
+        
+        .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .field { display: flex; align-items: center; gap: 6px; font-size: 14px; }
+        
+        input, select { padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; width: 100%; text-align: center; }
+        input:disabled { background: #f9fafb; color: #6b7280; }
+        
+        textarea { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; box-sizing: border-box; min-height: 80px; }
+        
+        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .btn { padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: #fff; font-size: 16px; }
+        .btn-gen { background: #7c3aed; }
+        .btn-copy { background: #a855f7; }
+        
+        #previewBox { background: #fff; border: 1px dashed #7c3aed; padding: 15px; border-radius: 8px; display: none; margin-top: 20px; white-space: pre-wrap; font-size: 14px; color: #374151; }
     </style>
 </head>
 <body>
 <div class="container">
     <h2>EVA STUDIO 日报系统</h2>
     
+    <div class="card" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <select id="store"><option>崇宁路店</option><option>永丰路店</option></select>
+        <select id="weather"><option>晴天</option><option>阴天</option><option>雨天</option></select>
+        <select id="sA"><option>A班:无</option><option>A:楠楠</option><option>A:萍萍</option></select>
+        <select id="sB"><option>B班:无</option><option>B:楠楠</option><option>B:萍萍</option></select>
+    </div>
+
     <div class="card">
-        <div class="select-row">
-            <select id="store"><option>崇宁路店</option><option>永丰路店</option></select>
-            <select id="weather"><option>晴天</option><option>阴天</option><option>雨天</option></select>
-            <select id="sA"><option>A班:无</option><option>A:楠楠</option><option>A:萍萍</option></select>
-            <select id="sB"><option>B班:无</option><option>B:楠楠</option><option>B:萍萍</option></select>
+        <div class="card-title">本月大盘 (自动平摊)</div>
+        <div class="row">
+            <input type="number" id="mTar" placeholder="月目标">
+            <input type="number" id="mBeg" placeholder="已累计">
+        </div>
+        <div class="row">
+            <span style="font-size:13px; color:#666;">今日建议目标:</span>
+            <input type="number" id="tarAuto" disabled style="width:100px;">
         </div>
     </div>
 
     <div class="card">
-        <div class="card-title">本月大盘进度 (自动记忆)</div>
-        <div class="row">月目标:<input type="number" id="mTar"> 累计:<input type="number" id="mBeg"></div>
+        <div class="card-title">进店与成交</div>
+        <div class="row"><div class="field">新客<input type="number" id="nC"></div> <div class="field">老客<input type="number" id="oC"></div></div>
+        <div class="row"><div class="field">新成交<input type="number" id="ndP">人 <input type="number" id="ndI">件</div></div>
+        <div class="row"><div class="field">老成交<input type="number" id="odP">人 <input type="number" id="odI">件</div></div>
     </div>
 
     <div class="card">
-        <div class="card-title">今日营业额度</div>
-        <div class="row">今日目标(自动):<input type="number" id="tarAuto" disabled> 今日额度:<input type="number" id="rev"></div>
+        <div class="card-title">收款与私域</div>
+        <div class="row"><div class="field">微<input type="number" id="pW"></div> <div class="field">支<input type="number" id="pZ"></div></div>
+        <div class="row"><div class="field">改衣<input type="number" id="alt">件</div></div>
     </div>
 
-    <div class="card">
-        <div class="card-title">进店与试穿数据</div>
-        <div class="row">新客:<input type="number" id="nC"> 人 | 老客:<input type="number" id="oC"> 人</div>
-        <div class="row">新试:<input type="number" id="nT"> 人 | 老试:<input type="number" id="oT"> 人</div>
+    <textarea id="note" placeholder="今日情况与交接事项..."></textarea>
+
+    <div class="btn-group">
+        <button class="btn btn-gen" onclick="generate()">生成日报预览</button>
+        <button class="btn btn-copy" onclick="copy()">一键复制</button>
     </div>
-
-    <div class="card">
-        <div class="card-title">成交情况</div>
-        <div class="row">新成交:<input type="number" id="ndP">人 <input type="number" id="ndI">件</div>
-        <div class="row">老成交:<input type="number" id="odP">人 <input type="number" id="odI">件</div>
-        <div class="row">线上:<input type="number" id="onP">人 <input type="number" id="onI">件</div>
-    </div>
-
-    <div class="card">
-        <div class="card-title">收款与私域 (含改衣)</div>
-        <div class="row">微信:<input type="number" id="pW"> 支付宝:<input type="number" id="pZ"></div>
-        <div class="row">银行卡:<input type="number" id="pY"> 改衣:<input type="number" id="alt"> 件</div>
-        <div class="row">微粉:<input type="number" id="prW"> 红:<input type="number" id="prX"> 抖:<input type="number" id="prD"></div>
-    </div>
-
-    <textarea id="note" placeholder="今日客户情况与交接事项..." rows="3"></textarea>
-
-    <button class="btn btn-gen" id="gen">生成预览</button>
-    <button class="btn btn-copy" id="copy">一键复制</button>
 
     <div id="previewBox"></div>
 </div>
 
 <script>
     const v = id => Number(document.getElementById(id).value || 0);
-    // 自动平摊目标计算逻辑
+    // 自动平摊逻辑
     document.querySelectorAll('input').forEach(i => i.oninput = () => {
-        const remaining = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate() - new Date().getDate() + 1;
-        document.getElementById('tarAuto').value = Math.round((v('mTar') - v('mBeg')) / remaining);
+        const days = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+        const rem = days - new Date().getDate() + 1;
+        document.getElementById('tarAuto').value = Math.round((v('mTar') - v('mBeg')) / rem);
     });
 
-    function make() {
-        return `❤️ EVA【${document.getElementById('store').value}】日报
-📊 目标:${v('mTar')} | 完成:${((v('mBeg')+v('rev'))/v('mTar')*100).toFixed(1)}%
-💰 营收:${v('rev')} (目标:${document.getElementById('tarAuto').value})
-👥 新客:${v('nC')} | 成交:${v('ndP')+v('odP')+v('onP')}人
-🚀 微:${v('prW')} | 改衣:${v('alt')}件
-📝 ${document.getElementById('note').value}`;
+    function generate() {
+        const text = `❤️【${document.getElementById('store').value}日报】\n📊 大盘完成:${((v('mBeg') + v('pW') + v('pZ'))/v('mTar')*100).toFixed(1)}%\n💰 营收:${v('pW')+v('pZ')} | 改衣:${v('alt')}件\n👥 新客:${v('nC')} | 新成交:${v('ndP')}人\n📝 备注:${document.getElementById('note').value}`;
+        const p = document.getElementById('previewBox');
+        p.innerText = text; p.style.display = 'block';
     }
-
-    document.getElementById('gen').onclick = () => { document.getElementById('previewBox').innerText = make(); document.getElementById('previewBox').style.display = 'block'; };
-    document.getElementById('copy').onclick = () => { navigator.clipboard.writeText(make()).then(() => alert('已复制！')); };
+    const copy = () => navigator.clipboard.writeText(document.getElementById('previewBox').innerText).then(() => alert('已复制！'));
 </script>
 </body>
 </html>
