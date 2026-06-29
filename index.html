@@ -99,6 +99,11 @@
         .w-long {
             width: 85px !important;
         }
+        .auto-bg {
+            background: #f1ebfc !important;
+            font-weight: bold;
+            color: #7c3aed;
+        }
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #7c3aed;
@@ -149,7 +154,7 @@
             border-radius: 6px;
             font-family: monospace;
             font-size: 12px;
-            line-height: 1.4;
+            line-height: 1.5;
             white-space: pre-wrap;
             display: none;
             margin-top: 10px;
@@ -195,49 +200,49 @@
             <div class="flex-row">
                 <div class="item-group">
                     <label>月度目标</label>
-                    <input type="number" id="monthTarget" class="w-long" placeholder="月初填一次"><span class="unit">元</span>
+                    <input type="number" id="monthTarget" min="0" class="w-long" placeholder="月初填一次"><span class="unit">元</span>
                 </div>
                 <div class="item-group">
                     <label>历史累计</label>
-                    <input type="number" id="monthBefore" class="w-long" placeholder="不含今日"><span class="unit">元</span>
+                    <input type="number" id="monthBefore" min="0" class="w-long" placeholder="不含今日"><span class="unit">元</span>
                 </div>
             </div>
         </div>
 
-        <!-- 3. 今日营业目标与额度 -->
+        <!-- 3. 今日营业额度 -->
         <div class="section">
             <div class="section-title">今日营业额度</div>
             <div class="flex-row">
                 <div class="item-group">
                     <label>今日目标</label>
-                    <input type="number" id="target" class="w-long" placeholder="0"><span class="unit">元</span>
+                    <input type="number" id="target" min="0" class="w-long auto-bg" placeholder="自动计算"><span class="unit">元</span>
                 </div>
                 <div class="item-group">
                     <label>今日营业额</label>
-                    <input type="number" id="revenue" class="w-long" placeholder="0"><span class="unit">元</span>
+                    <input type="number" id="revenue" min="0" class="w-long" placeholder="0"><span class="unit">元</span>
                 </div>
             </div>
         </div>
 
-        <!-- 4. 进店与试穿数据（已调整顺序：新客 -> 老客 -> 新试 -> 老试） -->
+        <!-- 4. 进店与试穿数据 -->
         <div class="section">
             <div class="section-title">进店与试穿数据</div>
             <div class="flex-row">
                 <div class="item-group">
                     <label>新客</label>
-                    <input type="number" id="newCust" placeholder="0"><span class="unit">人</span>
+                    <input type="number" id="newCust" min="0" placeholder="0"><span class="unit">人</span>
                 </div>
                 <div class="item-group">
                     <label>老客</label>
-                    <input type="number" id="oldCust" placeholder="0"><span class="unit">人</span>
+                    <input type="number" id="oldCust" min="0" placeholder="0"><span class="unit">人</span>
                 </div>
                 <div class="item-group">
                     <label>新试</label>
-                    <input type="number" id="newTry" placeholder="0"><span class="unit">人</span>
+                    <input type="number" id="newTry" min="0" placeholder="0"><span class="unit">人</span>
                 </div>
                 <div class="item-group">
                     <label>老试</label>
-                    <input type="number" id="oldTry" placeholder="0"><span class="unit">人</span>
+                    <input type="number" id="oldTry" min="0" placeholder="0"><span class="unit">人</span>
                 </div>
             </div>
         </div>
@@ -248,37 +253,41 @@
             <div class="flex-row">
                 <div class="item-group">
                     <label>新客</label>
-                    <input type="number" id="newDealP" class="w-deal" placeholder="0"><span class="unit">人</span>
-                    <input type="number" id="newDealI" class="w-deal" placeholder="0"><span class="unit">件</span>
+                    <input type="number" id="newDealP" min="0" class="w-deal" placeholder="0"><span class="unit">人</span>
+                    <input type="number" id="newDealI" min="0" class="w-deal" placeholder="0"><span class="unit">件</span>
                 </div>
                 <div class="item-group" style="margin-left: 2px;">
                     <label>老客</label>
-                    <input type="number" id="oldDealP" class="w-deal" placeholder="0"><span class="unit">人</span>
-                    <input type="number" id="oldDealI" class="w-deal" placeholder="0"><span class="unit">件</span>
+                    <input type="number" id="oldDealP" min="0" class="w-deal" placeholder="0"><span class="unit">人</span>
+                    <input type="number" id="oldDealI" min="0" class="w-deal" placeholder="0"><span class="unit">件</span>
                 </div>
                 <div class="item-group" style="margin-left: 2px;">
                     <label>线上</label>
-                    <input type="number" id="onDealP" class="w-deal" placeholder="0"><span class="unit">人</span>
-                    <input type="number" id="onDealI" class="w-deal" placeholder="0"><span class="unit">件</span>
+                    <input type="number" id="onDealP" min="0" class="w-deal" placeholder="0"><span class="unit">人</span>
+                    <input type="number" id="onDealI" min="0" class="w-deal" placeholder="0"><span class="unit">件</span>
                 </div>
             </div>
         </div>
 
-        <!-- 6. 收款明细 -->
+        <!-- 6. 收款明细（更新：四项并排，全宽适配短框） -->
         <div class="section">
             <div class="section-title">收款数据</div>
-            <div class="flex-row">
+            <div class="flex-row-nowrap" style="gap: 2px;">
                 <div class="item-group">
                     <label>微信</label>
-                    <input type="number" id="payWx" class="w-long" placeholder="0"><span class="unit">元</span>
+                    <input type="number" id="payWx" min="0" class="w-deal" placeholder="0">
                 </div>
                 <div class="item-group">
                     <label>支付宝</label>
-                    <input type="number" id="payZfb" class="w-long" placeholder="0"><span class="unit">元</span>
+                    <input type="number" id="payZfb" min="0" class="w-deal" placeholder="0">
                 </div>
                 <div class="item-group">
-                    <label>银行卡</label>
-                    <input type="number" id="payYhk" class="w-long" placeholder="0"><span class="unit">元</span>
+                    <label>银联</label>
+                    <input type="number" id="payYhk" min="0" class="w-deal" placeholder="0">
+                </div>
+                <div class="item-group">
+                    <label>现金</label>
+                    <input type="number" id="payXj" min="0" class="w-deal" placeholder="0">
                 </div>
             </div>
         </div>
@@ -289,15 +298,15 @@
             <div class="flex-row">
                 <div class="item-group">
                     <label>微信</label>
-                    <input type="number" id="privWx" placeholder="0"><span class="unit">人</span>
+                    <input type="number" id="privWx" min="0" placeholder="0"><span class="unit">人</span>
                 </div>
                 <div class="item-group">
                     <label>小红书</label>
-                    <input type="number" id="privXhs" placeholder="0"><span class="unit">人</span>
+                    <input type="number" id="privXhs" min="0" placeholder="0"><span class="unit">人</span>
                 </div>
                 <div class="item-group">
                     <label>抖音</label>
-                    <input type="number" id="privDy" placeholder="0"><span class="unit">人</span>
+                    <input type="number" id="privDy" min="0" placeholder="0"><span class="unit">人</span>
                 </div>
             </div>
         </div>
@@ -313,17 +322,23 @@
             </div>
         </div>
 
-        <!-- 9. 填表人 -->
+        <!-- 9. 售后与填表（更新：增加改衣，并排并行） -->
         <div class="section">
-            <div class="section-title">填表人</div>
-            <div class="item-group">
-                <label>选择您的名字</label>
-                <select id="reporter" style="width: 80px;">
-                    <option value="楠楠">楠楠</option>
-                    <option value="萍萍">萍萍</option>
-                    <option value="丽丽">丽丽</option>
-                    <option value="EVA">EVA</option>
-                </select>
+            <div class="section-title">售后与填表人</div>
+            <div class="flex-row" style="justify-content: space-between; width: 100%;">
+                <div class="item-group">
+                    <label style="color: #7c3aed; font-weight: bold;">🧵 改衣数量</label>
+                    <input type="number" id="alterCount" min="0" class="w-deal" placeholder="0"><span class="unit">件</span>
+                </div>
+                <div class="item-group">
+                    <label>填表人</label>
+                    <select id="reporter" style="width: 75px;">
+                        <option value="楠楠">楠楠</option>
+                        <option value="萍萍">萍萍</option>
+                        <option value="丽丽">丽丽</option>
+                        <option value="EVA">EVA</option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -339,6 +354,29 @@
     </div>
 
     <script>
+        // 核心动态计算公式：今日目标 = (月度目标 - 历史累计) / 本月剩余天数
+        function calcTodayTarget() {
+            const mTarget = valOf('monthTarget');
+            const mBefore = valOf('monthBefore');
+            
+            if (mTarget <= 0) return;
+
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth(); 
+            const today = now.getDate();
+
+            const totalDays = new Date(year, month + 1, 0).getDate();
+            const remainingDays = totalDays - today + 1;
+
+            if (remainingDays > 0) {
+                const gap = mTarget - mBefore;
+                const targetToday = gap > 0 ? Math.round(gap / remainingDays) : 0;
+                document.getElementById('target').value = targetToday;
+            }
+        }
+
+        // 页面初始化拦截与滚存读取
         window.addEventListener('DOMContentLoaded', () => {
             if(localStorage.getItem('eva_monthTarget')) {
                 document.getElementById('monthTarget').value = localStorage.getItem('eva_monthTarget');
@@ -346,7 +384,26 @@
             if(localStorage.getItem('eva_monthBefore')) {
                 document.getElementById('monthBefore').value = localStorage.getItem('eva_monthBefore');
             }
+            calcTodayTarget();
+
+            // 全局移动端键盘硬拦截：不准输入负号和小数点，不能小于 0
+            document.querySelectorAll('input[type="number"]').forEach(input => {
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '+' || e.key === '.') {
+                        e.preventDefault();
+                    }
+                });
+                input.addEventListener('input', () => {
+                    if (input.value < 0) input.value = 0;
+                    if (input.value.includes('-')) {
+                        input.value = input.value.replace(/-/g, '');
+                    }
+                });
+            });
         });
+
+        document.getElementById('monthTarget').addEventListener('input', calcTodayTarget);
+        document.getElementById('monthBefore').addEventListener('input', calcTodayTarget);
 
         function valOf(id) {
             const v = document.getElementById(id).value;
@@ -365,23 +422,95 @@
 
         function makeReport(shouldRoll = false) {
             const now = new Date();
-            const dateStr = now.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            // 自定义年、月、日输出格式
+            const dateStr = `${now.getFullYear()}年${String(now.getMonth() + 1).padStart(2, '0')}月${String(now.getDate()).padStart(2, '0')}日`;
+            const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+            const weekStr = weekDays[now.getDay()];
             
             const store = document.getElementById('store').value;
             const weather = document.getElementById('weather').value;
             
+            // 根据门店自动匹配心形图标
+            const heartIcon = (store === '崇宁路店') ? '💓' : '💛';
+            
+            // 班次整理
             const sA = document.getElementById('shiftA').value;
             const sB = document.getElementById('shiftB').value;
             const sC = document.getElementById('shiftC').value;
+            let shiftArr = [];
+            if(sA !== '无') shiftArr.push(`A:${sA}`);
+            if(sB !== '无') shiftArr.push(`B:${sB}`);
+            if(sC !== '无') shiftArr.push(`C:${sC}`);
+            const shiftText = shiftArr.length > 0 ? shiftArr.join(' ') : '无';
+
+            // 获取输入各项数值
+            const newCust = valOf('newCust');
+            const oldCust = valOf('oldCust');
+            const totalCust = newCust + oldCust;
+
+            const newTry = valOf('newTry');
+            const oldTry = valOf('oldTry');
+            const totalTry = newTry + oldTry;
+
+            const newDealP = valOf('newDealP');
+            const newDealI = valOf('newDealI');
+            const oldDealP = valOf('oldDealP');
+            const oldDealI = valOf('oldDealI');
+            const onDealP  = valOf('onDealP');
+            const onDealI  = valOf('onDealI');
+
+            const totalDealP = newDealP + oldDealP + onDealP;
+            const totalDealI = newDealI + oldDealI + onDealI;
+
+            const dRevenue = valOf('revenue');
+
+            // --- 【核心商业逻辑深度分析计算】 ---
+            // 1. CR = (新客成交人 + 老客成交人) / 总进店人
+            let cr = 0;
+            if (totalCust > 0) {
+                cr = Math.round(((newDealP + oldDealP) / totalCust) * 100);
+            }
             
+            // 2. UPT = 总成交件数 / 总成交人数
+            let upt = 0;
+            if (totalDealP > 0) {
+                upt = (totalDealI / totalDealP).toFixed(1);
+            }
+
+            // 3. ATP = 今日营业额 / 总成交人数
+            let atp = 0;
+            if (totalDealP > 0) {
+                atp = Math.round(dRevenue / totalDealP);
+            }
+
+            // 4. 新老客成交率
+            let newRate = 0;
+            if (newCust > 0) newRate = Math.round((newDealP / newCust) * 100);
+            
+            let oldRate = 0;
+            if (oldCust > 0) oldRate = Math.round((oldDealP / oldCust) * 100);
+
+            // 收款与拉新文本
+            const payWx = valOf('payWx');
+            const payZfb = valOf('payZfb');
+            const payYhk = valOf('payYhk');
+            const payXj = valOf('payXj');
+            
+            let payStrArr = [];
+            if(payWx > 0) payStrArr.push(`微信${payWx}`);
+            if(payZfb > 0) payStrArr.push(`支付宝${payZfb}`);
+            if(payYhk > 0) payStrArr.push(`银行卡${payYhk}`);
+            if(payXj > 0) payStrArr.push(`现金${payXj}`);
+            const payText = payStrArr.length > 0 ? payStrArr.join(' | ') : '无';
+
             const txtCust = document.getElementById('custDetail').value.trim() || '无';
             const txtHand = document.getElementById('handover').value.trim() || '无';
+            const alterCount = valOf('alterCount');
             const reporter = document.getElementById('reporter').value;
 
+            // 大盘进度数据滚存
             const mTarget = valOf('monthTarget'); 
-            const dRevenue = valOf('revenue');     
             const totalAccumulate = valOf('monthBefore') + dRevenue; 
-            
             let rateStr = '0.00%';
             if (mTarget > 0) {
                 rateStr = ((totalAccumulate / mTarget) * 100).toFixed(2) + '%';
@@ -394,35 +523,27 @@
                 localStorage.setItem('eva_monthBefore', document.getElementById('monthBefore').value);
             }
 
+            // 完全对齐老模板规范格式输出
             return [
-                `💜 EVA【${store}】日报`,
-                `日期：${dateStr}`,
-                `天气：${weather}`,
+                `${heartIcon} EVA【${store}】日报`,
+                `${dateStr}  ${weekStr}  ${weather}`,
                 ``,
-                `📊【本月经营大盘进度】`,
+                `【班次】${shiftText}`,
+                ``,
+                `【来客】新${newCust} 老${oldCust} 共${totalCust}人`,
+                `【试穿】新${newTry} 老${oldTry} 共${totalTry}人`,
+                `【成交】新${newDealP}人${newDealI}件 | 老${oldDealP}人${oldDealI}件 | 线上${onDealP}人${onDealI}件`,
+                `【分析】CR ${cr}% | UPT ${upt} | ATP ${atp}元`,
+                `        新客率${newRate}% | 老客率${oldRate}%`,
+                `【营业额】${dRevenue}元（今日目标：${valOf('target')}元）`,
+                `【收款】${payText}`,
+                `【新】微信${valOf('privWx')}人 | 小红书${valOf('privXhs')}人 | 抖音${valOf('privDy')}人`,
+                `【改衣】${alterCount} 件`,
+                ``,
+                `📊【本月大盘进度】`,
                 `月度营业目标：${mTarget} 元`,
                 `月度累计完成：${totalAccumulate} 元`,
                 `业绩目前完成率：${rateStr}`,
-                ``,
-                `【班次人员】`,
-                `A班：${sA}  B班：${sB}  C班：${sC}`,
-                ``,
-                `【今日营业额】${dRevenue}元（今日目标：${valOf('target')}元）`,
-                ``,
-                `【进店数据】`,
-                `新客：${valOf('newCust')}人（试穿${valOf('newTry')}人）`,
-                `老客：${valOf('oldCust')}人（试穿${valOf('oldTry')}人）`,
-                ``,
-                `【成交数据】`,
-                `新客：${valOf('newDealP')}人 ${valOf('newDealI')}件`,
-                `老客：${valOf('oldDealP')}人 ${valOf('oldDealI')}件`,
-                `线上：${valOf('onDealP')}人 ${valOf('onDealI')}件`,
-                ``,
-                `【收款数据】`,
-                `微信：${valOf('payWx')}元  支付宝：${valOf('payZfb')}元  银行卡：${valOf('payYhk')}元`,
-                ``,
-                `【私域引流】`,
-                `微信：${valOf('privWx')}人  小红书：${valOf('privXhs')}人  抖音：${valOf('privDy')}人`,
                 ``,
                 `【今日客户情况】`,
                 txtCust,
@@ -430,7 +551,7 @@
                 `【交接事项】`,
                 txtHand,
                 ``,
-                `填表人：${reporter}`
+                `【填表人】${reporter}`
             ].join('\n');
         }
 
@@ -446,6 +567,7 @@
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(text).then(() => {
                     alert('🎉 日报已复制成功！今日营业额已自动累加到大盘。');
+                    calcTodayTarget(); 
                 }).catch(() => { fallbackCopy(text); });
             } else { fallbackCopy(text); }
         });
@@ -457,6 +579,7 @@
             try {
                 document.execCommand('copy');
                 alert('🎉 日报已复制成功！今日营业额已自动累加到大盘。');
+                calcTodayTarget();
             } catch (err) {
                 alert('请点击“生成”，在下方框中手动选择复制。');
             }
@@ -473,6 +596,7 @@
             });
             document.getElementById('revenue').value = ''; 
             document.getElementById('previewBox').style.display = 'none';
+            calcTodayTarget(); 
         });
     </script>
 </body>
