@@ -9,357 +9,64 @@
     <script src="https://cdn.staticfile.org/babel-standalone/7.22.20/babel.min.js"></script>
 
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-            background: #f8f7fa;
-            color: #333;
-            -webkit-font-smoothing: antialiased;
+            background: #f8f7fa; color: #333; -webkit-font-smoothing: antialiased;
         }
-        .app {
-            max-width: 430px;
-            margin: 0 auto;
-            padding: 0 0 20px;
-            min-height: 100vh;
-        }
-        .header {
-            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
-            padding: 32px 20px 24px;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .brand-name {
-            font-size: 22px;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: 4px;
-        }
-        .brand-sub {
-            font-size: 13px;
-            color: rgba(255,255,255,0.85);
-            margin-top: 4px;
-            letter-spacing: 2px;
-        }
-        .card {
-            background: #fff;
-            margin: 12px 12px 0;
-            border-radius: 14px;
-            padding: 16px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-        }
-        .card-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #555;
-            margin-bottom: 12px;
-        }
-        .dashboard-card {
-            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
-        }
-        .dashboard-placeholder {
-            text-align: center;
-            color: #a78bfa;
-            font-size: 13px;
-            padding: 12px 0;
-        }
-        .field-row {
-            margin-bottom: 12px;
-        }
-        .field-row label {
-            display: block;
-            font-size: 12px;
-            color: #888;
-            margin-bottom: 6px;
-        }
-        .segment-group {
-            display: flex;
-            gap: 6px;
-        }
-        .segment-btn {
-            flex: 1;
-            padding: 8px 4px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 8px;
-            background: #fff;
-            font-size: 12px;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-        }
-        .segment-btn.active {
-            background: #7c3aed;
-            color: #fff;
-            border-color: #7c3aed;
-        }
-        .staff-section {
-            display: flex;
-            gap: 10px;
-            margin-top: 8px;
-        }
-        .staff-row {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-        .shift-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #7c3aed;
-        }
-        .staff-row select {
-            width: 100%;
-            padding: 7px 4px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 8px;
-            font-size: 12px;
-            color: #444;
-            background: #faf9fb;
-            text-align: center;
-            outline: none;
-        }
-        .number-input {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-        }
-        .number-input label {
-            font-size: 12px;
-            color: #888;
-        }
-        .input-with-unit {
-            position: relative;
-            width: 100%;
-            display: flex;
-            align-items: center;
-        }
-        .input-with-unit input {
-            width: 100%;
-            padding: 8px 24px 8px 8px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 8px;
-            font-size: 14px;
-            text-align: center;
-            color: #333;
-            background: #faf9fb;
-            outline: none;
-        }
-        .input-with-unit input:focus {
-            border-color: #a855f7;
-        }
-        .input-with-unit .unit {
-            position: absolute;
-            right: 8px;
-            font-size: 11px;
-            color: #bbb;
-            pointer-events: none;
-        }
-        .data-grid-2x2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-        .deal-section {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .deal-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #faf9fb;
-            padding: 8px 12px;
-            border-radius: 8px;
-        }
-        .deal-label {
-            font-size: 13px;
-            font-weight: 500;
-            color: #555;
-            width: 36px;
-            flex-shrink: 0;
-        }
-        .deal-row input {
-            flex: 1;
-            max-width: 80px;
-            padding: 6px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 6px;
-            font-size: 13px;
-            text-align: center;
-            color: #333;
-            outline: none;
-        }
-        .deal-row input:focus {
-            border-color: #a855f7;
-        }
-        .unit {
-            font-size: 12px;
-            color: #aaa;
-            flex-shrink: 0;
-        }
-        .revenue-input {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .revenue-input input {
-            flex: 1;
-            padding: 10px 12px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            text-align: center;
-            color: #333;
-            background: #faf9fb;
-            outline: none;
-        }
-        .revenue-input input:focus {
-            border-color: #a855f7;
-        }
-        .payment-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-        .payment-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: #faf9fb;
-            padding: 8px;
-            border-radius: 8px;
-        }
-        .payment-item label {
-            font-size: 12px;
-            color: #666;
-            min-width: 42px;
-        }
-        .payment-item input {
-            flex: 1;
-            width: 100%;
-            min-width: 40px;
-            padding: 6px 4px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 6px;
-            font-size: 13px;
-            text-align: center;
-            color: #333;
-            outline: none;
-        }
-        .payment-item input:focus {
-            border-color: #a855f7;
-        }
-        .private-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-        }
-        .private-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            background: #faf9fb;
-            padding: 10px 6px;
-            border-radius: 8px;
-        }
-        .private-item label {
-            font-size: 12px;
-            color: #666;
-        }
-        .private-item input {
-            width: 100%;
-            padding: 6px 2px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 6px;
-            font-size: 13px;
-            text-align: center;
-            color: #333;
-            outline: none;
-        }
-        .private-item input:focus {
-            border-color: #a855f7;
-        }
-        .card textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 8px;
-            font-size: 13px;
-            color: #333;
-            background: #faf9fb;
-            resize: none;
-            line-height: 1.6;
-            font-family: inherit;
-            outline: none;
-        }
-        .card textarea:focus {
-            border-color: #a855f7;
-        }
-        .action-section {
-            display: flex;
-            gap: 10px;
-            margin: 16px 12px 0;
-        }
-        .btn-copy {
-            flex: 2;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.1s ease, opacity 0.2s;
-        }
-        .btn-copy:active {
-            transform: scale(0.98);
-            opacity: 0.9;
-        }
-        .btn-reset {
-            flex: 1;
-            padding: 14px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 12px;
-            background: #fff;
-            color: #888;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-reset:active {
-            background: #f5f3f7;
-        }
-        .footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 11px;
-            color: #ccc;
-        }
-        @media (max-width: 360px) {
-            .payment-item label { min-width: 36px; font-size: 11px; }
-            .deal-row { padding: 6px 8px; gap: 4px; }
-            .deal-row input { max-width: 60px; }
-        }
-        input[type=number]::-webkit-inner-spin-button,
-        input[type=number]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
+        .app { max-width: 430px; margin: 0 auto; padding: 0 0 20px; min-height: 100vh; }
+        .header { background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); padding: 32px 20px 24px; text-align: center; position: sticky; top: 0; z-index: 100; }
+        .brand-name { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: 4px; }
+        .brand-sub { font-size: 13px; color: rgba(255,255,255,0.85); margin-top: 4px; letter-spacing: 2px; }
+        .card { background: #fff; margin: 12px 12px 0; border-radius: 14px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+        .card-title { font-size: 14px; font-weight: 600; color: #555; margin-bottom: 12px; }
+        .dashboard-card { background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); }
+        .dashboard-placeholder { text-align: center; color: #a78bfa; font-size: 13px; padding: 12px 0; }
+        .field-row { margin-bottom: 12px; }
+        .field-row label { display: block; font-size: 12px; color: #888; margin-bottom: 6px; }
+        .segment-group { display: flex; gap: 6px; }
+        .segment-btn { flex: 1; padding: 8px 4px; border: 1.5px solid #e5e0ea; border-radius: 8px; background: #fff; font-size: 12px; color: #666; cursor: pointer; transition: all 0.2s; }
+        .segment-btn.active { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+        .staff-section { display: flex; gap: 10px; margin-top: 8px; }
+        .staff-row { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .shift-label { font-size: 12px; font-weight: 600; color: #7c3aed; }
+        .staff-row select { width: 100%; padding: 7px 4px; border: 1.5px solid #e5e0ea; border-radius: 8px; font-size: 12px; color: #444; background: #faf9fb; text-align: center; outline: none; }
+        .number-input { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .number-input label { font-size: 12px; color: #888; }
+        .input-with-unit { position: relative; width: 100%; display: flex; align-items: center; }
+        .input-with-unit input { width: 100%; padding: 8px 24px 8px 8px; border: 1.5px solid #e5e0ea; border-radius: 8px; font-size: 14px; text-align: center; color: #333; background: #faf9fb; outline: none; }
+        .input-with-unit input:focus { border-color: #a855f7; }
+        .input-with-unit .unit { position: absolute; right: 8px; font-size: 11px; color: #bbb; pointer-events: none; }
+        .data-grid-2x2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .deal-section { display: flex; flex-direction: column; gap: 10px; }
+        .deal-row { display: flex; align-items: center; gap: 8px; background: #faf9fb; padding: 8px 12px; border-radius: 8px; }
+        .deal-label { font-size: 13px; font-weight: 500; color: #555; width: 36px; flex-shrink: 0; }
+        .deal-row input { flex: 1; max-width: 80px; padding: 6px; border: 1.5px solid #e5e0ea; border-radius: 6px; font-size: 13px; text-align: center; color: #333; outline: none; }
+        .deal-row input:focus { border-color: #a855f7; }
+        .unit { font-size: 12px; color: #aaa; flex-shrink: 0; }
+        .revenue-input { display: flex; align-items: center; gap: 8px; }
+        .revenue-input input { flex: 1; padding: 10px 12px; border: 1.5px solid #e5e0ea; border-radius: 8px; font-size: 16px; font-weight: 600; text-align: center; color: #333; background: #faf9fb; outline: none; }
+        .revenue-input input:focus { border-color: #a855f7; }
+        .payment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .payment-item { display: flex; align-items: center; gap: 4px; background: #faf9fb; padding: 8px; border-radius: 8px; }
+        .payment-item label { font-size: 12px; color: #666; min-width: 42px; }
+        .payment-item input { flex: 1; width: 100%; min-width: 40px; padding: 6px 4px; border: 1.5px solid #e5e0ea; border-radius: 6px; font-size: 13px; text-align: center; color: #333; outline: none; }
+        .payment-item input:focus { border-color: #a855f7; }
+        .private-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        .private-item { display: flex; flex-direction: column; align-items: center; gap: 4px; background: #faf9fb; padding: 10px 6px; border-radius: 8px; }
+        .private-item label { font-size: 12px; color: #666; }
+        .private-item input { width: 100%; padding: 6px 2px; border: 1.5px solid #e5e0ea; border-radius: 6px; font-size: 13px; text-align: center; color: #333; outline: none; }
+        .private-item input:focus { border-color: #a855f7; }
+        .card textarea { width: 100%; padding: 10px 12px; border: 1.5px solid #e5e0ea; border-radius: 8px; font-size: 13px; color: #333; background: #faf9fb; resize: none; line-height: 1.6; font-family: inherit; outline: none; }
+        .card textarea:focus { border-color: #a855f7; }
+        .action-section { display: flex; gap: 10px; margin: 16px 12px 0; }
+        .btn-copy { flex: 2; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.1s ease, opacity 0.2s; }
+        .btn-copy:active { transform: scale(0.98); opacity: 0.9; }
+        .btn-reset { flex: 1; padding: 14px; border: 1.5px solid #e5e0ea; border-radius: 12px; background: #fff; color: #888; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+        .btn-reset:active { background: #f5f3f7; }
+        .footer { text-align: center; padding: 20px; font-size: 11px; color: #ccc; }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
     </style>
 </head>
 <body>
@@ -662,14 +369,4 @@
                     </div>
 
                     <div className="footer">
-                        <span>EVA STUDIO © 2026</span>
-                    </div>
-                </div>
-            );
-        }
-
-        // 完美匹配 React 17 生产环境的最高兼容级挂载写法
-        ReactDOM.render(<App />, document.getElementById('root'));
-    </script>
-</body>
-</html>
+                        <span>EVA STUDIO © 20
