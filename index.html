@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EVA STUDIO 日报系统</title>
     <style>
-        body { font-family: sans-serif; background-color: #f8f7fa; padding: 20px; }
+        body { font-family: sans-serif; background-color: #f8f7fa; padding: 20px; color: #333; }
         .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         h2 { text-align: center; color: #7c3aed; margin-bottom: 20px; }
         .section { margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 8px; }
-        .label { font-size: 14px; font-weight: bold; color: #555; margin-bottom: 10px; display: block; }
+        .label { font-size: 14px; font-weight: bold; color: #555; margin-bottom: 8px; display: block; }
+        .hint { font-size: 12px; color: #999; margin-bottom: 8px; font-style: italic; }
         .flex { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        input:disabled { background-color: #f0f0f0; color: #777; }
         .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; margin-bottom: 10px; cursor: pointer; color: #fff; }
         .btn-gen { background: #7c3aed; } .btn-copy { background: #a855f7; } .btn-res { background: #ccc; }
         #previewBox { background: #fdfdfd; border: 1px dashed #7c3aed; padding: 15px; border-radius: 8px; white-space: pre-wrap; font-size: 14px; display: none; margin-top: 20px; color: #333; line-height: 1.6; }
@@ -32,12 +34,13 @@
 
         <div class="section">
             <label class="label">📊 本月大盘进度</label>
+            <div class="hint">* 本月大盘目标只需设置一次</div>
             <div class="flex">目标:<input type="number" id="mTar"> 累计:<input type="number" id="mBeg"></div>
         </div>
 
         <div class="section">
             <label class="label">💰 营收与收款</label>
-            <div class="flex">额度:<input type="number" id="rev"> 目标:<input type="number" id="tar"></div>
+            <div class="flex">今日额度:<input type="number" id="rev"> 今日目标(自动):<input type="number" id="tarAuto" disabled></div>
             <div class="flex">微:<input type="number" id="pW"> 支:<input type="number" id="pZ"> 银:<input type="number" id="pY"> 现:<input type="number" id="pX"></div>
         </div>
 
@@ -68,9 +71,21 @@
 
     <script>
         const val = id => Number(document.getElementById(id).value || 0);
+        
+        // 自动计算今日目标：(月目标 - 累计) / 剩余天数
+        function updateTar() {
+            const mTar = val('mTar'), mBeg = val('mBeg');
+            const d = new Date();
+            const daysInMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+            const remainingDays = daysInMonth - d.getDate() + 1;
+            const target = remainingDays > 0 ? Math.round((mTar - mBeg) / remainingDays) : 0;
+            document.getElementById('tarAuto').value = target;
+        }
+        ['mTar', 'mBeg'].forEach(id => document.getElementById(id).oninput = updateTar);
+
         function validate() {
             const rev = val('rev'), totalPay = val('pW') + val('pZ') + val('pY') + val('pX');
-            if (rev !== totalPay) { alert(`数据校验错误！\n营业额(${rev}) ≠ 收款总和(${totalPay})，请核对数据！`); return false; }
+            if (rev !== totalPay) { alert(`数据核对失败：营业额(${rev}) ≠ 收款总和(${totalPay})，请核对！`); return false; }
             return true;
         }
 
@@ -83,13 +98,12 @@
             const upt = totalDealP > 0 ? (totalDealI / totalDealP).toFixed(1) : 0;
             const atp = totalDealP > 0 ? Math.round(rev / totalDealP) : 0;
             
-            // 紧凑化的日报输出逻辑
             return `${icon} EVA【${store}】日报
 📅 ${d.getMonth()+1}/${d.getDate()} | 🌤️ ${document.getElementById('weather').value}
 
-📊【本月大盘】月目标：${mTar} | 完成率：${mTar>0 ? ((mBeg+rev)/mTar*100).toFixed(1) : 0}%
+📊【本月大盘】目标:${mTar} | 累计:${mBeg + rev} | 完成:${mTar>0 ? ((mBeg+rev)/mTar*100).toFixed(1) : 0}%
 
-【营收】${rev}元 (目标:${val('tar')})
+【营收】${rev}元 (今日目标:${val('tarAuto')})
 【收款】微${val('pW')}|支${val('pZ')}|银${val('pY')}|现${val('pX')}
 【来客】新${nC}|老${oC} (试穿:新${nT}|老${oT})
 【成交】新${ndP}人${ndI}件|老${odP}人${odI}件|线${onP}人${onI}件
@@ -97,12 +111,14 @@
 【私域】微${val('prW')}|红${val('prX')}|抖${val('prD')} | 【改衣】${val('alt')}件
 
 【客户情况】${document.getElementById('cust').value || '无'}
+
 【交接事项】${document.getElementById('hand').value || '无'}
+
 【填表】${document.getElementById('rep').value}`;
         }
 
         document.getElementById('gen').onclick = () => { if(validate()) { document.getElementById('previewBox').innerText = make(); document.getElementById('previewBox').style.display = 'block'; }};
-        document.getElementById('copy').onclick = () => { if(validate()) { navigator.clipboard.writeText(make()).then(() => alert('日报已紧凑优化，成功复制！')); }};
+        document.getElementById('copy').onclick = () => { if(validate()) { navigator.clipboard.writeText(make()).then(() => alert('日报已自动计算并复制！')); }};
         document.getElementById('res').onclick = () => location.reload();
     </script>
 </body>
