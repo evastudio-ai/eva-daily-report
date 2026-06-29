@@ -24,12 +24,12 @@
             background: #7c3aed;
             color: white;
             text-align: center;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
             margin-bottom: 10px;
         }
-        .header h1 { margin: 0; font-size: 18px; letter-spacing: 2px; }
-        .header p { margin: 3px 0 0 0; font-size: 11px; opacity: 0.9; }
+        .header h1 { margin: 0; font-size: 16px; letter-spacing: 2px; }
+        .header p { margin: 2px 0 0 0; font-size: 10px; opacity: 0.9; }
         
         .section {
             border: 1px solid #e5e0ea;
@@ -47,6 +47,21 @@
             padding-left: 6px;
         }
         
+        .flex-row-nowrap {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            gap: 4px;
+            width: 100%;
+        }
+        .flex-row-nowrap select {
+            flex: 1;
+            min-width: 0;
+            padding: 5px 2px;
+            font-size: 12px;
+        }
+
         .flex-row {
             display: flex;
             flex-wrap: wrap;
@@ -59,7 +74,7 @@
         .item-group {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
         }
         .item-group label {
             font-size: 12px;
@@ -69,14 +84,17 @@
         }
         
         input[type="number"], select {
-            width: 65px;
-            padding: 5px;
+            width: 55px;
+            padding: 5px 2px;
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 13px;
             text-align: center;
             background: #fafafa;
             box-sizing: border-box;
+        }
+        .w-deal {
+            width: 42px !important;
         }
         .w-long {
             width: 85px !important;
@@ -90,8 +108,8 @@
         .unit {
             font-size: 11px;
             color: #888;
-            margin-left: -2px;
-            margin-right: 4px;
+            margin-right: 2px;
+            white-space: nowrap;
         }
         
         textarea {
@@ -147,59 +165,46 @@
             <p>门店微信日报生成系统</p>
         </div>
 
+        <!-- 1. 基础信息 & 班次人员 -->
         <div class="section">
-            <div class="section-title">基础信息 & 班次人员</div>
+            <div class="flex-row-nowrap">
+                <select id="store">
+                    <option value="崇宁路店">崇宁路店</option>
+                    <option value="永丰路店">永丰路店</option>
+                </select>
+                <select id="weather">
+                    <option value="晴天">晴天</option>
+                    <option value="阴天">阴天</option>
+                    <option value="雨天">雨天</option>
+                </select>
+                <select id="shiftA">
+                    <option value="无">A班:无</option><option value="楠楠">A:楠楠</option><option value="萍萍">A:萍萍</option><option value="丽丽">A:丽丽</option><option value="EVA">A:EVA</option>
+                </select>
+                <select id="shiftB">
+                    <option value="无">B班:无</option><option value="楠楠">B:楠楠</option><option value="萍萍">B:萍萍</option><option value="丽丽">B:丽丽</option><option value="EVA">B:EVA</option>
+                </select>
+                <select id="shiftC">
+                    <option value="无">C班:无</option><option value="楠楠">C:楠楠</option><option value="萍萍">C:萍萍</option><option value="丽丽">C:丽丽</option><option value="EVA">C:EVA</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 2. 月度营业目标大盘进度 -->
+        <div class="section" style="background: #fbfbfe; border-color: #dcd7e5;">
+            <div class="section-title">本月大盘进度 (自动记忆)</div>
             <div class="flex-row">
                 <div class="item-group">
-                    <label>门店</label>
-                    <select id="store" style="width: 95px;">
-                        <option value="崇宁路店">崇宁路店</option>
-                        <option value="永丰路店">永丰路店</option>
-                    </select>
+                    <label>月度目标</label>
+                    <input type="number" id="monthTarget" class="w-long" placeholder="月初填一次"><span class="unit">元</span>
                 </div>
                 <div class="item-group">
-                    <label>天气</label>
-                    <select id="weather" style="width: 70px;">
-                        <option value="晴天">晴天</option>
-                        <option value="阴天">阴天</option>
-                        <option value="雨天">雨天</option>
-                    </select>
-                </div>
-                <div class="item-group">
-                    <label>A班</label>
-                    <select id="shiftA" style="width: 65px;">
-                        <option value="无">无</option><option value="楠楠">楠楠</option><option value="萍萍">萍萍</option><option value="丽丽">丽丽</option><option value="EVA">EVA</option>
-                    </select>
-                </div>
-                <div class="item-group">
-                    <label>B班</label>
-                    <select id="shiftB" style="width: 65px;">
-                        <option value="无">无</option><option value="楠楠">楠楠</option><option value="萍萍">萍萍</option><option value="丽丽">丽丽</option><option value="EVA">EVA</option>
-                    </select>
-                </div>
-                <div class="item-group">
-                    <label>C班</label>
-                    <select id="shiftC" style="width: 65px;">
-                        <option value="无">无</option><option value="楠楠">楠楠</option><option value="萍萍">萍萍</option><option value="丽丽">丽丽</option><option value="EVA">EVA</option>
-                    </select>
+                    <label>历史累计</label>
+                    <input type="number" id="monthBefore" class="w-long" placeholder="不含今日"><span class="unit">元</span>
                 </div>
             </div>
         </div>
 
-        <div class="section">
-            <div class="section-title">本月整体目标大盘</div>
-            <div class="flex-row">
-                <div class="item-group">
-                    <label>本月目标</label>
-                    <input type="number" id="monthTarget" class="w-long" placeholder="0"><span class="unit">元</span>
-                </div>
-                <div class="item-group">
-                    <label>本月累计(不含今日)</label>
-                    <input type="number" id="monthBefore" class="w-long" placeholder="0"><span class="unit">元</span>
-                </div>
-            </div>
-        </div>
-
+        <!-- 3. 今日营业目标与额度 -->
         <div class="section">
             <div class="section-title">今日营业额度</div>
             <div class="flex-row">
@@ -214,6 +219,7 @@
             </div>
         </div>
 
+        <!-- 4. 进店与试穿数据（已调整顺序：新客 -> 老客 -> 新试 -> 老试） -->
         <div class="section">
             <div class="section-title">进店与试穿数据</div>
             <div class="flex-row">
@@ -222,12 +228,12 @@
                     <input type="number" id="newCust" placeholder="0"><span class="unit">人</span>
                 </div>
                 <div class="item-group">
-                    <label>新试</label>
-                    <input type="number" id="newTry" placeholder="0"><span class="unit">人</span>
-                </div>
-                <div class="item-group">
                     <label>老客</label>
                     <input type="number" id="oldCust" placeholder="0"><span class="unit">人</span>
+                </div>
+                <div class="item-group">
+                    <label>新试</label>
+                    <input type="number" id="newTry" placeholder="0"><span class="unit">人</span>
                 </div>
                 <div class="item-group">
                     <label>老试</label>
@@ -236,27 +242,29 @@
             </div>
         </div>
 
+        <!-- 5. 成交情况 -->
         <div class="section">
             <div class="section-title">成交情况</div>
             <div class="flex-row">
                 <div class="item-group">
                     <label>新客</label>
-                    <input type="number" id="newDealP" placeholder="人"><span>p</span>
-                    <input type="number" id="newDealI" placeholder="件"><span>g</span>
+                    <input type="number" id="newDealP" class="w-deal" placeholder="0"><span class="unit">人</span>
+                    <input type="number" id="newDealI" class="w-deal" placeholder="0"><span class="unit">件</span>
                 </div>
-                <div class="item-group" style="margin-left: 5px;">
+                <div class="item-group" style="margin-left: 2px;">
                     <label>老客</label>
-                    <input type="number" id="oldDealP" placeholder="人"><span>p</span>
-                    <input type="number" id="oldDealI" placeholder="件"><span>g</span>
+                    <input type="number" id="oldDealP" class="w-deal" placeholder="0"><span class="unit">人</span>
+                    <input type="number" id="oldDealI" class="w-deal" placeholder="0"><span class="unit">件</span>
                 </div>
-                <div class="item-group" style="margin-left: 5px;">
+                <div class="item-group" style="margin-left: 2px;">
                     <label>线上</label>
-                    <input type="number" id="onDealP" placeholder="人"><span>p</span>
-                    <input type="number" id="onDealI" placeholder="件"><span>g</span>
+                    <input type="number" id="onDealP" class="w-deal" placeholder="0"><span class="unit">人</span>
+                    <input type="number" id="onDealI" class="w-deal" placeholder="0"><span class="unit">件</span>
                 </div>
             </div>
         </div>
 
+        <!-- 6. 收款明细 -->
         <div class="section">
             <div class="section-title">收款数据</div>
             <div class="flex-row">
@@ -275,6 +283,7 @@
             </div>
         </div>
 
+        <!-- 7. 私域拉新粉丝 -->
         <div class="section">
             <div class="section-title">私域拉新粉丝</div>
             <div class="flex-row">
@@ -293,6 +302,7 @@
             </div>
         </div>
 
+        <!-- 8. 文本情况 -->
         <div class="section">
             <div class="section-title">今日客户情况与交接</div>
             <div style="margin-bottom: 6px;">
@@ -303,6 +313,7 @@
             </div>
         </div>
 
+        <!-- 9. 填表人 -->
         <div class="section">
             <div class="section-title">填表人</div>
             <div class="item-group">
@@ -316,27 +327,49 @@
             </div>
         </div>
 
+        <!-- 操作按钮 -->
         <div class="btn-group">
             <button class="btn btn-primary" id="btnGen">生成并查看日报预览</button>
             <button class="btn btn-purple" id="btnCopy">直接一键复制日报</button>
-            <button class="btn btn-secondary" id="btnReset">清空重填</button>
+            <button class="btn btn-secondary" id="btnReset">清空重填(保留月大盘)</button>
         </div>
 
+        <!-- 日报预览显示框 -->
         <div class="preview-box" id="previewBox"></div>
     </div>
 
     <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            if(localStorage.getItem('eva_monthTarget')) {
+                document.getElementById('monthTarget').value = localStorage.getItem('eva_monthTarget');
+            }
+            if(localStorage.getItem('eva_monthBefore')) {
+                document.getElementById('monthBefore').value = localStorage.getItem('eva_monthBefore');
+            }
+        });
+
         function valOf(id) {
             const v = document.getElementById(id).value;
             return v === '' ? 0 : Number(v);
         }
 
-        function makeReport() {
+        function saveAndRollbackData(dRevenue) {
+            const mTarget = document.getElementById('monthTarget').value;
+            const currentBefore = valOf('monthBefore');
+            const newBefore = currentBefore + dRevenue;
+            
+            localStorage.setItem('eva_monthTarget', mTarget);
+            localStorage.setItem('eva_monthBefore', newBefore);
+            document.getElementById('monthBefore').value = newBefore;
+        }
+
+        function makeReport(shouldRoll = false) {
             const now = new Date();
             const dateStr = now.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
             
             const store = document.getElementById('store').value;
             const weather = document.getElementById('weather').value;
+            
             const sA = document.getElementById('shiftA').value;
             const sB = document.getElementById('shiftB').value;
             const sC = document.getElementById('shiftC').value;
@@ -345,14 +378,20 @@
             const txtHand = document.getElementById('handover').value.trim() || '无';
             const reporter = document.getElementById('reporter').value;
 
-            // 核心业绩大盘联动计算
-            const mTarget = valOf('monthTarget'); // 本月目标
-            const dRevenue = valOf('revenue');     // 今日营业额
-            const totalAccumulate = valOf('monthBefore') + dRevenue; // 截止今日的最新总累计
+            const mTarget = valOf('monthTarget'); 
+            const dRevenue = valOf('revenue');     
+            const totalAccumulate = valOf('monthBefore') + dRevenue; 
             
             let rateStr = '0.00%';
             if (mTarget > 0) {
                 rateStr = ((totalAccumulate / mTarget) * 100).toFixed(2) + '%';
+            }
+
+            if(shouldRoll) {
+                saveAndRollbackData(dRevenue);
+            } else {
+                localStorage.setItem('eva_monthTarget', document.getElementById('monthTarget').value);
+                localStorage.setItem('eva_monthBefore', document.getElementById('monthBefore').value);
             }
 
             return [
@@ -397,16 +436,16 @@
 
         document.getElementById('btnGen').addEventListener('click', function() {
             const box = document.getElementById('previewBox');
-            box.innerText = makeReport();
+            box.innerText = makeReport(false);
             box.style.display = 'block';
             box.scrollIntoView({ behavior: 'smooth' });
         });
 
         document.getElementById('btnCopy').addEventListener('click', function() {
-            const text = makeReport();
+            const text = makeReport(true); 
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(text).then(() => {
-                    alert('🎉 日报已复制成功！');
+                    alert('🎉 日报已复制成功！今日营业额已自动累加到大盘。');
                 }).catch(() => { fallbackCopy(text); });
             } else { fallbackCopy(text); }
         });
@@ -417,7 +456,7 @@
             document.body.appendChild(ta); ta.select();
             try {
                 document.execCommand('copy');
-                alert('🎉 日报已复制成功！');
+                alert('🎉 日报已复制成功！今日营业额已自动累加到大盘。');
             } catch (err) {
                 alert('请点击“生成”，在下方框中手动选择复制。');
             }
@@ -425,8 +464,14 @@
         }
 
         document.getElementById('btnReset').addEventListener('click', function() {
-            if (!confirm('确认要清空内容吗？')) return;
-            document.querySelectorAll('input[type="number"], textarea').forEach(el => el.value = '');
+            if (!confirm('确认要清空今日的填报内容吗？(大盘目标和累计将会保留)')) return;
+            
+            document.querySelectorAll('input[type="number"], textarea').forEach(el => {
+                if(el.id !== 'monthTarget' && el.id !== 'monthBefore') {
+                    el.value = '';
+                }
+            });
+            document.getElementById('revenue').value = ''; 
             document.getElementById('previewBox').style.display = 'none';
         });
     </script>
