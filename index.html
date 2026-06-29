@@ -38,7 +38,7 @@
         <div class="section">
             <label class="label">💰 营收与收款</label>
             <div class="flex">额度:<input type="number" id="rev"> 目标:<input type="number" id="tar"></div>
-            <div class="flex">微信:<input type="number" id="pW"> 支:<input type="number" id="pZ"> 银:<input type="number" id="pY"> 现:<input type="number" id="pX"></div>
+            <div class="flex">微:<input type="number" id="pW"> 支:<input type="number" id="pZ"> 银:<input type="number" id="pY"> 现:<input type="number" id="pX"></div>
         </div>
 
         <div class="section">
@@ -83,26 +83,21 @@
             const upt = totalDealP > 0 ? (totalDealI / totalDealP).toFixed(1) : 0;
             const atp = totalDealP > 0 ? Math.round(rev / totalDealP) : 0;
             
+            // 紧凑化的日报输出逻辑
             return `${icon} EVA【${store}】日报
-📅 ${d.getMonth()+1}/${d.getDate()}  🌤️ ${document.getElementById('weather').value}
+📅 ${d.getMonth()+1}/${d.getDate()} | 🌤️ ${document.getElementById('weather').value}
 
-📊【本月经营大盘】
-月目标：${mTar} | 累计：${mBeg + rev} | 完成率：${mTar>0 ? ((mBeg+rev)/mTar*100).toFixed(1) : 0}%
+📊【本月大盘】月目标：${mTar} | 完成率：${mTar>0 ? ((mBeg+rev)/mTar*100).toFixed(1) : 0}%
 
-【营业额】${rev}元 (今日目标:${val('tar')})
+【营收】${rev}元 (目标:${val('tar')})
 【收款】微${val('pW')}|支${val('pZ')}|银${val('pY')}|现${val('pX')}
 【来客】新${nC}|老${oC} (试穿:新${nT}|老${oT})
 【成交】新${ndP}人${ndI}件|老${odP}人${odI}件|线${onP}人${onI}件
 【分析】CR ${cr}% | UPT ${upt} | ATP ${atp}元
-        新客率${nC>0?Math.round(ndP/nC*100):0}%|老客率${oC>0?Math.round(odP/oC*100):0}%
 【私域】微${val('prW')}|红${val('prX')}|抖${val('prD')} | 【改衣】${val('alt')}件
 
-【客户情况】
-${document.getElementById('cust').value || '无'}
-
-【交接事项】
-${document.getElementById('hand').value || '无'}
-
+【客户情况】${document.getElementById('cust').value || '无'}
+【交接事项】${document.getElementById('hand').value || '无'}
 【填表】${document.getElementById('rep').value}`;
         }
 
