@@ -117,7 +117,7 @@
         }
 
         document.getElementById('gen').onclick = () => { if(validate()) { document.getElementById('previewBox').innerText = make(); document.getElementById('previewBox').style.display = 'block'; }};
-        document.getElementById('copy').onclick = () => { if(validate()) { navigator.clipboard.writeText(make()).then(() => alert('日报已自动计算并复制！')); }};
+        document.getElementById('copy').onclick = () => { if(validate()) { navigator.clipboard.writeText(make()).then(() => alert('日报已复制！')); }};
         document.getElementById('res').onclick = () => location.reload();
     </script>
 </body>
