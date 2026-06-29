@@ -2,12 +2,10 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EVA STUDIO 日报生成器</title>
-    <!-- 引入 React 与 ReactDOM 生产环境核心库 -->
-    <script src="https://cdn.staticfile.org/react/18.2.0/umd/react.production.min.js"></script>
-    <script src="https://cdn.staticfile.org/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-    <!-- 引入 Babel 用于在浏览器中直接解析 JSX -->
+    <script src="https://cdn.staticfile.org/react/17.0.2/umd/react.production.min.js"></script>
+    <script src="https://cdn.staticfile.org/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
     <script src="https://cdn.staticfile.org/babel-standalone/7.22.20/babel.min.js"></script>
 
     <style>
@@ -17,9 +15,10 @@
             padding: 0;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
             background: #f8f7fa;
             color: #333;
+            -webkit-font-smoothing: antialiased;
         }
         .app {
             max-width: 430px;
@@ -366,307 +365,13 @@
 <body>
     <div id="root"></div>
 
-    <!-- 业务前端逻辑层 -->
     <script type="text/babel">
         const { useState } = React;
 
         const STORES = ['崇宁路店', '永丰路店'];
         const WEATHERS = ['晴天', '阴天', '雨天'];
-        const STAFF_OPTIONS = ['无', '楠楠', '萍萍', '丽丽', 'EVA']; // 已加入楠楠、萍萍、丽丽作为值班备选
+        const STAFF_OPTIONS = ['无', '楠楠', '萍萍', '丽丽', 'EVA'];
         const PAYMENT_TYPES = ['微信', '支付宝', '银行卡', '现金', '卡消', '充值', '退单', '赠品'];
         const PRIVATE_DOMAIN = ['微信', '小红书', '抖音'];
 
-        function NumberInput({ value, onChange, label, unit = "人" }) {
-            return (
-                <div className="number-input">
-                    <label>{label}</label>
-                    <div className="input-with-unit">
-                        <input
-                            type="number"
-                            value={value}
-                            onChange={(e) => onChange(e.target.value)}
-                            min="0"
-                            placeholder="0"
-                        />
-                        <span className="unit">{unit}</span>
-                    </div>
-                </div>
-            )
-        }
-
-        function SegmentButton({ options, value, onChange }) {
-            return (
-                <div className="segment-group">
-                    {options.map((opt) => (
-                        <button
-                            key={opt}
-                            type="button"
-                            className={`segment-btn ${value === opt ? 'active' : ''}`}
-                            onClick={() => onChange(opt)}
-                        >
-                            {opt}
-                        </button>
-                    ))}
-                </div>
-            )
-        }
-
-        function StaffSelect({ value, onChange, shiftLabel }) {
-            return (
-                <div className="staff-row">
-                    <span className="shift-label">{shiftLabel}</span>
-                    <select value={value} onChange={(e) => onChange(e.target.value)}>
-                        {STAFF_OPTIONS.map((opt) => (
-                            <option key={opt} value={opt}>{opt}</option>
-                        ))}
-                    </select>
-                </div>
-            )
-        }
-
-        function App() {
-            const [store, setStore] = useState('崇宁路店');
-            const [weather, setWeather] = useState('晴天');
-            const [shiftA, setShiftA] = useState('无');
-            const [shiftB, setShiftB] = useState('无');
-            const [shiftC, setShiftC] = useState('无');
-
-            // 彻底初始化为空字符串，消灭页面初始显示的数字0
-            const [newCustomers, setNewCustomers] = useState('');
-            const [newTryOn, setNewTryOn] = useState('');
-            const [oldCustomers, setOldCustomers] = useState('');
-            const [oldTryOn, setOldTryOn] = useState('');
-
-            const [newDealPeople, setNewDealPeople] = useState('');
-            const [newDealItems, setNewDealItems] = useState('');
-            const [oldDealPeople, setOldDealPeople] = useState('');
-            const [oldDealItems, setOldDealItems] = useState('');
-            const [onlineDealPeople, setOnlineDealPeople] = useState('');
-            const [onlineDealItems, setOnlineDealItems] = useState('');
-
-            const [revenue, setRevenue] = useState('');
-
-            const [payments, setPayments] = useState({
-                '微信': '', '支付宝': '', '银行卡': '', '现金': '',
-                '卡消': '', '充值': '', '退单': '', '赠品': '',
-            });
-
-            const [privateDomain, setPrivateDomain] = useState({
-                '微信': '', '小红书': '', '抖音': '',
-            });
-
-            const [customerDetails, setCustomerDetails] = useState('');
-            const [handover, setHandover] = useState('');
-            const [reporter, setReporter] = useState('楠楠');
-
-            const today = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
-
-            const formatNum = (val) => (val === '' ? 0 : Number(val));
-
-            const generateReport = () => {
-                const lines = [
-                    `💜 EVA【${store}】日报`,
-                    `日期：${today}`,
-                    `天气：${weather}`,
-                    '',
-                    `【班次】`,
-                    `A班：${shiftA}`,
-                    `B班：${shiftB}`,
-                    `C班：${shiftC}`,
-                    '',
-                    `【进店数据】`,
-                    `新客：${formatNum(newCustomers)}人（试穿${formatNum(newTryOn)}人）`,
-                    `老客：${formatNum(oldCustomers)}人（试穿${formatNum(oldTryOn)}人）`,
-                    '',
-                    `【成交数据】`,
-                    `新客：${formatNum(newDealPeople)}人${formatNum(newDealItems)}件`,
-                    `老客：${formatNum(oldDealPeople)}人${formatNum(oldDealItems)}件`,
-                    `线上：${formatNum(onlineDealPeople)}人${formatNum(onlineDealItems)}件`,
-                    '',
-                    `【营业额】${formatNum(revenue)}元`,
-                    '',
-                    `【收款数据】`,
-                    ...PAYMENT_TYPES.map(t => `${t}：${formatNum(payments[t])}元`),
-                    '',
-                    `【私域数据】`,
-                    ...PRIVATE_DOMAIN.map(t => `${t}：${formatNum(privateDomain[t])}人`),
-                    '',
-                    `【今日客户情况】`,
-                    customerDetails.trim() || '无',
-                    '',
-                    `【交接事项】`,
-                    handover.trim() || '无',
-                    '',
-                    `填表人：${reporter}`,
-                ];
-                return lines.join('\n');
-            };
-
-            const copyReport = async () => {
-                const text = generateReport();
-                try {
-                    if (navigator.clipboard && window.isSecureContext) {
-                        await navigator.clipboard.writeText(text);
-                        alert('🎉 日报已复制，请直接粘贴发送至微信群！');
-                    } else {
-                        throw new Error('Fallback');
-                    }
-                } catch {
-                    const ta = document.createElement('textarea');
-                    ta.value = text;
-                    ta.style.position = 'absolute';
-                    ta.style.opacity = '0';
-                    document.body.appendChild(ta);
-                    ta.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(ta);
-                    alert('🎉 日报已复制，请直接粘贴发送至微信群！');
-                }
-            };
-
-            const resetAll = () => {
-                if (!confirm('确定清空所有数据重新填写吗？')) return;
-                setStore('崇宁路店'); setWeather('晴天');
-                setShiftA('无'); setShiftB('无'); setShiftC('无');
-                setNewCustomers(''); setNewTryOn(''); setOldCustomers(''); setOldTryOn('');
-                setNewDealPeople(''); setNewDealItems(''); setOldDealPeople(''); setOldDealItems('');
-                setOnlineDealPeople(''); setOnlineDealItems(''); setRevenue('');
-                setPayments({ '微信': '', '支付宝': '', '银行卡': '', '现金': '', '卡消': '', '充值': '', '退单': '', '赠品': '' });
-                setPrivateDomain({ '微信': '', '小红书': '', '抖音': '' });
-                setCustomerDetails(''); setHandover('');
-            };
-
-            return (
-                <div className="app">
-                    <div className="header">
-                        <div className="brand-name">EVA STUDIO</div>
-                        <div className="brand-sub">日报生成器</div>
-                    </div>
-
-                    <div className="card dashboard-card">
-                        <div className="card-title">🎯 本月经营看板</div>
-                        <div className="dashboard-placeholder">本月目标未设置</div>
-                    </div>
-
-                    <div className="card">
-                        <div className="card-title">基础信息</div>
-                        <div className="field-row">
-                            <label>门店</label>
-                            <SegmentButton options={STORES} value={store} onChange={setStore} />
-                        </div>
-                        <div className="field-row">
-                            <label>天气</label>
-                            <SegmentButton options={WEATHERS} value={weather} onChange={setWeather} />
-                        </div>
-                        <div className="staff-section">
-                            <StaffSelect value={shiftA} onChange={setShiftA} shiftLabel="A班" />
-                            <StaffSelect value={shiftB} onChange={setShiftB} shiftLabel="B班" />
-                            <StaffSelect value={shiftC} onChange={setShiftC} shiftLabel="C班" />
-                        </div>
-                    </div>
-
-                    <div className="card">
-                        <div className="card-title">进店数据</div>
-                        <div className="data-grid-2x2">
-                            <NumberInput value={newCustomers} onChange={setNewCustomers} label="新客" />
-                            <NumberInput value={newTryOn} onChange={setNewTryOn} label="新客试穿" />
-                            <NumberInput value={oldCustomers} onChange={setOldCustomers} label="老客" />
-                            <NumberInput value={oldTryOn} onChange={setOldTryOn} label="老客试穿" />
-                        </div>
-                    </div>
-
-                    <div className="card">
-                        <div className="card-title">成交数据</div>
-                        <div className="deal-section">
-                            <div className="deal-row">
-                                <span className="deal-label">新客</span>
-                                <input type="number" value={newDealPeople} onChange={e => setNewDealPeople(e.target.value)} min="0" placeholder="0" />
-                                <span className="unit">人</span>
-                                <input type="number" value={newDealItems} onChange={e => setNewDealItems(e.target.value)} min="0" placeholder="0" />
-                                <span className="unit">件</span>
-                            </div>
-                            <div className="deal-row">
-                                <span className="deal-label">老客</span>
-                                <input type="number" value={oldDealPeople} onChange={e => setOldDealPeople(e.target.value)} min="0" placeholder="0" />
-                                <span className="unit">人</span>
-                                <input type="number" value={oldDealItems} onChange={e => setOldDealItems(e.target.value)} min="0" placeholder="0" />
-                                <span className="unit">件</span>
-                            </div>
-                            <div className="deal-row">
-                                <span className="deal-label">线上</span>
-                                <input type="number" value={onlineDealPeople} onChange={e => setOnlineDealPeople(e.target.value)} min="0" placeholder="0" />
-                                <span className="unit">人</span>
-                                <input type="number" value={onlineDealItems} onChange={e => setOnlineDealItems(e.target.value)} min="0" placeholder="0" />
-                                <span className="unit">件</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="card">
-                        <div className="card-title">营业额</div>
-                        <div className="revenue-input">
-                            <input type="number" value={revenue} onChange={e => setRevenue(e.target.value)} min="0" placeholder="0" />
-                            <span className="unit">元</span>
-                        </div>
-                    </div>
-
-                    <div className="card">
-                        <div className="card-title">收款数据</div>
-                        <div className="payment-grid">
-                            {PAYMENT_TYPES.map(type => (
-                                <div key={type} className="payment-item">
-                                    <label>{type}</label>
-                                    <input type="number" value={payments[type]} onChange={e => setPayments({ ...payments, [type]: e.target.value })} min="0" placeholder="0" />
-                                    <span className="unit">元</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="card">
-                        <div className="card-title">私域数据</div>
-                        <div className="private-grid">
-                            {PRIVATE_DOMAIN.map(type => (
-                                <div key={type} className="private-item">
-                                    <label>{type}</label>
-                                    <input type="number" value={privateDomain[type]} onChange={e => setPrivateDomain({ ...privateDomain, [type]: e.target.value })} min="0" placeholder="0" />
-                                    <span className="unit">人</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="card">
-                        <div className="card-title">今日客户情况</div>
-                        <textarea value={customerDetails} onChange={e => setCustomerDetails(e.target.value)} placeholder="施美女成交4件1037元&#10;王姐试穿风衣未成交&#10;陈总预定连衣裙1件" rows={4} />
-                    </div>
-
-                    <div className="card">
-                        <div className="card-title">交接事项</div>
-                        <textarea value={handover} onChange={e => setHandover(e.target.value)} placeholder="许蓉挂单未购买&#10;杨润短裙待跟进&#10;刘姐定金已收等待调货" rows={4} />
-                    </div>
-
-                    <div className="card">
-                        <div className="card-title">填表人</div>
-                        <SegmentButton options={['楠楠', '萍萍', '丽丽', 'EVA']} value={reporter} onChange={setReporter} />
-                    </div>
-
-                    <div className="action-section">
-                        <button className="btn-copy" onClick={copyReport}>复制日报</button>
-                        <button className="btn-reset" onClick={resetAll}>清空重填</button>
-                    </div>
-
-                    <div className="footer">
-                        <span>EVA STUDIO © 2026</span>
-                    </div>
-                </div>
-            );
-        }
-
-        const root = banknotes.createRoot(document.getElementById('root'));
-        // 兼容单网页环境的渲染写法
-        const rootElement = document.getElementById('root');
-        ReactDOM.render(<App />, rootElement);
-    </script>
-</body>
-</html>
+        function Number
