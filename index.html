@@ -5,360 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EVA STUDIO 日报生成器</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-            background: #f8f7fa;
-            color: #333;
-            -webkit-font-smoothing: antialiased;
-        }
-        .app {
-            max-width: 430px;
-            margin: 0 auto;
-            padding: 0 0 20px;
-            min-height: 100vh;
-        }
-        .header {
-            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
-            padding: 32px 20px 24px;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .brand-name {
-            font-size: 22px;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: 4px;
-        }
-        .brand-sub {
-            font-size: 13px;
-            color: rgba(255,255,255,0.85);
-            margin-top: 4px;
-            letter-spacing: 2px;
-        }
-        .card {
-            background: #fff;
-            margin: 12px 12px 0;
-            border-radius: 14px;
-            padding: 16px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-        }
-        .card-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #555;
-            margin-bottom: 12px;
-        }
-        .dashboard-card {
-            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
-        }
-        .dashboard-placeholder {
-            text-align: center;
-            color: #a78bfa;
-            font-size: 13px;
-            padding: 12px 0;
-        }
-        .field-row {
-            margin-bottom: 12px;
-        }
-        .field-row label {
-            display: block;
-            font-size: 12px;
-            color: #888;
-            margin-bottom: 6px;
-        }
-        .segment-group {
-            display: flex;
-            gap: 6px;
-        }
-        .segment-btn {
-            flex: 1;
-            padding: 8px 4px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 8px;
-            background: #fff;
-            font-size: 12px;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            text-align: center;
-        }
-        .segment-btn.active {
-            background: #7c3aed;
-            color: #fff;
-            border-color: #7c3aed;
-        }
-        .staff-section {
-            display: flex;
-            gap: 10px;
-            margin-top: 8px;
-        }
-        .staff-row {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-        .shift-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #7c3aed;
-        }
-        .staff-row select {
-            width: 100%;
-            padding: 7px 4px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 8px;
-            font-size: 12px;
-            color: #444;
-            background: #faf9fb;
-            text-align: center;
-            outline: none;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-        .number-input {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-        }
-        .number-input label {
-            font-size: 12px;
-            color: #888;
-        }
-        .input-with-unit {
-            position: relative;
-            width: 100%;
-            display: flex;
-            align-items: center;
-        }
-        .input-with-unit input {
-            width: 100%;
-            padding: 8px 24px 8px 8px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 8px;
-            font-size: 14px;
-            text-align: center;
-            color: #333;
-            background: #faf9fb;
-            outline: none;
-        }
-        .input-with-unit input:focus {
-            border-color: #a855f7;
-        }
-        .input-with-unit .unit {
-            position: absolute;
-            right: 8px;
-            font-size: 11px;
-            color: #bbb;
-            pointer-events: none;
-        }
-        .data-grid-2x2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-        .deal-section {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .deal-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #faf9fb;
-            padding: 8px 12px;
-            border-radius: 8px;
-        }
-        .deal-label {
-            font-size: 13px;
-            font-weight: 500;
-            color: #555;
-            width: 36px;
-            flex-shrink: 0;
-        }
-        .deal-row input {
-            flex: 1;
-            max-width: 80px;
-            padding: 6px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 6px;
-            font-size: 13px;
-            text-align: center;
-            color: #333;
-            outline: none;
-        }
-        .deal-row input:focus {
-            border-color: #a855f7;
-        }
-        .unit {
-            font-size: 12px;
-            color: #aaa;
-            flex-shrink: 0;
-        }
-        .revenue-input {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .revenue-input input {
-            flex: 1;
-            padding: 10px 12px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            text-align: center;
-            color: #333;
-            background: #faf9fb;
-            outline: none;
-        }
-        .revenue-input input:focus {
-            border-color: #a855f7;
-        }
-        .payment-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-        .payment-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: #faf9fb;
-            padding: 8px;
-            border-radius: 8px;
-        }
-        .payment-item label {
-            font-size: 12px;
-            color: #666;
-            min-width: 42px;
-        }
-        .payment-item input {
-            flex: 1;
-            width: 100%;
-            min-width: 40px;
-            padding: 6px 4px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 6px;
-            font-size: 13px;
-            text-align: center;
-            color: #333;
-            outline: none;
-        }
-        .payment-item input:focus {
-            border-color: #a855f7;
-        }
-        .private-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-        }
-        .private-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            background: #faf9fb;
-            padding: 10px 6px;
-            border-radius: 8px;
-        }
-        .private-item label {
-            font-size: 12px;
-            color: #666;
-        }
-        .private-item input {
-            width: 100%;
-            padding: 6px 2px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 6px;
-            font-size: 13px;
-            text-align: center;
-            color: #333;
-            outline: none;
-        }
-        .private-item input:focus {
-            border-color: #a855f7;
-        }
-        .card textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 8px;
-            font-size: 13px;
-            color: #333;
-            background: #faf9fb;
-            resize: none;
-            line-height: 1.6;
-            font-family: inherit;
-            outline: none;
-        }
-        .card textarea:focus {
-            border-color: #a855f7;
-        }
-        .action-section {
-            display: flex;
-            gap: 10px;
-            margin: 16px 12px 0;
-        }
-        .btn-copy {
-            flex: 2;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.1s ease, opacity 0.2s;
-        }
-        .btn-copy:active {
-            transform: scale(0.98);
-            opacity: 0.9;
-        }
-        .btn-reset {
-            flex: 1;
-            padding: 14px;
-            border: 1.5px solid #e5e0ea;
-            border-radius: 12px;
-            background: #fff;
-            color: #888;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-reset:active {
-            background: #f5f3f7;
-        }
-        .footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 11px;
-            color: #ccc;
-        }
-        @media (max-width: 360px) {
-            .payment-item label { min-width: 36px; font-size: 11px; }
-            .deal-row { padding: 6px 8px; gap: 4px; }
-            .deal-row input { max-width: 60px; }
-        }
-        input[type=number]::-webkit-inner-spin-button,
-        input[type=number]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f8f7fa; color: #333; }
+        .app { max-width: 430px; margin: 0 auto; padding-bottom: 30px; }
+        .header { background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); padding: 24px 20px; text-align: center; }
+        .brand-name { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: 4px; }
+        .brand-sub { font-size: 13px; color: rgba(255,255,255,0.85); margin-top: 4px; }
+        .card { background: #fff; margin: 12px 12px 0; border-radius: 14px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+        .card-title { font-size: 14px; font-weight: 600; color: #555; margin-bottom: 12px; }
+        .dashboard-card { background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); text-align: center; color: #a78bfa; font-size: 13px; padding: 20px; }
+        .field-row { margin-bottom: 12px; }
+        .field-row label { display: block; font-size: 12px; color: #888; margin-bottom: 6px; }
+        .segment-group { display: flex; gap: 6px; }
+        .segment-btn { flex: 1; padding: 8px 4px; border: 1.5px solid #e5e0ea; border-radius: 8px; background: #fff; font-size: 12px; color: #666; cursor: pointer; text-align: center; }
+        .segment-btn.active { background: #7c3aed; color: #fff; border-color: #7c3aed; }
+        .staff-section { display: flex; gap: 10px; margin-top: 8px; }
+        .staff-row { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .shift-label { font-size: 12px; font-weight: 600; color: #7c3aed; }
+        .staff-row select { width: 100%; padding: 7px 4px; border: 1.5px solid #e5e0ea; border-radius: 8px; font-size: 12px; color: #444; background: #faf9fb; text-align: center; outline: none; }
+        .number-input { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .number-input label { font-size: 12px; color: #888; }
+        .input-with-unit { position: relative; width: 100%; display: flex; align-items: center; }
+        .input-with-unit input { width: 100%; padding: 8px 24px 8px 8px; border: 1.5px solid #e5e0ea; border-radius: 8px; font-size: 14px; text-align: center; background: #faf9fb; outline: none; }
+        .input-with-unit .unit { position: absolute; right: 8px; font-size: 11px; color: #bbb; }
+        .data-grid-2x2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .deal-section { display: flex; flex-direction: column; gap: 10px; }
+        .deal-row { display: flex; align-items: center; gap: 8px; background: #faf9fb; padding: 8px 12px; border-radius: 8px; }
+        .deal-label { font-size: 13px; font-weight: 500; color: #555; width: 36px; flex-shrink: 0; }
+        .deal-row input { flex: 1; max-width: 80px; padding: 6px; border: 1.5px solid #e5e0ea; border-radius: 6px; font-size: 13px; text-align: center; outline: none; }
+        .revenue-input { display: flex; align-items: center; gap: 8px; }
+        .revenue-input input { flex: 1; padding: 10px 12px; border: 1.5px solid #e5e0ea; border-radius: 8px; font-size: 16px; font-weight: 600; text-align: center; background: #faf9fb; outline: none; }
+        .payment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .payment-item { display: flex; align-items: center; gap: 4px; background: #faf9fb; padding: 8px; border-radius: 8px; }
+        .payment-item label { font-size: 12px; color: #666; min-width: 42px; }
+        .payment-item input { flex: 1; width: 100%; min-width: 40px; padding: 6px 4px; border: 1.5px solid #e5e0ea; border-radius: 6px; font-size: 13px; text-align: center; outline: none; }
+        .private-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        .private-item { display: flex; flex-direction: column; align-items: center; gap: 4px; background: #faf9fb; padding: 10px 6px; border-radius: 8px; }
+        .private-item input { width: 100%; padding: 6px 2px; border: 1.5px solid #e5e0ea; border-radius: 6px; font-size: 13px; text-align: center; outline: none; }
+        .card textarea { width: 100%; padding: 10px 12px; border: 1.5px solid #e5e0ea; border-radius: 8px; font-size: 13px; background: #faf9fb; resize: none; line-height: 1.6; font-family: inherit; outline: none; }
+        .action-section { display: flex; gap: 10px; margin: 16px 12px 0; }
+        .btn-copy { flex: 2; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .btn-reset { flex: 1; padding: 14px; border: 1.5px solid #e5e0ea; border-radius: 12px; background: #fff; color: #888; font-size: 14px; cursor: pointer; }
+        .footer { text-align: center; padding: 20px; font-size: 11px; color: #ccc; }
+        .unit { font-size: 12px; color: #aaa; flex-shrink: 0; }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
     </style>
 </head>
 <body>
@@ -369,8 +60,8 @@
         </div>
 
         <div class="card dashboard-card">
-            <div class="card-title">🎯 本月经营看板</div>
-            <div class="dashboard-placeholder">本月目标未设置</div>
+            <strong>🎯 本月经营看板</strong><br><br>
+            <span>本月目标未设置</span>
         </div>
 
         <div class="card">
@@ -389,3 +80,144 @@
                     <button type="button" class="segment-btn" data-value="阴天">阴天</button>
                     <button type="button" class="segment-btn" data-value="雨天">雨天</button>
                 </div>
+            </div>
+            <div class="staff-section">
+                <div class="staff-row"><span class="shift-label">A班</span><select id="shiftA"><option value="无">无</option><option value="楠楠">楠楠</option><option value="萍萍">萍萍</option><option value="丽丽">丽丽</option><option value="EVA">EVA</option></select></div>
+                <div class="staff-row"><span class="shift-label">B班</span><select id="shiftB"><option value="无">无</option><option value="楠楠">楠楠</option><option value="萍萍">萍萍</option><option value="丽丽">丽丽</option><option value="EVA">EVA</option></select></div>
+                <div class="staff-row"><span class="shift-label">C班</span><select id="shiftC"><option value="无">无</option><option value="楠楠">楠楠</option><option value="萍萍">萍萍</option><option value="丽丽">丽丽</option><option value="EVA">EVA</option></select></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">进店数据</div>
+            <div class="data-grid-2x2">
+                <div class="number-input"><label>新客</label><div class="input-with-unit"><input type="number" id="newCustomers" min="0" placeholder="0"><span class="unit">人</span></div></div>
+                <div class="number-input"><label>新客试穿</label><div class="input-with-unit"><input type="number" id="newTryOn" min="0" placeholder="0"><span class="unit">人</span></div></div>
+                <div class="number-input"><label>老客</label><div class="input-with-unit"><input type="number" id="oldCustomers" min="0" placeholder="0"><span class="unit">人</span></div></div>
+                <div class="number-input"><label>老客试穿</label><div class="input-with-unit"><input type="number" id="oldTryOn" min="0" placeholder="0"><span class="unit">人</span></div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">成交数据</div>
+            <div class="deal-section">
+                <div class="deal-row"><span class="deal-label">新客</span><input type="number" id="newDealPeople" min="0" placeholder="0"><span class="unit">人</span><input type="number" id="newDealItems" min="0" placeholder="0"><span class="unit">件</span></div>
+                <div class="deal-row"><span class="deal-label">老客</span><input type="number" id="oldDealPeople" min="0" placeholder="0"><span class="unit">人</span><input type="number" id="oldDealItems" min="0" placeholder="0"><span class="unit">件</span></div>
+                <div class="deal-row"><span class="deal-label">线上</span><input type="number" id="onlineDealPeople" min="0" placeholder="0"><span class="unit">人</span><input type="number" id="onlineDealItems" min="0" placeholder="0"><span class="unit">件</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">营业额</div>
+            <div class="revenue-input"><input type="number" id="revenue" min="0" placeholder="0"><span class="unit">元</span></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">收款数据</div>
+            <div class="payment-grid">
+                <div class="payment-item"><label>微信</label><input type="number" id="pay_wx" min="0" placeholder="0"><span class="unit">元</span></div>
+                <div class="payment-item"><label>支付宝</label><input type="number" id="pay_zfb" min="0" placeholder="0"><span class="unit">元</span></div>
+                <div class="payment-item"><label>银行卡</label><input type="number" id="pay_yhk" min="0" placeholder="0"><span class="unit">元</span></div>
+                <div class="payment-item"><label>现金</label><input type="number" id="pay_xj" min="0" placeholder="0"><span class="unit">元</span></div>
+                <div class="payment-item"><label>卡消</label><input type="number" id="pay_kx" min="0" placeholder="0"><span class="unit">元</span></div>
+                <div class="payment-item"><label>充值</label><input type="number" id="pay_cz" min="0" placeholder="0"><span class="unit">元</span></div>
+                <div class="payment-item"><label>退单</label><input type="number" id="pay_td" min="0" placeholder="0"><span class="unit">元</span></div>
+                <div class="payment-item"><label>赠品</label><input type="number" id="pay_zp" min="0" placeholder="0"><span class="unit">元</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">私域数据</div>
+            <div class="private-grid">
+                <div class="private-item"><label>微信</label><input type="number" id="priv_wx" min="0" placeholder="0"><span class="unit">人</span></div>
+                <div class="private-item"><label>小红书</label><input type="number" id="priv_xhs" min="0" placeholder="0"><span class="unit">人</span></div>
+                <div class="private-item"><label>抖音</label><input type="number" id="priv_dy" min="0" placeholder="0"><span class="unit">人</span></div>
+            </div>
+        </div>
+
+        <div class="card"><div class="card-title">今日客户情况</div><textarea id="customerDetails" placeholder="施美女成交4件1037元&#10;王姐试穿风衣未成交" rows="3"></textarea></div>
+        <div class="card"><div class="card-title">交接事项</div><textarea id="handover" placeholder="许蓉挂单未购买&#10;杨润短裙待跟进" rows="3"></textarea></div>
+
+        <div class="card">
+            <div class="card-title">填表人</div>
+            <div class="segment-group" id="reporter-group">
+                <button type="button" class="segment-btn active" data-value="楠楠">楠楠</button>
+                <button type="button" class="segment-btn" data-value="萍萍">萍萍</button>
+                <button type="button" class="segment-btn" data-value="丽丽">丽丽</button>
+                <button type="button" class="segment-btn" data-value="EVA">EVA</button>
+            </div>
+        </div>
+
+        <div class="action-section">
+            <button class="btn-copy" id="btnCopy">复制日报</button>
+            <button class="btn-reset" id="btnReset">清空重填</button>
+        </div>
+
+        <div class="footer"><span>Copyright © 2026 EVA STUDIO</span></div>
+    </div>
+
+    <script>
+        let activeStore = '崇宁路店', activeWeather = '晴天', activeReporter = '楠楠';
+        function setupSegment(groupId, cb) {
+            const container = document.getElementById(groupId);
+            const buttons = container.querySelectorAll('.segment-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    buttons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    cb(btn.getAttribute('data-value'));
+                });
+            });
+        }
+        setupSegment('store-group', (val) => activeStore = val);
+        setupSegment('weather-group', (val) => activeWeather = val);
+        setupSegment('reporter-group', (val) => activeReporter = val);
+
+        function getNum(id) {
+            const val = document.getElementById(id).value;
+            return val === '' ? 0 : Number(val);
+        }
+
+        function generateReportText() {
+            const today = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            return [
+                `💜 EVA【${activeStore}】日报`, `日期：${today}`, `天气：${activeWeather}`, '',
+                `【班次】`, `A班：${document.getElementById('shiftA').value}`, `B班：${document.getElementById('shiftB').value}`, `C班：${document.getElementById('shiftC').value}`, '',
+                `【进店数据】`, `新客：${getNum('newCustomers')}人（试穿${getNum('newTryOn')}人）`, `老客：${getNum('oldCustomers')}人（试穿${getNum('oldTryOn')}人）`, '',
+                `【成交数据】`, `新客：${getNum('newDealPeople')}人${getNum('newDealItems')}件`, `老客：${getNum('oldDealPeople')}人${getNum('oldDealItems')}件`, `线上：${getNum('onlineDealPeople')}人${getNum('onlineDealItems')}件`, '',
+                `【营业额】${getNum('revenue')}元`, '',
+                `【收款数据】`, `微信：${getNum('pay_wx')}元`, `支付宝：${getNum('pay_zfb')}元`, `银行卡：${getNum('pay_yhk')}元`, `现金：${getNum('pay_xj')}元`, `卡消：${getNum('pay_kx')}元`, `充值：${getNum('pay_cz')}元`, `退单：${getNum('pay_td')}元`, `赠品：${getNum('pay_zp')}元`, '',
+                `【私域数据】`, `微信：${getNum('priv_wx')}人`, `小红书：${getNum('priv_xhs')}人`, `抖音：${getNum('priv_dy')}人`, '',
+                `【今日客户情况】`, document.getElementById('customerDetails').value.trim() || '无', '',
+                `【交接事项】`, document.getElementById('handover').value.trim() || '无', '',
+                `填表人：${activeReporter}`
+            ].join('\n');
+        }
+
+        document.getElementById('btnCopy').addEventListener('click', function() {
+            const text = generateReportText();
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(() => alert('🎉 日报已复制成功！')).catch(() => fallbackCopy(text));
+            } else { fallbackCopy(text); }
+        });
+
+        function fallbackCopy(text) {
+            const ta = document.createElement("textarea"); ta.value = text; ta.style.position = "absolute"; ta.style.opacity = "0";
+            document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); alert('🎉 日报已复制成功！'); } catch (err) { alert('复制失败，请手动选择复制。'); }
+            document.body.removeChild(ta);
+        }
+
+        document.getElementById('btnReset').addEventListener('click', function() {
+            if (!confirm('确定要清空数据吗？')) return;
+            document.querySelectorAll('input[type="number"], textarea').forEach(i => i.value = '');
+            ['shiftA', 'shiftB', 'shiftC'].forEach(id => document.getElementById(id).value = '无');
+            document.querySelectorAll('.segment-group').forEach(g => {
+                const bs = g.querySelectorAll('.segment-btn');
+                bs.forEach(b => b.classList.remove('active')); if(bs[0]) bs[0].classList.add('active');
+            });
+            activeStore = '崇宁路店'; activeWeather = '晴天'; activeReporter = '楠楠';
+        });
+    </script>
+</body>
+</html>
