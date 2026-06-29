@@ -2,74 +2,84 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>EVA STUDIO 日报生成器</title>
     <style>
-        /* 基础样式，确保各组件稳定纵向排列 */
         body {
             font-family: -apple-system, sans-serif;
             background-color: #f8f7fa;
             color: #333;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
         }
         .container {
-            max-width: 500px;
+            max-width: 480px;
             margin: 0 auto;
             background: #ffffff;
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            padding: 20px;
+            padding: 12px;
         }
         .header {
             background: #7c3aed;
             color: white;
             text-align: center;
-            padding: 20px;
+            padding: 12px;
             border-radius: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
-        .header h1 { margin: 0; font-size: 22px; letter-spacing: 2px; }
-        .header p { margin: 5px 0 0 0; font-size: 13px; opacity: 0.9; }
+        .header h1 { margin: 0; font-size: 18px; letter-spacing: 2px; }
+        .header p { margin: 3px 0 0 0; font-size: 11px; opacity: 0.9; }
         
-        /* 模块区块样式 */
         .section {
             border: 1px solid #e5e0ea;
             border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 10px;
+            margin-bottom: 10px;
             background: #fff;
         }
         .section-title {
-            font-size: 15px;
+            font-size: 13px;
             font-weight: bold;
             color: #7c3aed;
-            margin-bottom: 15px;
-            border-left: 4px solid #7c3aed;
-            padding-left: 8px;
+            margin-bottom: 8px;
+            border-left: 3px solid #7c3aed;
+            padding-left: 6px;
         }
         
-        /* 表单元素基本布局 */
-        .form-group {
-            margin-bottom: 12px;
+        .flex-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
         }
-        .form-group label {
-            display: block;
-            font-size: 13px;
+        .flex-row:last-child { margin-bottom: 0; }
+        
+        .item-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .item-group label {
+            font-size: 12px;
             color: #555;
-            margin-bottom: 5px;
             font-weight: 500;
+            white-space: nowrap;
         }
         
-        /* 输入框与下拉选择框 */
-        input[type="text"], input[type="number"], select, textarea {
-            width: 100%;
-            padding: 10px;
+        input[type="number"], select {
+            width: 65px;
+            padding: 5px;
             border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
-            box-sizing: border-box;
+            border-radius: 4px;
+            font-size: 13px;
+            text-align: center;
             background: #fafafa;
+            box-sizing: border-box;
+        }
+        .w-long {
+            width: 85px !important;
         }
         input:focus, select:focus, textarea:focus {
             outline: none;
@@ -77,69 +87,55 @@
             background: #fff;
         }
         
-        /* 带有单位的输入框包装 */
-        .input-wrap {
-            position: relative;
-            display: flex;
-            align-items: center;
+        .unit {
+            font-size: 11px;
+            color: #888;
+            margin-left: -2px;
+            margin-right: 4px;
         }
-        .input-wrap span {
-            position: absolute;
-            right: 12px;
+        
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
             font-size: 13px;
-            color: #999;
+            background: #fafafa;
+            resize: none;
+            box-sizing: border-box;
         }
         
-        /* 行内多输入框并排 */
-        .inline-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .inline-item {
-            flex: 1;
-        }
-        
-        /* 核心按钮样式 */
         .btn-group {
-            margin-top: 25px;
+            margin-top: 15px;
         }
         .btn {
             width: 100%;
-            padding: 14px;
+            padding: 10px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 6px;
+            font-size: 14px;
             font-weight: bold;
             cursor: pointer;
-            margin-bottom: 12px;
-            transition: background 0.2s;
+            margin-bottom: 8px;
         }
-        .btn-primary {
-            background: #7c3aed;
-            color: white;
-        }
-        .btn-primary:hover { background: #6d31d1; }
-        .btn-secondary {
-            background: #e5e0ea;
-            color: #555;
-        }
-        .btn-secondary:hover { background: #dcd6e2; }
+        .btn-primary { background: #7c3aed; color: white; }
+        .btn-purple { background: #a855f7; color: white; }
+        .btn-secondary { background: #e5e0ea; color: #555; }
         
-        /* 预览文本域 */
         .preview-box {
             width: 100%;
             background: #f3f0f7;
             border: 1px dashed #7c3aed;
             color: #333;
-            padding: 12px;
+            padding: 10px;
             border-radius: 6px;
             font-family: monospace;
-            font-size: 13px;
-            line-height: 1.5;
+            font-size: 12px;
+            line-height: 1.4;
             white-space: pre-wrap;
             display: none;
-            margin-top: 15px;
+            margin-top: 10px;
+            box-sizing: border-box;
         }
     </style>
 </head>
@@ -152,164 +148,166 @@
         </div>
 
         <div class="section">
-            <div class="section-title">基础信息</div>
-            <div class="form-group">
-                <label>选择门店</label>
-                <select id="store">
-                    <option value="崇宁路店">崇宁路店</option>
-                    <option value="永丰路店">永丰路店</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>今日天气</label>
-                <select id="weather">
-                    <option value="晴天">晴天</option>
-                    <option value="阴天">阴天</option>
-                    <option value="雨天">雨天</option>
-                </select>
+            <div class="section-title">基础信息 & 班次人员</div>
+            <div class="flex-row">
+                <div class="item-group">
+                    <label>门店</label>
+                    <select id="store" style="width: 95px;">
+                        <option value="崇宁路店">崇宁路店</option>
+                        <option value="永丰路店">永丰路店</option>
+                    </select>
+                </div>
+                <div class="item-group">
+                    <label>天气</label>
+                    <select id="weather" style="width: 70px;">
+                        <option value="晴天">晴天</option>
+                        <option value="阴天">阴天</option>
+                        <option value="雨天">雨天</option>
+                    </select>
+                </div>
+                <div class="item-group">
+                    <label>A班</label>
+                    <select id="shiftA" style="width: 65px;">
+                        <option value="无">无</option><option value="楠楠">楠楠</option><option value="萍萍">萍萍</option><option value="丽丽">丽丽</option><option value="EVA">EVA</option>
+                    </select>
+                </div>
+                <div class="item-group">
+                    <label>B班</label>
+                    <select id="shiftB" style="width: 65px;">
+                        <option value="无">无</option><option value="楠楠">楠楠</option><option value="萍萍">萍萍</option><option value="丽丽">丽丽</option><option value="EVA">EVA</option>
+                    </select>
+                </div>
+                <div class="item-group">
+                    <label>C班</label>
+                    <select id="shiftC" style="width: 65px;">
+                        <option value="无">无</option><option value="楠楠">楠楠</option><option value="萍萍">萍萍</option><option value="丽丽">丽丽</option><option value="EVA">EVA</option>
+                    </select>
+                </div>
             </div>
         </div>
 
         <div class="section">
-            <div class="section-title">班次 / 当班人员</div>
-            <div class="form-group">
-                <label>A班人员</label>
-                <select id="shiftA">
-                    <option value="无">无</option>
-                    <option value="楠楠">楠楠</option>
-                    <option value="萍萍">萍萍</option>
-                    <option value="丽丽">丽丽</option>
-                    <option value="EVA">EVA</option>
-                </select>
+            <div class="section-title">本月整体目标大盘</div>
+            <div class="flex-row">
+                <div class="item-group">
+                    <label>本月目标</label>
+                    <input type="number" id="monthTarget" class="w-long" placeholder="0"><span class="unit">元</span>
+                </div>
+                <div class="item-group">
+                    <label>本月累计(不含今日)</label>
+                    <input type="number" id="monthBefore" class="w-long" placeholder="0"><span class="unit">元</span>
+                </div>
             </div>
-            <div class="form-group">
-                <label>B班人员</label>
-                <select id="shiftB">
-                    <option value="无">无</option>
-                    <option value="楠楠">楠楠</option>
-                    <option value="萍萍">萍萍</option>
-                    <option value="丽丽">丽丽</option>
-                    <option value="EVA">EVA</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>C班人员</label>
-                <select id="shiftC">
-                    <option value="无">无</option>
-                    <option value="楠楠">楠楠</option>
-                    <option value="萍萍">萍萍</option>
-                    <option value="丽丽">丽丽</option>
-                    <option value="EVA">EVA</option>
-                </select>
+        </div>
+
+        <div class="section">
+            <div class="section-title">今日营业额度</div>
+            <div class="flex-row">
+                <div class="item-group">
+                    <label>今日目标</label>
+                    <input type="number" id="target" class="w-long" placeholder="0"><span class="unit">元</span>
+                </div>
+                <div class="item-group">
+                    <label>今日营业额</label>
+                    <input type="number" id="revenue" class="w-long" placeholder="0"><span class="unit">元</span>
+                </div>
             </div>
         </div>
 
         <div class="section">
             <div class="section-title">进店与试穿数据</div>
-            <div class="inline-group">
-                <div class="inline-item">
-                    <label>新客来客</label>
-                    <div class="input-wrap"><input type="number" id="newCust" placeholder="0"><span>人</span></div>
+            <div class="flex-row">
+                <div class="item-group">
+                    <label>新客</label>
+                    <input type="number" id="newCust" placeholder="0"><span class="unit">人</span>
                 </div>
-                <div class="inline-item">
-                    <label>新客试穿</label>
-                    <div class="input-wrap"><input type="number" id="newTry" placeholder="0"><span>人</span></div>
+                <div class="item-group">
+                    <label>新试</label>
+                    <input type="number" id="newTry" placeholder="0"><span class="unit">人</span>
                 </div>
-            </div>
-            <div class="inline-group">
-                <div class="inline-item">
-                    <label>老客来客</label>
-                    <div class="input-wrap"><input type="number" id="oldCust" placeholder="0"><span>人</span></div>
+                <div class="item-group">
+                    <label>老客</label>
+                    <input type="number" id="oldCust" placeholder="0"><span class="unit">人</span>
                 </div>
-                <div class="inline-item">
-                    <label>老客试穿</label>
-                    <div class="input-wrap"><input type="number" id="oldTry" placeholder="0"><span>人</span></div>
+                <div class="item-group">
+                    <label>老试</label>
+                    <input type="number" id="oldTry" placeholder="0"><span class="unit">人</span>
                 </div>
             </div>
         </div>
 
         <div class="section">
             <div class="section-title">成交情况</div>
-            <label style="font-size:12px; color:#888; display:block; margin-bottom:5px;">新客成交</label>
-            <div class="inline-group">
-                <div class="input-wrap inline-item"><input type="number" id="newDealP" placeholder="人数"><span>人</span></div>
-                <div class="input-wrap inline-item"><input type="number" id="newDealI" placeholder="件数"><span>件</span></div>
-            </div>
-            
-            <label style="font-size:12px; color:#888; display:block; margin-bottom:5px; margin-top:5px;">老客成交</label>
-            <div class="inline-group">
-                <div class="input-wrap inline-item"><input type="number" id="oldDealP" placeholder="人数"><span>人</span></div>
-                <div class="input-wrap inline-item"><input type="number" id="oldDealI" placeholder="件数"><span>件</span></div>
-            </div>
-            
-            <label style="font-size:12px; color:#888; display:block; margin-bottom:5px; margin-top:5px;">线上成交</label>
-            <div class="inline-group">
-                <div class="input-wrap inline-item"><input type="number" id="onDealP" placeholder="人数"><span>人</span></div>
-                <div class="input-wrap inline-item"><input type="number" id="onDealI" placeholder="件数"><span>件</span></div>
-            </div>
-        </div>
-
-        <div class="section">
-            <div class="section-title">营业目标与额度</div>
-            <div class="form-group">
-                <label>今日营业目标</label>
-                <div class="input-wrap"><input type="number" id="target" placeholder="0"><span>元</span></div>
-            </div>
-            <div class="form-group">
-                <label>今日营业额</label>
-                <div class="input-wrap"><input type="number" id="revenue" placeholder="0"><span>元</span></div>
+            <div class="flex-row">
+                <div class="item-group">
+                    <label>新客</label>
+                    <input type="number" id="newDealP" placeholder="人"><span>p</span>
+                    <input type="number" id="newDealI" placeholder="件"><span>g</span>
+                </div>
+                <div class="item-group" style="margin-left: 5px;">
+                    <label>老客</label>
+                    <input type="number" id="oldDealP" placeholder="人"><span>p</span>
+                    <input type="number" id="oldDealI" placeholder="件"><span>g</span>
+                </div>
+                <div class="item-group" style="margin-left: 5px;">
+                    <label>线上</label>
+                    <input type="number" id="onDealP" placeholder="人"><span>p</span>
+                    <input type="number" id="onDealI" placeholder="件"><span>g</span>
+                </div>
             </div>
         </div>
 
         <div class="section">
-            <div class="section-title">收款渠道明细</div>
-            <div class="form-group">
-                <label>微信收款</label>
-                <div class="input-wrap"><input type="number" id="payWx" placeholder="0"><span>元</span></div>
-            </div>
-            <div class="form-group">
-                <label>支付宝收款</label>
-                <div class="input-wrap"><input type="number" id="payZfb" placeholder="0"><span>元</span></div>
-            </div>
-            <div class="form-group">
-                <label>银行卡收款</label>
-                <div class="input-wrap"><input type="number" id="payYhk" placeholder="0"><span>元</span></div>
+            <div class="section-title">收款数据</div>
+            <div class="flex-row">
+                <div class="item-group">
+                    <label>微信</label>
+                    <input type="number" id="payWx" class="w-long" placeholder="0"><span class="unit">元</span>
+                </div>
+                <div class="item-group">
+                    <label>支付宝</label>
+                    <input type="number" id="payZfb" class="w-long" placeholder="0"><span class="unit">元</span>
+                </div>
+                <div class="item-group">
+                    <label>银行卡</label>
+                    <input type="number" id="payYhk" class="w-long" placeholder="0"><span class="unit">元</span>
+                </div>
             </div>
         </div>
 
         <div class="section">
             <div class="section-title">私域拉新粉丝</div>
-            <div class="form-group">
-                <label>微信引流</label>
-                <div class="input-wrap"><input type="number" id="privWx" placeholder="0"><span>人</span></div>
-            </div>
-            <div class="form-group">
-                <label>小红书引流</label>
-                <div class="input-wrap"><input type="number" id="privXhs" placeholder="0"><span>人</span></div>
-            </div>
-            <div class="form-group">
-                <label>抖音引流</label>
-                <div class="input-wrap"><input type="number" id="privDy" placeholder="0"><span>人</span></div>
+            <div class="flex-row">
+                <div class="item-group">
+                    <label>微信</label>
+                    <input type="number" id="privWx" placeholder="0"><span class="unit">人</span>
+                </div>
+                <div class="item-group">
+                    <label>小红书</label>
+                    <input type="number" id="privXhs" placeholder="0"><span class="unit">人</span>
+                </div>
+                <div class="item-group">
+                    <label>抖音</label>
+                    <input type="number" id="privDy" placeholder="0"><span class="unit">人</span>
+                </div>
             </div>
         </div>
 
         <div class="section">
             <div class="section-title">今日客户情况与交接</div>
-            <div class="form-group">
-                <label>今日客户具体情况</label>
-                <textarea id="custDetail" rows="3" placeholder="例如：某客户成交几件，意向客户跟进情况等"></textarea>
+            <div style="margin-bottom: 6px;">
+                <textarea id="custDetail" rows="2" placeholder="今日客户具体情况..."></textarea>
             </div>
-            <div class="form-group">
-                <label>交代与交接事项</label>
-                <textarea id="handover" rows="3" placeholder="有无需要调货、待跟进或者明天需要注意的事项"></textarea>
+            <div>
+                <textarea id="handover" rows="2" placeholder="交代与交接事项..."></textarea>
             </div>
         </div>
 
         <div class="section">
             <div class="section-title">填表人</div>
-            <div class="form-group">
-                <label>请选择您的名字</label>
-                <select id="reporter">
+            <div class="item-group">
+                <label>选择您的名字</label>
+                <select id="reporter" style="width: 80px;">
                     <option value="楠楠">楠楠</option>
                     <option value="萍萍">萍萍</option>
                     <option value="丽丽">丽丽</option>
@@ -320,7 +318,7 @@
 
         <div class="btn-group">
             <button class="btn btn-primary" id="btnGen">生成并查看日报预览</button>
-            <button class="btn btn-primary" style="background:#a855f7;" id="btnCopy">直接一键复制日报</button>
+            <button class="btn btn-purple" id="btnCopy">直接一键复制日报</button>
             <button class="btn btn-secondary" id="btnReset">清空重填</button>
         </div>
 
@@ -328,13 +326,11 @@
     </div>
 
     <script>
-        // 获取数值安全工具函数
         function valOf(id) {
             const v = document.getElementById(id).value;
             return v === '' ? 0 : Number(v);
         }
 
-        // 拼接日报微信格式函数
         function makeReport() {
             const now = new Date();
             const dateStr = now.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -349,15 +345,30 @@
             const txtHand = document.getElementById('handover').value.trim() || '无';
             const reporter = document.getElementById('reporter').value;
 
+            // 核心业绩大盘联动计算
+            const mTarget = valOf('monthTarget'); // 本月目标
+            const dRevenue = valOf('revenue');     // 今日营业额
+            const totalAccumulate = valOf('monthBefore') + dRevenue; // 截止今日的最新总累计
+            
+            let rateStr = '0.00%';
+            if (mTarget > 0) {
+                rateStr = ((totalAccumulate / mTarget) * 100).toFixed(2) + '%';
+            }
+
             return [
                 `💜 EVA【${store}】日报`,
                 `日期：${dateStr}`,
                 `天气：${weather}`,
                 ``,
-                `【班次】`,
-                `A班：${sA}`,
-                `B班：${sB}`,
-                `C班：${sC}`,
+                `📊【本月经营大盘进度】`,
+                `月度营业目标：${mTarget} 元`,
+                `月度累计完成：${totalAccumulate} 元`,
+                `业绩目前完成率：${rateStr}`,
+                ``,
+                `【班次人员】`,
+                `A班：${sA}  B班：${sB}  C班：${sC}`,
+                ``,
+                `【今日营业额】${dRevenue}元（今日目标：${valOf('target')}元）`,
                 ``,
                 `【进店数据】`,
                 `新客：${valOf('newCust')}人（试穿${valOf('newTry')}人）`,
@@ -368,18 +379,11 @@
                 `老客：${valOf('oldDealP')}人 ${valOf('oldDealI')}件`,
                 `线上：${valOf('onDealP')}人 ${valOf('onDealI')}件`,
                 ``,
-                `【营业目标】${valOf('target')}元`,
-                `【今日营业额】${valOf('revenue')}元`,
-                ``,
                 `【收款数据】`,
-                `微信：${valOf('payWx')}元`,
-                `支付宝：${valOf('payZfb')}元`,
-                `银行卡：${valOf('payYhk')}元`,
+                `微信：${valOf('payWx')}元  支付宝：${valOf('payZfb')}元  银行卡：${valOf('payYhk')}元`,
                 ``,
                 `【私域引流】`,
-                `微信：${valOf('privWx')}人`,
-                `小红书：${valOf('privXhs')}人`,
-                `抖音：${valOf('privDy')}人`,
+                `微信：${valOf('privWx')}人  小红书：${valOf('privXhs')}人  抖音：${valOf('privDy')}人`,
                 ``,
                 `【今日客户情况】`,
                 txtCust,
@@ -391,7 +395,6 @@
             ].join('\n');
         }
 
-        // 生成预览事件
         document.getElementById('btnGen').addEventListener('click', function() {
             const box = document.getElementById('previewBox');
             box.innerText = makeReport();
@@ -399,42 +402,31 @@
             box.scrollIntoView({ behavior: 'smooth' });
         });
 
-        // 核心一键复制功能
         document.getElementById('btnCopy').addEventListener('click', function() {
             const text = makeReport();
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(text).then(() => {
-                    alert('🎉 日报已完美复制到剪贴板，请直接前往微信粘贴发送！');
-                }).catch(() => {
-                    fallbackCopy(text);
-                });
-            } else {
-                fallbackCopy(text);
-            }
+                    alert('🎉 日报已复制成功！');
+                }).catch(() => { fallbackCopy(text); });
+            } else { fallbackCopy(text); }
         });
 
-        // 降级复制机制
         function fallbackCopy(text) {
             const ta = document.createElement("textarea");
-            ta.value = text;
-            ta.style.position = "absolute";
-            ta.style.opacity = "0";
-            document.body.appendChild(ta);
-            ta.select();
+            ta.value = text; ta.style.position = "absolute"; ta.style.opacity = "0";
+            document.body.appendChild(ta); ta.select();
             try {
                 document.execCommand('copy');
-                alert('🎉 日报已成功复制到剪贴板，请去微信粘贴！');
+                alert('🎉 日报已复制成功！');
             } catch (err) {
-                alert('由于浏览器限制，复制失败。请点击“生成并查看日报预览”，在下方手动选择文本复制。');
+                alert('请点击“生成”，在下方框中手动选择复制。');
             }
             document.body.removeChild(ta);
         }
 
-        // 清空重填事件
         document.getElementById('btnReset').addEventListener('click', function() {
-            if (!confirm('确认要清空表单中所有填写的内容吗？')) return;
-            const inputs = document.querySelectorAll('input[type="number"], textarea');
-            inputs.forEach(el => el.value = '');
+            if (!confirm('确认要清空内容吗？')) return;
+            document.querySelectorAll('input[type="number"], textarea').forEach(el => el.value = '');
             document.getElementById('previewBox').style.display = 'none';
         });
     </script>
