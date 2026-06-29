@@ -3,25 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EVA 日报生成器</title>
+    <title>EVA STUDIO 日报生成系统</title>
     <style>
-        body { font-family: sans-serif; background: #f8f7fa; margin: 0; padding: 5px; font-size: 13px; }
-        .container { max-width: 480px; margin: 0 auto; background: #fff; padding: 10px; border-radius: 8px; }
-        .header { background: #7c3aed; color: white; padding: 8px; text-align: center; border-radius: 6px; margin-bottom: 8px; }
-        .section { border: 1px solid #eee; padding: 8px; border-radius: 6px; margin-bottom: 8px; }
-        .section-title { color: #7c3aed; font-weight: bold; margin-bottom: 5px; font-size: 12px; }
-        .flex { display: flex; align-items: center; gap: 5px; margin-bottom: 5px; flex-wrap: wrap; }
-        input[type="number"], select { width: 45px; padding: 3px; border: 1px solid #ccc; border-radius: 3px; text-align: center; }
-        .w-long { width: 70px !important; }
-        textarea { width: 100%; border: 1px solid #ccc; border-radius: 3px; padding: 5px; box-sizing: border-box; resize: none; }
-        .btn { width: 100%; padding: 8px; border: none; border-radius: 4px; color: white; font-weight: bold; margin-bottom: 5px; cursor: pointer; }
-        .btn-g { background: #7c3aed; } .btn-c { background: #a855f7; } .btn-r { background: #e5e0ea; color: #555; }
-        #previewBox { background: #f3f0f7; padding: 8px; border-radius: 4px; white-space: pre-wrap; font-size: 12px; display: none; }
+        body { font-family: -apple-system, sans-serif; background-color: #f8f7fa; padding: 15px; color: #333; }
+        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #7c3aed; margin-bottom: 20px; }
+        .section { margin-bottom: 20px; padding: 15px; border: 1px solid #eee; border-radius: 8px; }
+        .label { font-size: 14px; font-weight: bold; color: #555; margin-bottom: 10px; display: block; }
+        .flex { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; margin-bottom: 10px; cursor: pointer; color: #fff; }
+        .btn-gen { background: #7c3aed; } .btn-copy { background: #a855f7; } .btn-res { background: #ccc; }
+        #previewBox { background: #fdfdfd; border: 1px dashed #7c3aed; padding: 15px; border-radius: 8px; white-space: pre-wrap; font-size: 14px; display: none; margin-top: 20px; color: #333; line-height: 1.6; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">EVA STUDIO 日报系统</div>
+        <h2>EVA STUDIO 日报系统</h2>
+        
         <div class="section">
             <div class="flex">
                 <select id="store"><option>崇宁路店</option><option>永丰路店</option></select>
@@ -30,44 +29,46 @@
                 <select id="sB"><option>B班:无</option><option>B:楠楠</option><option>B:萍萍</option><option>B:丽丽</option></select>
             </div>
         </div>
+
         <div class="section">
-            <div class="section-title">本月大盘进度</div>
-            <div class="flex">目标:<input type="number" id="mTar" class="w-long"> 累计:<input type="number" id="mBeg" class="w-long"></div>
+            <label class="label">📊 本月大盘进度</label>
+            <div class="flex">目标:<input type="number" id="mTar"> 累计:<input type="number" id="mBeg"></div>
         </div>
+
         <div class="section">
-            <div class="section-title">营收与收款数据</div>
-            <div class="flex">额度:<input type="number" id="rev" class="w-long"> 目标:<input type="number" id="tar" class="w-long"></div>
-            <div class="flex" style="color: #7c3aed; font-size: 11px;">(微信/支/银/现):</div>
-            <div class="flex"><input type="number" id="pW"><input type="number" id="pZ"><input type="number" id="pY"><input type="number" id="pX"></div>
+            <label class="label">💰 营收与收款</label>
+            <div class="flex">今日额度:<input type="number" id="rev"> 今日目标:<input type="number" id="tar"></div>
+            <div class="flex">微信:<input type="number" id="pW"> 支:<input type="number" id="pZ"> 银:<input type="number" id="pY"> 现:<input type="number" id="pX"></div>
         </div>
+
         <div class="section">
-            <div class="section-title">进店与成交</div>
-            <div class="flex">新:<input type="number" id="nC"> 老:<input type="number" id="oC"> 新试:<input type="number" id="nT"> 老试:<input type="number" id="oT"></div>
-            <div class="flex">成交: 新<input type="number" id="ndP">人<input type="number" id="ndI">件|老<input type="number" id="odP">人<input type="number" id="odI">件|线<input type="number" id="onP">人<input type="number" id="onI">件</div>
+            <label class="label">👥 进店与成交</label>
+            <div class="flex">新客:<input type="number" id="nC"> 老客:<input type="number" id="oC"></div>
+            <div class="flex">新试:<input type="number" id="nT"> 老试:<input type="number" id="oT"></div>
+            <div class="flex">成交: 新<input type="number" id="ndP">人<input type="number" id="ndI">件 | 老<input type="number" id="odP">人<input type="number" id="odI">件 | 线<input type="number" id="onP">人<input type="number" id="onI">件</div>
         </div>
+
         <div class="section">
-            <div class="section-title">私域与改衣</div>
+            <label class="label">🚀 私域与改衣</label>
             <div class="flex">微:<input type="number" id="prW"> 红:<input type="number" id="prX"> 抖:<input type="number" id="prD"> 改衣:<input type="number" id="alt"></div>
         </div>
-        <textarea id="cust" placeholder="客户情况..." rows="2"></textarea>
-        <textarea id="hand" placeholder="交接事项..." rows="2"></textarea>
-        <select id="rep" style="width:100%; margin-top:5px;"><option>楠楠</option><option>萍萍</option><option>丽丽</option><option>EVA</option></select>
-        
-        <button class="btn btn-g" id="gen">生成预览</button>
-        <button class="btn btn-c" id="copy">一键复制</button>
-        <button class="btn btn-r" id="res">清空</button>
+
+        <textarea id="cust" placeholder="今日客户情况..." rows="2"></textarea>
+        <textarea id="hand" placeholder="交接事项..." rows="2" style="margin-top:10px;"></textarea>
+        <select id="rep" style="margin-top:10px;"><option>楠楠</option><option>萍萍</option><option>丽丽</option><option>EVA</option></select>
+
+        <button class="btn btn-gen" id="gen">生成预览</button>
+        <button class="btn btn-copy" id="copy">一键复制</button>
+        <button class="btn btn-res" id="res">清空</button>
+
         <div id="previewBox"></div>
     </div>
 
     <script>
         const val = id => Number(document.getElementById(id).value || 0);
         function validate() {
-            const rev = val('rev');
-            const totalPay = val('pW') + val('pZ') + val('pY') + val('pX');
-            if (rev !== totalPay) {
-                alert(`数据错误！\n营业额(${rev}) 不等于 收款总和(${totalPay})。\n请核对收款数据后再提交！`);
-                return false;
-            }
+            const rev = val('rev'), totalPay = val('pW') + val('pZ') + val('pY') + val('pX');
+            if (rev !== totalPay) { alert(`数据核对失败！\n营业额(${rev}) ≠ 收款总和(${totalPay})，请修改后再生成！`); return false; }
             return true;
         }
 
@@ -81,41 +82,30 @@
             const atp = totalDealP > 0 ? Math.round(rev / totalDealP) : 0;
             
             return `${icon} EVA【${store}】日报
-日期：${d.getMonth()+1}/${d.getDate()} 天气：${document.getElementById('weather').value}
+📅 ${d.getMonth()+1}/${d.getDate()}  🌤️ ${document.getElementById('weather').value}
 
-📊【本月经营大盘进度】
-月度目标：${mTar} | 累计完成：${mBeg + rev}
-业绩完成率：${mTar>0 ? ((mBeg+rev)/mTar*100).toFixed(2) : 0}%
+📊【本月经营大盘】
+月目标：${mTar} | 累计完成：${mBeg + rev} | 完成率：${mTar>0 ? ((mBeg+rev)/mTar*100).toFixed(1) : 0}%
 
-【班次】${document.getElementById('sA').value} ${document.getElementById('sB').value}
-【今日营业额】${rev} (目标:${val('tar')})
-【收款】微信${val('pW')}|支${val('pZ')}|银${val('pY')}|现${val('pX')}
-【来客】新${nC} 老${oC} 共${nC+oC}人
-【试穿】新${nT} 老${oT} 共${nT+oT}人
-【成交】新${ndP}人${ndI}件|老${odP}人${odI}件|线上${onP}人${onI}件
+【营业额】${rev}元 (今日目标:${val('tar')})
+【收款】微${val('pW')}|支${val('pZ')}|银${val('pY')}|现${val('pX')}
+【来客】新${nC}|老${oC} (试穿:新${nT}|老${oT})
+【成交】新${ndP}人${ndI}件|老${odP}人${odI}件|线${onP}人${onI}件
 【分析】CR ${cr}% | UPT ${upt} | ATP ${atp}元
         新客率${nC>0?Math.round(ndP/nC*100):0}%|老客率${oC>0?Math.round(odP/oC*100):0}%
-【新】微${val('prW')}人|红${val('prX')}人|抖${val('prD')}人
-【改衣】${val('alt')}件
+【拉新】微${val('prW')}|红${val('prX')}|抖${val('prD')} | 【改衣】${val('alt')}件
 
-【今日客户情况】
-${document.getElementById('cust').value}
+【客户情况】
+${document.getElementById('cust').value || '无'}
 
 【交接事项】
-${document.getElementById('hand').value}
+${document.getElementById('hand').value || '无'}
 
-【填表人】${document.getElementById('rep').value}`;
+【填表】${document.getElementById('rep').value}`;
         }
 
-        document.getElementById('gen').onclick = () => { 
-            if(!validate()) return;
-            document.getElementById('previewBox').innerText = make(); 
-            document.getElementById('previewBox').style.display = 'block'; 
-        };
-        document.getElementById('copy').onclick = () => { 
-            if(!validate()) return;
-            navigator.clipboard.writeText(make()).then(() => alert('已复制！')); 
-        };
+        document.getElementById('gen').onclick = () => { if(validate()) { document.getElementById('previewBox').innerText = make(); document.getElementById('previewBox').style.display = 'block'; }};
+        document.getElementById('copy').onclick = () => { if(validate()) { navigator.clipboard.writeText(make()).then(() => alert('已复制至剪贴板！')); }};
         document.getElementById('res').onclick = () => location.reload();
     </script>
 </body>
