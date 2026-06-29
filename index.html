@@ -2,297 +2,671 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EVA日报生成器 V1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVA STUDIO 日报生成器</title>
+    <!-- 引入 React 与 ReactDOM 生产环境核心库 -->
+    <script src="https://cdn.staticfile.org/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdn.staticfile.org/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <!-- 引入 Babel 用于在浏览器中直接解析 JSX -->
+    <script src="https://cdn.staticfile.org/babel-standalone/7.22.20/babel.min.js"></script>
+
     <style>
-        :root {
-            --primary-color: #111111;
-            --accent-color: #8c7662;
-            --bg-color: #fcfbfa;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --text-light: #777777;
-            --border-color: #e8e6e2;
-            --success-color: #5a7261;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; padding: 16px; padding-bottom: 40px; }
-        .container { max-width: 500px; margin: 0 auto; }
-        header { text-align: center; padding: 15px 0; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); }
-        header h1 { font-size: 18px; font-weight: 600; letter-spacing: 2px; color: var(--primary-color); }
-        header p { font-size: 9px; color: var(--text-light); letter-spacing: 1px; margin-top: 2px; }
-        .card { background: var(--card-bg); border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(140, 118, 98, 0.03); margin-bottom: 14px; border: 1px solid rgba(232, 230, 226, 0.7); }
-        .section-title { font-size: 13px; font-weight: 600; color: var(--accent-color); margin-bottom: 12px; letter-spacing: 1px; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; }
-        .form-group { margin-bottom: 12px; }
-        label { display: block; font-size: 11px; font-weight: 500; margin-bottom: 4px; color: var(--primary-color); text-align: center; white-space: nowrap; }
-        input, select, textarea { width: 100%; padding: 10px; font-size: 14px; border: 1px solid var(--border-color); border-radius: 8px; background-color: #faf9f7; color: var(--text-color); outline: none; -webkit-appearance: none; text-align: center; }
-        textarea { resize: none; height: 85px; font-family: inherit; line-height: 1.5; text-align: left; }
-        input:focus, select:focus, textarea:focus { border-color: var(--accent-color); background-color: #fff; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-        
-        .grid-compact { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px; }
-
-        .staff-group { display: flex; gap: 6px; flex-wrap: wrap; }
-        .staff-btn { background: #faf9f7; border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; color: var(--text-color); flex: 1; min-width: 60px; text-align: center; transition: all 0.2s; }
-        .staff-btn.active { background: var(--accent-color); color: #fff; border-color: var(--accent-color); font-weight: 500; }
-
-        .btn-group { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 20px; }
-        button.action-btn { border: none; border-radius: 8px; padding: 16px; font-size: 15px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; width: 100%; }
-        .btn-primary { background-color: var(--primary-color); color: #fff; }
-        .btn-primary:active { opacity: 0.8; }
-        .btn-secondary { background-color: transparent; color: var(--text-light); border: 1px solid var(--border-color); margin-top: 4px; }
-        .btn-success { background-color: var(--success-color); color: #fff; margin-top: 12px; font-weight: 600; }
-        .btn-success:active { opacity: 0.9; }
-        
-        #resultContainer { display: none; background: #fff; }
-        .preview-box { background: #faf9f7; border: 1px dashed var(--accent-color); border-radius: 8px; padding: 16px; font-size: 14px; white-space: pre-wrap; word-break: break-all; color: #222; line-height: 1.6; }
-        .toast { position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.85); color: #fff; padding: 12px 24px; border-radius: 24px; font-size: 13px; z-index: 9999; display: none; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #f8f7fa;
+            color: #333;
+        }
+        .app {
+            max-width: 430px;
+            margin: 0 auto;
+            padding: 0 0 20px;
+            min-height: 100vh;
+        }
+        .header {
+            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+            padding: 32px 20px 24px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .brand-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 4px;
+        }
+        .brand-sub {
+            font-size: 13px;
+            color: rgba(255,255,255,0.85);
+            margin-top: 4px;
+            letter-spacing: 2px;
+        }
+        .card {
+            background: #fff;
+            margin: 12px 12px 0;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 12px;
+        }
+        .dashboard-card {
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+        }
+        .dashboard-placeholder {
+            text-align: center;
+            color: #a78bfa;
+            font-size: 13px;
+            padding: 12px 0;
+        }
+        .field-row {
+            margin-bottom: 12px;
+        }
+        .field-row label {
+            display: block;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 6px;
+        }
+        .segment-group {
+            display: flex;
+            gap: 6px;
+        }
+        .segment-btn {
+            flex: 1;
+            padding: 8px 4px;
+            border: 1.5px solid #e5e0ea;
+            border-radius: 8px;
+            background: #fff;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+        .segment-btn.active {
+            background: #7c3aed;
+            color: #fff;
+            border-color: #7c3aed;
+        }
+        .staff-section {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .staff-row {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .shift-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #7c3aed;
+        }
+        .staff-row select {
+            width: 100%;
+            padding: 7px 4px;
+            border: 1.5px solid #e5e0ea;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #444;
+            background: #faf9fb;
+            text-align: center;
+            outline: none;
+        }
+        .number-input {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .number-input label {
+            font-size: 12px;
+            color: #888;
+        }
+        .input-with-unit {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+        .input-with-unit input {
+            width: 100%;
+            padding: 8px 24px 8px 8px;
+            border: 1.5px solid #e5e0ea;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+            color: #333;
+            background: #faf9fb;
+            outline: none;
+        }
+        .input-with-unit input:focus {
+            border-color: #a855f7;
+        }
+        .input-with-unit .unit {
+            position: absolute;
+            right: 8px;
+            font-size: 11px;
+            color: #bbb;
+            pointer-events: none;
+        }
+        .data-grid-2x2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .deal-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .deal-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #faf9fb;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+        .deal-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #555;
+            width: 36px;
+            flex-shrink: 0;
+        }
+        .deal-row input {
+            flex: 1;
+            max-width: 80px;
+            padding: 6px;
+            border: 1.5px solid #e5e0ea;
+            border-radius: 6px;
+            font-size: 13px;
+            text-align: center;
+            color: #333;
+            outline: none;
+        }
+        .deal-row input:focus {
+            border-color: #a855f7;
+        }
+        .unit {
+            font-size: 12px;
+            color: #aaa;
+            flex-shrink: 0;
+        }
+        .revenue-input {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .revenue-input input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1.5px solid #e5e0ea;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            color: #333;
+            background: #faf9fb;
+            outline: none;
+        }
+        .revenue-input input:focus {
+            border-color: #a855f7;
+        }
+        .payment-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .payment-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: #faf9fb;
+            padding: 8px;
+            border-radius: 8px;
+        }
+        .payment-item label {
+            font-size: 12px;
+            color: #666;
+            min-width: 42px;
+        }
+        .payment-item input {
+            flex: 1;
+            width: 100%;
+            min-width: 40px;
+            padding: 6px 4px;
+            border: 1.5px solid #e5e0ea;
+            border-radius: 6px;
+            font-size: 13px;
+            text-align: center;
+            color: #333;
+            outline: none;
+        }
+        .payment-item input:focus {
+            border-color: #a855f7;
+        }
+        .private-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+        .private-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: #faf9fb;
+            padding: 10px 6px;
+            border-radius: 8px;
+        }
+        .private-item label {
+            font-size: 12px;
+            color: #666;
+        }
+        .private-item input {
+            width: 100%;
+            padding: 6px 2px;
+            border: 1.5px solid #e5e0ea;
+            border-radius: 6px;
+            font-size: 13px;
+            text-align: center;
+            color: #333;
+            outline: none;
+        }
+        .private-item input:focus {
+            border-color: #a855f7;
+        }
+        .card textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #e5e0ea;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #333;
+            background: #faf9fb;
+            resize: none;
+            line-height: 1.6;
+            font-family: inherit;
+            outline: none;
+        }
+        .card textarea:focus {
+            border-color: #a855f7;
+        }
+        .action-section {
+            display: flex;
+            gap: 10px;
+            margin: 16px 12px 0;
+        }
+        .btn-copy {
+            flex: 2;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.1s ease, opacity 0.2s;
+        }
+        .btn-copy:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+        .btn-reset {
+            flex: 1;
+            padding: 14px;
+            border: 1.5px solid #e5e0ea;
+            border-radius: 12px;
+            background: #fff;
+            color: #888;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-reset:active {
+            background: #f5f3f7;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 11px;
+            color: #ccc;
+        }
+        @media (max-width: 360px) {
+            .payment-item label { min-width: 36px; font-size: 11px; }
+            .deal-row { padding: 6px 8px; gap: 4px; }
+            .deal-row input { max-width: 60px; }
+        }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
     </style>
 </head>
 <body>
+    <div id="root"></div>
 
-<div class="container">
-    <header>
-        <h1>EVA STUDIO</h1>
-        <p>DAILY REPORT GENERATOR V1</p>
-    </header>
+    <!-- 业务前端逻辑层 -->
+    <script type="text/babel">
+        const { useState } = React;
 
-    <form id="reportForm">
-        <div class="card">
-            <div class="section-title">🟢 基础信息</div>
-            <div class="grid-2" style="margin-bottom: 10px;">
-                <div class="form-group" style="margin-bottom: 0;">
-                    <label style="text-align:left;">门店</label>
-                    <select id="store" required style="text-align-last: center;">
-                        <option value="崇宁路店">崇宁路店</option>
-                        <option value="永丰路店">永丰路店</option>
+        const STORES = ['崇宁路店', '永丰路店'];
+        const WEATHERS = ['晴天', '阴天', '雨天'];
+        const STAFF_OPTIONS = ['无', '楠楠', '萍萍', '丽丽', 'EVA']; // 已加入楠楠、萍萍、丽丽作为值班备选
+        const PAYMENT_TYPES = ['微信', '支付宝', '银行卡', '现金', '卡消', '充值', '退单', '赠品'];
+        const PRIVATE_DOMAIN = ['微信', '小红书', '抖音'];
+
+        function NumberInput({ value, onChange, label, unit = "人" }) {
+            return (
+                <div className="number-input">
+                    <label>{label}</label>
+                    <div className="input-with-unit">
+                        <input
+                            type="number"
+                            value={value}
+                            onChange={(e) => onChange(e.target.value)}
+                            min="0"
+                            placeholder="0"
+                        />
+                        <span className="unit">{unit}</span>
+                    </div>
+                </div>
+            )
+        }
+
+        function SegmentButton({ options, value, onChange }) {
+            return (
+                <div className="segment-group">
+                    {options.map((opt) => (
+                        <button
+                            key={opt}
+                            type="button"
+                            className={`segment-btn ${value === opt ? 'active' : ''}`}
+                            onClick={() => onChange(opt)}
+                        >
+                            {opt}
+                        </button>
+                    ))}
+                </div>
+            )
+        }
+
+        function StaffSelect({ value, onChange, shiftLabel }) {
+            return (
+                <div className="staff-row">
+                    <span className="shift-label">{shiftLabel}</span>
+                    <select value={value} onChange={(e) => onChange(e.target.value)}>
+                        {STAFF_OPTIONS.map((opt) => (
+                            <option key={opt} value={opt}>{opt}</option>
+                        ))}
                     </select>
                 </div>
-                <div class="form-group" style="margin-bottom: 0;">
-                    <label style="text-align:left;">日期</label>
-                    <input type="text" id="dateDisplay" readonly style="background-color:#eee; color:#666; cursor:not-allowed;">
-                </div>
-            </div>
-            <div class="form-group" style="margin-bottom: 0;">
-                <label style="text-align:left;">当班人员</label>
-                <div class="staff-group" id="staffGroup">
-                    <button type="button" class="staff-btn active" data-name="楠楠">楠楠</button>
-                    <button type="button" class="staff-btn" data-name="萍萍">萍萍</button>
-                    <button type="button" class="staff-btn" data-name="丽丽">丽丽</button>
-                    <button type="button" class="staff-btn" data-name="EVA">EVA</button>
-                </div>
-            </div>
-        </div>
+            )
+        }
 
-        <div class="card">
-            <div class="section-title">🔵 核心KPI</div>
-            <div class="grid-2">
-                <div class="form-group" style="margin-bottom:0;">
-                    <label>营业目标 (元)</label>
-                    <input type="number" id="targetAmount" min="1" placeholder="目标金额" required>
-                </div>
-                <div class="form-group" style="margin-bottom:0;">
-                    <label>营业额 (元)</label>
-                    <input type="number" id="salesAmount" step="0.01" min="0" placeholder="0.00" required>
-                </div>
-            </div>
-        </div>
+        function App() {
+            const [store, setStore] = useState('崇宁路店');
+            const [weather, setWeather] = useState('晴天');
+            const [shiftA, setShiftA] = useState('无');
+            const [shiftB, setShiftB] = useState('无');
+            const [shiftC, setShiftC] = useState('无');
 
-        <div class="card">
-            <div class="section-title">📊 营业数据 (流量 / 结构 / 客户)</div>
-            
-            <div class="grid-compact">
-                <div class="form-group" style="margin-bottom:0;">
-                    <label>来客数</label>
-                    <input type="number" id="customers" min="0" placeholder="0" required>
-                </div>
-                <div class="form-group" style="margin-bottom:0;">
-                    <label>试穿数</label>
-                    <input type="number" id="tryOns" min="0" placeholder="0" required>
-                </div>
-                <div class="form-group" style="margin-bottom:0;">
-                    <label>成交(人)</label>
-                    <input type="number" id="orders" min="0" placeholder="0" required>
-                </div>
-                <div class="form-group" style="margin-bottom:0;">
-                    <label>件数(件)</label>
-                    <input type="number" id="itemCount" min="0" placeholder="0" required>
-                </div>
-            </div>
+            // 彻底初始化为空字符串，消灭页面初始显示的数字0
+            const [newCustomers, setNewCustomers] = useState('');
+            const [newTryOn, setNewTryOn] = useState('');
+            const [oldCustomers, setOldCustomers] = useState('');
+            const [oldTryOn, setOldTryOn] = useState('');
 
-            <div class="grid-2">
-                <div class="form-group" style="margin-bottom:0;">
-                    <label>新客数</label>
-                    <input type="number" id="newCust" min="0" placeholder="0" required>
-                </div>
-                <div class="form-group" style="margin-bottom:0;">
-                    <label>老客数</label>
-                    <input type="number" id="oldCust" min="0" placeholder="0" required>
-                </div>
-            </div>
-        </div>
+            const [newDealPeople, setNewDealPeople] = useState('');
+            const [newDealItems, setNewDealItems] = useState('');
+            const [oldDealPeople, setOldDealPeople] = useState('');
+            const [oldDealItems, setOldDealItems] = useState('');
+            const [onlineDealPeople, setOnlineDealPeople] = useState('');
+            const [onlineDealItems, setOnlineDealItems] = useState('');
 
-        <div class="card">
-            <div class="section-title">⚫ 收款结构 (元)</div>
-            <div class="grid-3" style="margin-bottom:0;">
-                <div class="form-group" style="margin-bottom:0;"><label>微信</label><input type="number" id="payWx" step="0.01" min="0" placeholder="0" required></div>
-                <div class="form-group" style="margin-bottom:0;"><label>支付宝</label><input type="number" id="payAlipay" step="0.01" min="0" placeholder="0" required></div>
-                <div class="form-group" style="margin-bottom:0;"><label>银行卡</label><input type="number" id="payCard" step="0.01" min="0" placeholder="0" required></div>
-            </div>
-        </div>
+            const [revenue, setRevenue] = useState('');
 
-        <div class="card">
-            <div class="section-title">📝 交接事项及备注</div>
-            <div class="form-group" style="margin-bottom: 0;">
-                <textarea id="remark" placeholder="请手动输入交接事项及备注信息..."></textarea>
-            </div>
-        </div>
-
-        <div class="btn-group">
-            <button type="submit" class="action-btn btn-primary">生成微信标准日报</button>
-            <button type="button" class="action-btn btn-secondary" id="resetBtn">清空表单</button>
-        </div>
-    </form>
-
-    <div id="resultContainer" class="card">
-        <div class="section-title">📱 微信群日报预览 (极紧凑版)</div>
-        <div class="preview-box" id="previewBox"></div>
-        <button type="button" class="action-btn btn-success" id="copyBtn">一键复制完整日报</button>
-    </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-    let currentStaff = "楠楠";
-
-    window.addEventListener('DOMContentLoaded', () => {
-        const d = new Date();
-        document.getElementById('dateDisplay').value = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
-
-        const staffBtns = document.querySelectorAll('#staffGroup .staff-btn');
-        staffBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                staffBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentStaff = btn.getAttribute('data-name');
+            const [payments, setPayments] = useState({
+                '微信': '', '支付宝': '', '银行卡': '', '现金': '',
+                '卡消': '', '充值': '', '退单': '', '赠品': '',
             });
-        });
-    });
 
-    const form = document.getElementById('reportForm');
-    const resultContainer = document.getElementById('resultContainer');
-    const previewBox = document.getElementById('previewBox');
-    const resetBtn = document.getElementById('resetBtn');
-    const copyBtn = document.getElementById('copyBtn');
-    const toast = document.getElementById('toast');
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        try {
-            const store = document.getElementById('store').value;
-            const dateText = document.getElementById('dateDisplay').value;
-
-            const targetAmount = parseFloat(document.getElementById('targetAmount').value) || 1;
-            const salesAmount = parseFloat(document.getElementById('salesAmount').value) || 0;
-
-            const customers = parseInt(document.getElementById('customers').value) || 0;
-            const tryOns = parseInt(document.getElementById('tryOns').value) || 0;
-            const orders = parseInt(document.getElementById('orders').value) || 0;
-
-            const itemCount = parseInt(document.getElementById('itemCount').value) || 0;
-
-            const newCust = parseInt(document.getElementById('newCust').value) || 0;
-            const oldCust = parseInt(document.getElementById('oldCust').value) || 0;
-
-            const payWx = parseFloat(document.getElementById('payWx').value) || 0;
-            const payAlipay = parseFloat(document.getElementById('payAlipay').value) || 0;
-            const payCard = parseFloat(document.getElementById('payCard').value) || 0;
-
-            const remark = document.getElementById('remark').value.trim();
-
-            const targetRate = ((salesAmount / targetAmount) * 100).toFixed(1) + '%';
-            const upt = orders > 0 ? (itemCount / orders).toFixed(1) : '0.0';
-
-            const reportText = `💜 EVA日报 | ${store} | ${dateText}
-【🔥 核心KPI】
-营业额：${salesAmount}元 | 目标：${targetAmount}元 | 达成率：${targetRate}
-────────────────
-【流量数据】来客：${customers} | 试穿：${tryOns} | 成交：${orders}
-【销售结构】成交人数：${orders} | 件数：${itemCount} | UPT：${upt}
-【客户结构】新客：${newCust} | 老客：${oldCust}
-【收款结构】微信：${payWx} | 支付宝：${payAlipay} | 银行卡：${payCard}
-────────────────
-【交接事项及备注】
-当班人员：${currentStaff}
-${remark || '无'}`;
-
-            previewBox.textContent = reportText;
-            resultContainer.style.display = 'block';
-            resultContainer.scrollIntoView({ behavior: 'smooth' });
-
-        } catch (error) {
-            alert("生成失败，请确认输入数据是否完整有效。");
-            console.error(error);
-        }
-    });
-
-    copyBtn.addEventListener('click', () => {
-        const text = previewBox.textContent;
-        const textArea = document.createElement("textarea");
-        textArea.value = text;
-        
-        textArea.style.position = "fixed";
-        textArea.style.top = "0";
-        textArea.style.left = "0";
-        textArea.style.width = "2em";
-        textArea.style.height = "2em";
-        textArea.style.padding = "0";
-        textArea.style.border = "none";
-        textArea.style.outline = "none";
-        textArea.style.boxShadow = "none";
-        textArea.style.background = "transparent";
-        
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        textArea.setSelectionRange(0, 99999); 
-
-        try {
-            const successful = document.execCommand('copy');
-            if(successful) {
-                showToast('已复制！快去微信群粘贴吧 🎉');
-            } else {
-                showToast('复制失败，请长按下方文本框手动复制');
-            }
-        } catch (err) {
-            showToast('设备不支持快捷复制，请长按手动复制');
-        }
-
-        document.body.removeChild(textArea);
-    });
-
-    resetBtn.addEventListener('click', () => {
-        if (confirm('确定要清空所有数据吗？')) {
-            form.reset();
-            const staffBtns = document.querySelectorAll('#staffGroup .staff-btn');
-            staffBtns.forEach((b, i) => {
-                if(i === 0) { b.classList.add('active'); currentStaff = "楠楠"; }
-                else { b.classList.remove('active'); }
+            const [privateDomain, setPrivateDomain] = useState({
+                '微信': '', '小红书': '', '抖音': '',
             });
-            resultContainer.style.display = 'none';
-            previewBox.textContent = '';
-            showToast('已清空');
-        }
-    });
 
-    function showToast(msg) {
-        toast.textContent = msg;
-        toast.style.display = 'block';
-        setTimeout(() => { toast.style.display = 'none'; }, 2000);
-    }
-</script>
+            const [customerDetails, setCustomerDetails] = useState('');
+            const [handover, setHandover] = useState('');
+            const [reporter, setReporter] = useState('楠楠');
+
+            const today = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
+
+            const formatNum = (val) => (val === '' ? 0 : Number(val));
+
+            const generateReport = () => {
+                const lines = [
+                    `💜 EVA【${store}】日报`,
+                    `日期：${today}`,
+                    `天气：${weather}`,
+                    '',
+                    `【班次】`,
+                    `A班：${shiftA}`,
+                    `B班：${shiftB}`,
+                    `C班：${shiftC}`,
+                    '',
+                    `【进店数据】`,
+                    `新客：${formatNum(newCustomers)}人（试穿${formatNum(newTryOn)}人）`,
+                    `老客：${formatNum(oldCustomers)}人（试穿${formatNum(oldTryOn)}人）`,
+                    '',
+                    `【成交数据】`,
+                    `新客：${formatNum(newDealPeople)}人${formatNum(newDealItems)}件`,
+                    `老客：${formatNum(oldDealPeople)}人${formatNum(oldDealItems)}件`,
+                    `线上：${formatNum(onlineDealPeople)}人${formatNum(onlineDealItems)}件`,
+                    '',
+                    `【营业额】${formatNum(revenue)}元`,
+                    '',
+                    `【收款数据】`,
+                    ...PAYMENT_TYPES.map(t => `${t}：${formatNum(payments[t])}元`),
+                    '',
+                    `【私域数据】`,
+                    ...PRIVATE_DOMAIN.map(t => `${t}：${formatNum(privateDomain[t])}人`),
+                    '',
+                    `【今日客户情况】`,
+                    customerDetails.trim() || '无',
+                    '',
+                    `【交接事项】`,
+                    handover.trim() || '无',
+                    '',
+                    `填表人：${reporter}`,
+                ];
+                return lines.join('\n');
+            };
+
+            const copyReport = async () => {
+                const text = generateReport();
+                try {
+                    if (navigator.clipboard && window.isSecureContext) {
+                        await navigator.clipboard.writeText(text);
+                        alert('🎉 日报已复制，请直接粘贴发送至微信群！');
+                    } else {
+                        throw new Error('Fallback');
+                    }
+                } catch {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.position = 'absolute';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    alert('🎉 日报已复制，请直接粘贴发送至微信群！');
+                }
+            };
+
+            const resetAll = () => {
+                if (!confirm('确定清空所有数据重新填写吗？')) return;
+                setStore('崇宁路店'); setWeather('晴天');
+                setShiftA('无'); setShiftB('无'); setShiftC('无');
+                setNewCustomers(''); setNewTryOn(''); setOldCustomers(''); setOldTryOn('');
+                setNewDealPeople(''); setNewDealItems(''); setOldDealPeople(''); setOldDealItems('');
+                setOnlineDealPeople(''); setOnlineDealItems(''); setRevenue('');
+                setPayments({ '微信': '', '支付宝': '', '银行卡': '', '现金': '', '卡消': '', '充值': '', '退单': '', '赠品': '' });
+                setPrivateDomain({ '微信': '', '小红书': '', '抖音': '' });
+                setCustomerDetails(''); setHandover('');
+            };
+
+            return (
+                <div className="app">
+                    <div className="header">
+                        <div className="brand-name">EVA STUDIO</div>
+                        <div className="brand-sub">日报生成器</div>
+                    </div>
+
+                    <div className="card dashboard-card">
+                        <div className="card-title">🎯 本月经营看板</div>
+                        <div className="dashboard-placeholder">本月目标未设置</div>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-title">基础信息</div>
+                        <div className="field-row">
+                            <label>门店</label>
+                            <SegmentButton options={STORES} value={store} onChange={setStore} />
+                        </div>
+                        <div className="field-row">
+                            <label>天气</label>
+                            <SegmentButton options={WEATHERS} value={weather} onChange={setWeather} />
+                        </div>
+                        <div className="staff-section">
+                            <StaffSelect value={shiftA} onChange={setShiftA} shiftLabel="A班" />
+                            <StaffSelect value={shiftB} onChange={setShiftB} shiftLabel="B班" />
+                            <StaffSelect value={shiftC} onChange={setShiftC} shiftLabel="C班" />
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-title">进店数据</div>
+                        <div className="data-grid-2x2">
+                            <NumberInput value={newCustomers} onChange={setNewCustomers} label="新客" />
+                            <NumberInput value={newTryOn} onChange={setNewTryOn} label="新客试穿" />
+                            <NumberInput value={oldCustomers} onChange={setOldCustomers} label="老客" />
+                            <NumberInput value={oldTryOn} onChange={setOldTryOn} label="老客试穿" />
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-title">成交数据</div>
+                        <div className="deal-section">
+                            <div className="deal-row">
+                                <span className="deal-label">新客</span>
+                                <input type="number" value={newDealPeople} onChange={e => setNewDealPeople(e.target.value)} min="0" placeholder="0" />
+                                <span className="unit">人</span>
+                                <input type="number" value={newDealItems} onChange={e => setNewDealItems(e.target.value)} min="0" placeholder="0" />
+                                <span className="unit">件</span>
+                            </div>
+                            <div className="deal-row">
+                                <span className="deal-label">老客</span>
+                                <input type="number" value={oldDealPeople} onChange={e => setOldDealPeople(e.target.value)} min="0" placeholder="0" />
+                                <span className="unit">人</span>
+                                <input type="number" value={oldDealItems} onChange={e => setOldDealItems(e.target.value)} min="0" placeholder="0" />
+                                <span className="unit">件</span>
+                            </div>
+                            <div className="deal-row">
+                                <span className="deal-label">线上</span>
+                                <input type="number" value={onlineDealPeople} onChange={e => setOnlineDealPeople(e.target.value)} min="0" placeholder="0" />
+                                <span className="unit">人</span>
+                                <input type="number" value={onlineDealItems} onChange={e => setOnlineDealItems(e.target.value)} min="0" placeholder="0" />
+                                <span className="unit">件</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-title">营业额</div>
+                        <div className="revenue-input">
+                            <input type="number" value={revenue} onChange={e => setRevenue(e.target.value)} min="0" placeholder="0" />
+                            <span className="unit">元</span>
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-title">收款数据</div>
+                        <div className="payment-grid">
+                            {PAYMENT_TYPES.map(type => (
+                                <div key={type} className="payment-item">
+                                    <label>{type}</label>
+                                    <input type="number" value={payments[type]} onChange={e => setPayments({ ...payments, [type]: e.target.value })} min="0" placeholder="0" />
+                                    <span className="unit">元</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-title">私域数据</div>
+                        <div className="private-grid">
+                            {PRIVATE_DOMAIN.map(type => (
+                                <div key={type} className="private-item">
+                                    <label>{type}</label>
+                                    <input type="number" value={privateDomain[type]} onChange={e => setPrivateDomain({ ...privateDomain, [type]: e.target.value })} min="0" placeholder="0" />
+                                    <span className="unit">人</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="card">
+                        <div className="card-title">今日客户情况</div>
+                        <textarea value={customerDetails} onChange={e => setCustomerDetails(e.target.value)} placeholder="施美女成交4件1037元&#10;王姐试穿风衣未成交&#10;陈总预定连衣裙1件" rows={4} />
+                    </div>
+
+                    <div className="card">
+                        <div className="card-title">交接事项</div>
+                        <textarea value={handover} onChange={e => setHandover(e.target.value)} placeholder="许蓉挂单未购买&#10;杨润短裙待跟进&#10;刘姐定金已收等待调货" rows={4} />
+                    </div>
+
+                    <div className="card">
+                        <div className="card-title">填表人</div>
+                        <SegmentButton options={['楠楠', '萍萍', '丽丽', 'EVA']} value={reporter} onChange={setReporter} />
+                    </div>
+
+                    <div className="action-section">
+                        <button className="btn-copy" onClick={copyReport}>复制日报</button>
+                        <button className="btn-reset" onClick={resetAll}>清空重填</button>
+                    </div>
+
+                    <div className="footer">
+                        <span>EVA STUDIO © 2026</span>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = banknotes.createRoot(document.getElementById('root'));
+        // 兼容单网页环境的渲染写法
+        const rootElement = document.getElementById('root');
+        ReactDOM.render(<App />, rootElement);
+    </script>
 </body>
 </html>
