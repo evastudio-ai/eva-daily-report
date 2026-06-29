@@ -72,7 +72,6 @@
     <script>
         const val = id => Number(document.getElementById(id).value || 0);
         
-        // 自动计算今日目标：(月目标 - 累计) / 剩余天数
         function updateTar() {
             const mTar = val('mTar'), mBeg = val('mBeg');
             const d = new Date();
@@ -85,7 +84,7 @@
 
         function validate() {
             const rev = val('rev'), totalPay = val('pW') + val('pZ') + val('pY') + val('pX');
-            if (rev !== totalPay) { alert(`数据核对失败：营业额(${rev}) ≠ 收款总和(${totalPay})，请核对！`); return false; }
+            if (rev !== totalPay) { alert(`数据校验错误！\n营业额(${rev}) ≠ 收款总和(${totalPay})，请核对！`); return false; }
             return true;
         }
 
@@ -101,7 +100,7 @@
             return `${icon} EVA【${store}】日报
 📅 ${d.getMonth()+1}/${d.getDate()} | 🌤️ ${document.getElementById('weather').value}
 
-📊【本月大盘】目标:${mTar} | 累计:${mBeg + rev} | 完成:${mTar>0 ? ((mBeg+rev)/mTar*100).toFixed(1) : 0}%
+📊【本月经营】目标:${mTar} | 累计:${mBeg + rev} | 完成:${mTar>0 ? ((mBeg+rev)/mTar*100).toFixed(1) : 0}%
 
 【营收】${rev}元 (今日目标:${val('tarAuto')})
 【收款】微${val('pW')}|支${val('pZ')}|银${val('pY')}|现${val('pX')}
