@@ -5,110 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EVA STUDIO 日报系统</title>
     <style>
-        body { font-family: -apple-system, sans-serif; background-color: #f4f4f9; padding: 15px; color: #333; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f4f9; padding: 15px; color: #333; }
         .container { max-width: 500px; margin: 0 auto; }
-        h2 { text-align: center; color: #7c3aed; margin-bottom: 20px; }
-        .card { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .card-title { font-weight: bold; color: #7c3aed; margin-bottom: 10px; border-left: 4px solid #7c3aed; padding-left: 8px; font-size: 15px; }
-        .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
-        input, select, textarea { padding: 8px; border: 1px solid #ddd; border-radius: 6px; width: 60px; text-align: center; }
-        textarea { width: 100%; text-align: left; box-sizing: border-box; }
-        .full-width { width: 100%; }
-        .btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; margin-bottom: 10px; cursor: pointer; color: #fff; }
-        .btn-gen { background: #7c3aed; } .btn-copy { background: #a855f7; } .btn-res { background: #ccc; }
-        #previewBox { background: #fff; border: 1px dashed #7c3aed; padding: 15px; border-radius: 8px; white-space: pre-wrap; font-size: 14px; display: none; margin-top: 15px; line-height: 1.6; }
+        .card { background: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); }
+        .card-title { font-weight: bold; color: #7c3aed; margin-bottom: 12px; border-left: 4px solid #7c3aed; padding-left: 8px; display: flex; align-items: center; }
+        .row { display: flex; align-items: center; margin-bottom: 10px; gap: 8px; }
+        .label { min-width: 70px; font-size: 14px; color: #666; }
+        input { flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px; text-align: center; }
+        input:disabled { background: #f9f9f9; }
+        .unit { min-width: 20px; font-size: 13px; color: #999; }
+        textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .btn-group { display: flex; gap: 10px; }
+        .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: #fff; }
+        .gen { background: #7c3aed; } .copy { background: #a855f7; }
+        #preview { background: #fff; border: 1px dashed #7c3aed; padding: 15px; border-radius: 8px; display: none; margin-top: 15px; white-space: pre-wrap; font-size: 14px; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h2>EVA STUDIO 日报系统</h2>
-    
-    <div class="card">
-        <div class="row">
-            <select id="store"><option>崇宁路店</option><option>永丰路店</option></select>
-            <select id="weather"><option>晴天</option><option>阴天</option><option>雨天</option></select>
-            <select id="sA"><option>A班:无</option><option>A:楠楠</option><option>A:萍萍</option><option>A:丽丽</option></select>
-        </div>
-    </div>
-
     <div class="card">
         <div class="card-title">本月大盘进度 (自动记忆)</div>
-        <div class="row">月目标:<input type="number" id="mTar" class="full-width"></div>
-        <div class="row">历史累计:<input type="number" id="mBeg" class="full-width"></div>
+        <div class="row"><div class="label">月目标</div><input type="number" id="mTar"><div class="unit">元</div></div>
+        <div class="row"><div class="label">历史累计</div><input type="number" id="mBeg"><div class="unit">元</div></div>
     </div>
 
     <div class="card">
         <div class="card-title">今日营业额度</div>
-        <div class="row">今日目标(自动):<input type="number" id="tarAuto" disabled class="full-width"></div>
-        <div class="row">今日营业额:<input type="number" id="rev" class="full-width"></div>
+        <div class="row"><div class="label">今日目标</div><input type="number" id="tarAuto" disabled><div class="unit">元</div></div>
+        <div class="row"><div class="label">今日额度</div><input type="number" id="rev"><div class="unit">元</div></div>
     </div>
 
     <div class="card">
         <div class="card-title">进店与试穿数据</div>
-        <div class="row">新客:<input type="number" id="nC"> 人 | 老客:<input type="number" id="oC"> 人</div>
-        <div class="row">新试:<input type="number" id="nT"> 人 | 老试:<input type="number" id="oT"> 人</div>
+        <div class="row">新客<input type="number" id="nC">人 | 老客<input type="number" id="oC">人</div>
+        <div class="row">新试<input type="number" id="nT">人 | 老试<input type="number" id="oT">人</div>
     </div>
 
     <div class="card">
         <div class="card-title">成交情况</div>
-        <div class="row">新成交:<input type="number" id="ndP">人 <input type="number" id="ndI">件</div>
-        <div class="row">老成交:<input type="number" id="odP">人 <input type="number" id="odI">件</div>
-        <div class="row">线上:<input type="number" id="onP">人 <input type="number" id="onI">件</div>
+        <div class="row">新成交<input type="number" id="ndP">人<input type="number" id="ndI">件</div>
+        <div class="row">老成交<input type="number" id="odP">人<input type="number" id="odI">件</div>
+        <div class="row">线上<input type="number" id="onP">人<input type="number" id="onI">件</div>
     </div>
 
-    <div class="card">
-        <div class="card-title">收款与私域 (含改衣)</div>
-        <div class="row">微:<input type="number" id="pW"> 支:<input type="number" id="pZ"></div>
-        <div class="row">银:<input type="number" id="pY"> 现:<input type="number" id="pX"></div>
-        <div class="row">改衣:<input type="number" id="alt"> 件</div>
-        <div class="row">微粉:<input type="number" id="prW"> 红:<input type="number" id="prX"> 抖:<input type="number" id="prD"></div>
+    <textarea id="note" placeholder="客户情况与交接事项..." rows="3"></textarea>
+    <div class="btn-group" style="margin-top:15px;">
+        <button class="btn gen" onclick="gen()">生成预览</button>
+        <button class="btn copy" onclick="copy()">一键复制</button>
     </div>
-
-    <textarea id="cust" placeholder="今日客户情况..." rows="3"></textarea>
-    <textarea id="hand" placeholder="交接事项..." rows="3" style="margin-top:10px;"></textarea>
-
-    <button class="btn btn-gen" id="gen">生成预览</button>
-    <button class="btn btn-copy" id="copy">一键复制</button>
-    <button class="btn btn-res" onclick="location.reload()">重置表单</button>
-
-    <div id="previewBox"></div>
+    <div id="preview"></div>
 </div>
 
 <script>
-    const val = id => Number(document.getElementById(id).value || 0);
-    
-    // 自动平摊目标计算
-    function updateTar() {
-        const mTar = val('mTar'), mBeg = val('mBeg');
-        const d = new Date();
-        const daysInMonth = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
-        const remainingDays = daysInMonth - d.getDate() + 1;
-        const target = remainingDays > 0 ? Math.round((mTar - mBeg) / remainingDays) : 0;
-        document.getElementById('tarAuto').value = target;
+    const v = id => Number(document.getElementById(id).value || 0);
+    // 自动平摊逻辑
+    document.querySelectorAll('input').forEach(i => i.oninput = () => {
+        const remaining = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate() - new Date().getDate() + 1;
+        document.getElementById('tarAuto').value = Math.round((v('mTar') - v('mBeg')) / remaining);
+    });
+
+    function gen() {
+        const text = `今日营收：${v('rev')}元 (目标:${document.getElementById('tarAuto').value})\n进店：新${v('nC')}/老${v('oC')}\n成交：新${v('ndP')}人${v('ndI')}件\n备注：${document.getElementById('note').value}`;
+        const p = document.getElementById('preview');
+        p.innerText = text; p.style.display = 'block';
     }
-    ['mTar', 'mBeg'].forEach(id => document.getElementById(id).oninput = updateTar);
-
-    function make() {
-        const d = new Date(), store = document.getElementById('store').value;
-        const icon = store === '崇宁路店' ? '❤️' : '💛';
-        const [nC, oC, nT, oT, ndP, ndI, odP, odI, onP, onI, rev, mTar, mBeg] = ['nC', 'oC', 'nT', 'oT', 'ndP', 'ndI', 'odP', 'odI', 'onP', 'onI', 'rev', 'mTar', 'mBeg'].map(val);
-        
-        return `${icon} EVA【${store}】日报
-📅 ${d.getMonth()+1}/${d.getDate()} | 🌤️ ${document.getElementById('weather').value}
-
-📊【本月经营】目标:${mTar} | 累计:${mBeg + rev} | 完成:${mTar>0 ? ((mBeg+rev)/mTar*100).toFixed(1) : 0}%
-
-【营收】${rev}元 (今日目标:${val('tarAuto')})
-【收款】微${val('pW')}|支${val('pZ')}|银${val('pY')}|现${val('pX')}
-【成交】新${ndP}人${ndI}件|老${odP}人${odI}件|线${onP}人${onI}件
-【私域/改衣】微${val('prW')}|红${val('prX')}|抖${val('prD')} | 改衣:${val('alt')}件
-
-【客户情况】${document.getElementById('cust').value || '无'}
-【交接事项】${document.getElementById('hand').value || '无'}`;
-    }
-
-    document.getElementById('gen').onclick = () => { document.getElementById('previewBox').innerText = make(); document.getElementById('previewBox').style.display = 'block'; };
-    document.getElementById('copy').onclick = () => { navigator.clipboard.writeText(make()).then(() => alert('已复制！')); };
+    const copy = () => navigator.clipboard.writeText(document.getElementById('preview').innerText).then(() => alert('已复制'));
 </script>
 </body>
 </html>
