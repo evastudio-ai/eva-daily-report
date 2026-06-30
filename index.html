@@ -1,615 +1,170 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>EVA 日报生成器</title>
-  <style>
-    :root {
-      --primary: #634db7;
-      --bg-color: #f7f7f8;
-      --card-bg: #ffffff;
-      --text-main: #1a1a1a;
-      --text-muted: #8c8c8c;
-      --border: #ebebeb;
-      --error: #e53e3e;
-      --radius: 8px;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      -webkit-font-smoothing: antialiased;
-      padding-bottom: 80px;
-    }
-
-    .header {
-      background: var(--primary);
-      color: #fff;
-      padding: 16px;
-      text-align: center;
-      font-size: 1.1rem;
-      font-weight: 600;
-      letter-spacing: 1px;
-    }
-
-    .container { padding: 12px; }
-
-    .section {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 16px;
-      margin-bottom: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-    }
-
-    .section-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin-bottom: 12px;
-      color: var(--primary);
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 8px;
-    }
-
-    .form-group { margin-bottom: 12px; }
-    .form-group:last-child { margin-bottom: 0; }
-    
-    label {
-      display: block;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 10px;
-      font-size: 0.95rem;
-      background: #fff;
-      appearance: none;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-    input[readonly] {
-      background-color: #f9f9fb;
-      color: var(--primary);
-      font-weight: 600;
-    }
-
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-
-    .table-layout {
-      display: grid;
-      grid-template-columns: 50px 1fr 1fr;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .table-header {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      text-align: center;
-    }
-    .row-label { font-size: 0.9rem; font-weight: 500; }
-
-    .metrics-box {
-      background: #f4f2fa;
-      border-radius: 6px;
-      padding: 12px;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px 8px;
-      margin-top: 10px;
-    }
-    .metric-item { display: flex; flex-direction: column; align-items: center; }
-    .metric-val { font-size: 1rem; font-weight: 600; color: var(--primary); margin-top: 4px;}
-    .metric-label { font-size: 0.75rem; color: var(--text-muted); }
-
-    .error-text {
-      color: var(--error);
-      font-size: 0.8rem;
-      margin-top: 8px;
-      display: none;
-      background: #fff5f5;
-      padding: 8px;
-      border-radius: 4px;
-    }
-
-    textarea.tall { height: 100px; resize: none; }
-
-    .sticky-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      padding: 12px;
-      display: flex;
-      gap: 10px;
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-      border-top: 1px solid var(--border);
-      z-index: 100;
-    }
-
-    button {
-      border: none;
-      border-radius: 6px;
-      padding: 12px 0;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      text-align: center;
-    }
-    .btn-primary { background: var(--primary); color: #fff; flex: 2; }
-    .btn-secondary { background: #eef2ff; color: var(--primary); flex: 1.5; border: 1px solid var(--primary); }
-    .btn-clear { background: #f5f5f5; color: #a0a0a0; flex: 0.8; font-weight: normal; }
-
-    .result-area { margin-top: 12px; }
-    #resultText { height: 350px; background: #fafafa; line-height: 1.6; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EVA 日报生成器</title>
+    <style>
+        :root { --primary-color: #6a5acd; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f4f4; color: #333; margin: 0; padding: 15px; font-size: 14px; }
+        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        h2 { text-align: center; color: var(--primary-color); margin-bottom: 20px; font-size: 18px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        .row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .col { flex: 1; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; padding: 14px; border: none; border-radius: 8px; background: var(--primary-color); color: #fff; font-size: 16px; margin-top: 10px; cursor: pointer; }
+        button.secondary { background: #eee; color: #666; }
+        #output { margin-top: 25px; padding: 20px; background: #fafafa; border-radius: 8px; border: 1px solid #eee; white-space: pre-wrap; font-size: 14px; line-height: 1.6; }
+    </style>
 </head>
 <body>
-
-  <div class="header">EVA 日报生成器</div>
-
-  <div class="container" id="formContainer">
-    <div class="section grid-2">
-      <div class="form-group"><label>日期</label><input type="date" id="date"></div>
-      <div class="form-group">
-        <label>门店</label>
-        <select id="store">
-          <option value="崇宁路店">崇宁路店</option>
-          <option value="永丰路店">永丰路店</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>班次</label>
-        <select id="shift">
-          <option value="A">A</option><option value="B">B</option><option value="C">C</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>当班人员</label>
-        <select id="staff"></select>
-      </div>
+<div class="container">
+    <h2>EVA 日报生成器</h2>
+    
+    <div class="row">
+        <div class="col"><label>日期</label><input type="date" id="date"></div>
+        <div class="col"><label>门店</label><select id="store"><option>崇宁路店</option><option>永丰路店</option></select></div>
+    </div>
+    <div class="row">
+        <div class="col"><label>班次</label><select id="shift"><option>A</option><option>B</option><option>C</option></select></div>
+        <div class="col"><label>当班人员</label><select id="staff"><option value="">请选择</option><option>楠楠</option><option>萍萍</option><option>丽丽</option><option>EVA</option></select></div>
     </div>
 
-    <div class="section">
-      <div class="section-title">核心 KPI</div>
-      
-      <div class="grid-3" style="margin-bottom: 16px;">
-        <div class="form-group"><label>目标</label><input type="number" id="target" placeholder="0"></div>
-        <div class="form-group"><label>累计营业额</label><input type="number" id="cumRevenue" placeholder="0"></div>
-        <div class="form-group"><label>达成率(%)</label><input type="text" id="targetRate" readonly placeholder="0%"></div>
-      </div>
-
-      <div class="form-group" style="padding-top: 16px; border-top: 1px dashed var(--border);">
-        <label style="color: var(--primary); font-weight: 600; font-size: 0.9rem;">今日营业额</label>
-        <input type="number" id="todayRevenue" placeholder="0">
-      </div>
-      
-      <div class="grid-4">
-        <div class="form-group"><label>微信</label><input type="number" id="payWx" placeholder="0"></div>
-        <div class="form-group"><label>支付宝</label><input type="number" id="payAli" placeholder="0"></div>
-        <div class="form-group"><label>银行卡</label><input type="number" id="payBank" placeholder="0"></div>
-        <div class="form-group"><label>其他</label><input type="number" id="payOther" placeholder="0"></div>
-      </div>
-      <div id="payError" class="error-text">⚠️ 收款金额与今日营业额不一致，请检查。</div>
+    <div class="row">
+        <div class="col"><label>目标</label><input type="number" id="target" placeholder="元"></div>
+        <div class="col"><label>累计营业额</label><input type="number" id="totalSales" placeholder="元"></div>
     </div>
+    <div class="form-group"><label>今日营业额</label><input type="number" id="todaySales" placeholder="元"></div>
 
-    <div class="section">
-      <div class="section-title">流量数据</div>
-      <label>来客 (人)</label>
-      <div class="grid-3" style="margin-bottom: 12px;">
-        <input type="number" id="trafficNew" placeholder="新客">
-        <input type="number" id="trafficOld" placeholder="老客">
-        <input type="text" id="trafficTotal" readonly placeholder="总计">
-      </div>
-      <label>试穿 (人)</label>
-      <div class="grid-3">
-        <input type="number" id="tryNew" placeholder="新客">
-        <input type="number" id="tryOld" placeholder="老客">
-        <input type="text" id="tryTotal" readonly placeholder="总计">
-      </div>
-    </div>
+    <label>来客 (新/老)</label>
+    <div class="row"><input type="number" id="guestNew"><input type="number" id="guestOld"></div>
+    <label>试穿 (新/老)</label>
+    <div class="row"><input type="number" id="tryNew"><input type="number" id="tryOld"></div>
+    
+    <label>成交人数 (新/老/线)</label>
+    <div class="row"><input type="number" id="dealNewP"><input type="number" id="dealOldP"><input type="number" id="dealWebP"></div>
+    <label>成交件数 (新/老/线)</label>
+    <div class="row"><input type="number" id="dealNewI"><input type="number" id="dealOldI"><input type="number" id="dealWebI"></div>
 
-    <div class="section">
-      <div class="section-title">成交数据</div>
-      
-      <div class="table-layout table-header">
-        <div>客群</div><div>人数</div><div>件数</div>
-      </div>
-      <div class="table-layout">
-        <div class="row-label">新客</div>
-        <input type="number" id="dealNewPeople" placeholder="0">
-        <input type="number" id="dealNewItems" placeholder="0">
-      </div>
-      <div class="table-layout">
-        <div class="row-label">老客</div>
-        <input type="number" id="dealOldPeople" placeholder="0">
-        <input type="number" id="dealOldItems" placeholder="0">
-      </div>
-      <div class="table-layout">
-        <div class="row-label">线上</div>
-        <input type="number" id="dealOnlinePeople" placeholder="0">
-        <input type="number" id="dealOnlineItems" placeholder="0">
-      </div>
-      <div class="table-layout" style="margin-top: 4px; padding-top: 8px; border-top: 1px dashed #eee;">
-        <div class="row-label" style="color: var(--primary);">总计</div>
-        <input type="text" id="dealTotalPeople" readonly placeholder="0">
-        <input type="text" id="dealTotalItems" readonly placeholder="0">
-      </div>
+    <label>收款 (微信/支付宝/银行/其他)</label>
+    <div class="row"><input type="number" id="payWx"><input type="number" id="payAli"><input type="number" id="payBank"><input type="number" id="payOther"></div>
+    
+    <label>新客来源 (微信/小红书/抖音/其他)</label>
+    <div class="row"><input type="number" id="srcWx"><input type="number" id="srcRed"><input type="number" id="srcDou"><input type="number" id="srcOther"></div>
 
-      <div class="metrics-box">
-        <div class="metric-item"><span class="metric-label">CR(转化率)</span><span class="metric-val" id="metricCR">0%</span></div>
-        <div class="metric-item"><span class="metric-label">UPT(连带率)</span><span class="metric-val" id="metricUPT">0.0</span></div>
-        <div class="metric-item"><span class="metric-label">ATP(客单价)</span><span class="metric-val" id="metricATP">0</span></div>
-        <div class="metric-item"><span class="metric-label">新客率</span><span class="metric-val" id="metricNewRate">0%</span></div>
-        <div class="metric-item"><span class="metric-label">老客率</span><span class="metric-val" id="metricOldRate">0%</span></div>
-      </div>
-    </div>
+    <div class="form-group"><label>今日客户情况</label><textarea id="customerInfo" rows="2"></textarea></div>
+    <div class="form-group"><label>交接事项及其他备注</label><textarea id="remark" rows="2"></textarea></div>
+    <div class="form-group"><label>填表人</label><input type="text" id="filler"></div>
 
-    <div class="section">
-      <div class="section-title">新客来源</div>
-      <div class="grid-4">
-        <div class="form-group"><label>微信</label><input type="number" id="srcWx" placeholder="0"></div>
-        <div class="form-group"><label>小红书</label><input type="number" id="srcRed" placeholder="0"></div>
-        <div class="form-group"><label>抖音</label><input type="number" id="srcDy" placeholder="0"></div>
-        <div class="form-group"><label>其他</label><input type="number" id="srcOther" placeholder="0"></div>
-      </div>
-      <div id="srcError" class="error-text">⚠️ 提示：来源人数合计不等于来客新客人数，请检查。</div>
-    </div>
+    <button onclick="generateReport()">生成日报</button>
+    <button onclick="copyReport()" class="secondary">一键复制</button>
+</div>
+<div id="output"></div>
 
-    <div class="section">
-      <div class="form-group">
-        <label class="section-title" style="border:none; padding:0;">今日客户情况</label>
-        <textarea id="customers" class="tall" placeholder="记录今日客户重点情况...（默认：今日无特殊情况）"></textarea>
-      </div>
-      <div class="form-group" style="margin-top: 16px;">
-        <label class="section-title" style="border:none; padding:0;">交接事项及其他备注</label>
-        <textarea id="notes" class="tall" placeholder="填写需要交接的事项...（默认：今日无特殊情况）"></textarea>
-      </div>
-    </div>
+<script>
+    const staffSelect = document.getElementById('staff');
+    const fillerInput = document.getElementById('filler');
+    let fillerModified = false;
 
-    <div class="section grid-2">
-      <div class="form-group"><label>填表人</label><input type="text" id="author" placeholder="默认同步当班人员"></div>
-    </div>
-
-    <div class="section result-area" id="resultSection" style="display: none;">
-      <div class="section-title">日报预览</div>
-      <textarea id="resultText" readonly></textarea>
-    </div>
-  </div>
-
-  <div class="sticky-bar">
-    <button class="btn-primary" onclick="generateReport()">生成日报</button>
-    <button class="btn-secondary" onclick="copyReport()">一键复制</button>
-    <button class="btn-clear" onclick="clearData()">清空</button>
-  </div>
-
-  <script>
-    // ==========================================
-    // 员工名单配置 (在此处增减员工，下拉框自动更新)
-    // ==========================================
-    const STAFF_LIST = [
-      "慢慢",
-      "小雨",
-      "Lily",
-      "Coco"
-    ];
-
-    const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
-    const getStr = (id) => document.getElementById(id).value.trim();
-    const setVal = (id, val) => document.getElementById(id).value = val;
-
-    // 所有需要监听和缓存的字段
-    const inputIds = [
-      'date', 'store', 'shift', 'staff', 'target', 'cumRevenue', 'todayRevenue',
-      'trafficNew', 'trafficOld', 'tryNew', 'tryOld',
-      'dealNewPeople', 'dealNewItems', 'dealOldPeople', 'dealOldItems', 'dealOnlinePeople', 'dealOnlineItems',
-      'payWx', 'payAli', 'payBank', 'payOther',
-      'srcWx', 'srcRed', 'srcDy', 'srcOther',
-      'customers', 'notes', 'author'
-    ];
-
-    function initStaffList() {
-      const staffSelect = document.getElementById('staff');
-      STAFF_LIST.forEach(name => {
-        const opt = document.createElement('option');
-        opt.value = name;
-        opt.innerText = name;
-        staffSelect.appendChild(opt);
-      });
-    }
-
-    function initDate() {
-      const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth() + 1).padStart(2, '0');
-      const dd = String(today.getDate()).padStart(2, '0');
-      document.getElementById('date').value = `${yyyy}-${mm}-${dd}`;
-    }
-
-    // 填表人输入监听：一旦手动修改过，打上 modified 标记
-    document.getElementById('author').addEventListener('input', function() {
-      this.dataset.modified = 'true';
-      if (this.value.trim() === '') {
-        // 如果被手动清空，重新允许自动同步
-        this.dataset.modified = '';
-        calculateAndValidate(); // 触发重新同步
-      }
+    // 自动同步逻辑
+    staffSelect.addEventListener('change', () => {
+        if (!fillerModified) fillerInput.value = staffSelect.value;
     });
+    fillerInput.addEventListener('input', () => fillerModified = true);
 
-    function calculateAndValidate() {
-      const tar = getVal('target');
-      const cumRev = getVal('cumRevenue');
-      const todayRev = getVal('todayRevenue');
-      
-      const tfNew = getVal('trafficNew');
-      const tfOld = getVal('trafficOld');
-      const tfTotal = tfNew + tfOld;
-      
-      const trNew = getVal('tryNew');
-      const trOld = getVal('tryOld');
-      const trTotal = trNew + trOld;
-
-      const dnPeo = getVal('dealNewPeople');
-      const dnItem = getVal('dealNewItems');
-      const doPeo = getVal('dealOldPeople');
-      const doItem = getVal('dealOldItems');
-      const onPeo = getVal('dealOnlinePeople');
-      const onItem = getVal('dealOnlineItems');
-
-      const totalPeo = dnPeo + doPeo + onPeo;
-      const totalItem = dnItem + doItem + onItem;
-
-      setVal('trafficTotal', tfTotal);
-      setVal('tryTotal', trTotal);
-      setVal('dealTotalPeople', totalPeo);
-      setVal('dealTotalItems', totalItem);
-
-      const targetRate = tar > 0 ? ((cumRev / tar) * 100).toFixed(1) + '%' : '0%';
-      const cr = tfTotal > 0 ? Math.round((totalPeo / tfTotal) * 100) + '%' : '0%';
-      const upt = totalPeo > 0 ? (totalItem / totalPeo).toFixed(1) : '0.0';
-      const atp = totalItem > 0 ? Math.round(todayRev / totalItem) : '0';
-      const newRate = totalPeo > 0 ? Math.round((dnPeo / totalPeo) * 100) + '%' : '0%';
-      const oldRate = totalPeo > 0 ? Math.round((doPeo / totalPeo) * 100) + '%' : '0%';
-
-      setVal('targetRate', targetRate);
-      document.getElementById('metricCR').innerText = cr;
-      document.getElementById('metricUPT').innerText = upt;
-      document.getElementById('metricATP').innerText = atp;
-      document.getElementById('metricNewRate').innerText = newRate;
-      document.getElementById('metricOldRate').innerText = oldRate;
-
-      // 填表人自动同步逻辑
-      const staffStr = getStr('staff');
-      const authorEl = document.getElementById('author');
-      if (!authorEl.dataset.modified) {
-        authorEl.value = staffStr;
-      }
-
-      // 收款校验
-      const payTotal = getVal('payWx') + getVal('payAli') + getVal('payBank') + getVal('payOther');
-      const payErrorEl = document.getElementById('payError');
-      if (todayRev > 0 && Math.abs(todayRev - payTotal) > 0.1) {
-        payErrorEl.style.display = 'block';
-      } else {
-        payErrorEl.style.display = 'none';
-      }
-
-      // 新客来源校验
-      const srcTotal = getVal('srcWx') + getVal('srcRed') + getVal('srcDy') + getVal('srcOther');
-      const srcErrorEl = document.getElementById('srcError');
-      if (tfNew > 0 && srcTotal !== tfNew) {
-        srcErrorEl.style.display = 'block';
-      } else {
-        srcErrorEl.style.display = 'none';
-      }
-
-      saveToLocal();
-    }
-
-    function saveToLocal() {
-      const data = { _timestamp: new Date().toDateString() }; // 存入当天的日期字符串
-      inputIds.forEach(id => {
-        data[id] = document.getElementById(id).value;
-      });
-      // 存储填表人的修改状态
-      data['_authorModified'] = document.getElementById('author').dataset.modified || '';
-      localStorage.setItem('evaDailyReportData', JSON.stringify(data));
-    }
-
-    function loadFromLocal() {
-      initDate(); // 优先设置为当天日期
-      const saved = localStorage.getItem('evaDailyReportData');
-      if (saved) {
-        try {
-          const data = JSON.parse(saved);
-          const isTodayCache = data._timestamp === new Date().toDateString();
-
-          inputIds.forEach(id => {
-            if (data[id] !== undefined) {
-              // 除非缓存是今天的，否则不恢复被缓存的日期（跳过旧日期恢复）
-              if (id === 'date' && !isTodayCache) return; 
-              document.getElementById(id).value = data[id];
-            }
-          });
-
-          if (data['_authorModified']) {
-            document.getElementById('author').dataset.modified = 'true';
-          }
-        } catch (e) { console.error('读取缓存失败', e); }
-      }
-      calculateAndValidate();
-    }
-
-    document.querySelectorAll('input, select, textarea:not(#resultText)').forEach(el => {
-      el.addEventListener('input', calculateAndValidate);
-      el.addEventListener('change', calculateAndValidate); // 兼容 select
-    });
+    function formatMoney(num) { return (num || 0).toLocaleString('en-US') + '元'; }
 
     function generateReport() {
-      calculateAndValidate(); 
+        const d = document.getElementById('date').value || new Date().toISOString().slice(0,10);
+        const store = document.getElementById('store').value;
+        const shift = document.getElementById('shift').value;
+        const staff = document.getElementById('staff').value;
+        const target = parseFloat(document.getElementById('target').value) || 0;
+        const totalSales = parseFloat(document.getElementById('totalSales').value) || 0;
+        const todaySales = parseFloat(document.getElementById('todaySales').value) || 0;
 
-      const dateStr = getStr('date');
-      const fDate = dateStr ? `${dateStr.split('-')[0]}年${parseInt(dateStr.split('-')[1])}月${parseInt(dateStr.split('-')[2])}日` : '';
-      
-      const store = getStr('store');
-      const shift = getStr('shift');
-      const staff = getStr('staff');
-      
-      const tar = getVal('target');
-      const cumRev = getVal('cumRevenue');
-      const todayRev = getVal('todayRevenue');
-      const tRate = getStr('targetRate');
+        const gN = parseInt(document.getElementById('guestNew').value) || 0;
+        const gO = parseInt(document.getElementById('guestOld').value) || 0;
+        const tN = parseInt(document.getElementById('tryNew').value) || 0;
+        const tO = parseInt(document.getElementById('tryOld').value) || 0;
+        const dNP = parseInt(document.getElementById('dealNewP').value) || 0;
+        const dNI = parseInt(document.getElementById('dealNewI').value) || 0;
+        const dOP = parseInt(document.getElementById('dealOldP').value) || 0;
+        const dOI = parseInt(document.getElementById('dealOldI').value) || 0;
+        const dWP = parseInt(document.getElementById('dealWebP').value) || 0;
+        const dWI = parseInt(document.getElementById('dealWebI').value) || 0;
 
-      const tfNew = getVal('trafficNew');
-      const tfOld = getVal('trafficOld');
-      const tfTotal = getStr('trafficTotal');
+        const totalP = dNP + dOP + dWP;
+        const totalI = dNI + dOI + dWI;
+        const reach = target > 0 ? (totalSales / target * 100).toFixed(1) + '%' : '0%';
+        const CR = (gN + gO) > 0 ? (totalP / (gN + gO) * 100).toFixed(0) + '%' : '0%';
+        const UPT = totalP > 0 ? (totalI / totalP).toFixed(1) : '0';
+        const ATP = totalI > 0 ? (todaySales / totalI).toFixed(0) : '0';
+        const newR = totalP > 0 ? (dNP / totalP * 100).toFixed(0) + '%' : '0%';
+        const oldR = totalP > 0 ? (dOP / totalP * 100).toFixed(0) + '%' : '0%';
 
-      const trNew = getVal('tryNew');
-      const trOld = getVal('tryOld');
-      const trTotal = getStr('tryTotal');
+        const report = `💜 EVA【${store}】日报
+📅 ${d}
+👤 ${shift}班｜${staff}
+━━━━━━━━━━━━━━
 
-      const dnPeo = getVal('dealNewPeople');
-      const dnItem = getVal('dealNewItems');
-      const doPeo = getVal('dealOldPeople');
-      const doItem = getVal('dealOldItems');
-      const onPeo = getVal('dealOnlinePeople');
-      const onItem = getVal('dealOnlineItems');
+📊 核心KPI
+今日：${formatMoney(todaySales)}
+累计：${formatMoney(totalSales)}
+目标：${formatMoney(target)}
+达成：${reach}
 
-      const cr = document.getElementById('metricCR').innerText;
-      const upt = document.getElementById('metricUPT').innerText;
-      const atp = document.getElementById('metricATP').innerText;
-      const newRate = document.getElementById('metricNewRate').innerText;
-      const oldRate = document.getElementById('metricOldRate').innerText;
+👣 客流
+来客：新${gN}｜老${gO}｜共${gN + gO}
+试穿：新${tN}｜老${tO}｜共${tN + tO}
 
-      const payWx = getVal('payWx');
-      const payAli = getVal('payAli');
-      const payBank = getVal('payBank');
-      const payOther = getVal('payOther');
+成交：
+新客：${dNP}人 / ${dNI}件
+老客：${dOP}人 / ${dOI}件
+线上：${dWP}人 / ${dWI}件
 
-      const srcWx = getVal('srcWx');
-      const srcRed = getVal('srcRed');
-      const srcDy = getVal('srcDy');
-      const srcOther = getVal('srcOther');
+📈 经营指标
+CR：${CR}
+UPT：${UPT}
+ATP：${formatMoney(ATP)}
+新客率：${newR}
+老客率：${oldR}
 
-      const customers = getStr('customers') || '今日无特殊情况';
-      const notes = getStr('notes') || '今日无特殊情况';
-      const author = getStr('author') || staff;
+💳 收款结构
+微信：${formatMoney(document.getElementById('payWx').value)}
+支付宝：${formatMoney(document.getElementById('payAli').value)}
+银行卡：${formatMoney(document.getElementById('payBank').value)}
+其他：${formatMoney(document.getElementById('payOther').value)}
 
-      // 遵循 V1.3.1 的排版格式，增加模块空行，优化微信阅读体验
-      const report = `💜 EVA【${store}】日报
-${fDate}
+🌱 新客来源
+微信：${document.getElementById('srcWx').value}人
+小红书：${document.getElementById('srcRed').value}人
+抖音：${document.getElementById('srcDou').value}人
+其他：${document.getElementById('srcOther').value}人
 
-【班次】${shift}:${staff}
+📝 今日客户情况
+${document.getElementById('customerInfo').value || '暂无'}
 
-【核心KPI】
-目标：${tar}元
-累计：${cumRev}元
-达成：${tRate}
-今日：${todayRev}元
+📌 交接事项
+${document.getElementById('remark').value || '无'}
+━━━━━━━━━━━━━━
 
-【来客】新${tfNew} 老${tfOld} 共${tfTotal}人
-【试穿】新${trNew} 老${trOld} 共${trTotal}人
-【成交】新${dnPeo}人${dnItem}件 | 老${doPeo}人${doItem}件 | 线上${onPeo}人${onItem}件
+✍️ 填表人：${fillerInput.value}`;
 
-【经营指标】
-CR：${cr}
-UPT：${upt}
-ATP：${atp}元
-新客率：${newRate}
-老客率：${oldRate}
-
-【收款】微信${payWx}元 | 支付宝${payAli}元 | 银行卡${payBank}元 | 其他${payOther}元
-
-【新客来源】微信${srcWx}人 | 小红书${srcRed}人 | 抖音${srcDy}人 | 其他${srcOther}人
-
-【今日客户情况】
-${customers}
-
-【交接事项及其他备注】
-${notes}
-
-【填表人】${author}`;
-
-      const resArea = document.getElementById('resultSection');
-      resArea.style.display = 'block';
-      document.getElementById('resultText').value = report;
-
-      setTimeout(() => {
-        resArea.scrollIntoView({ behavior: 'smooth', block: 'end' });
-      }, 100);
+        document.getElementById('output').innerText = report;
+        window.scrollTo(0, document.body.scrollHeight);
     }
 
     function copyReport() {
-      const text = getStr('resultText');
-      if (!text) {
-        alert("请先点击「生成日报」！");
-        return;
-      }
-      
-      if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => {
-          alert('✅ 日报已复制成功，可直接去微信粘贴');
-        }).catch(err => fallbackCopy(text));
-      } else {
-        fallbackCopy(text);
-      }
+        const text = document.getElementById('output').innerText;
+        if (!text) return alert("请先生成日报");
+        navigator.clipboard.writeText(text).then(() => alert("日报已复制"));
     }
 
-    function fallbackCopy(text) {
-      const textArea = document.createElement("textarea");
-      textArea.value = text;
-      document.body.appendChild(textArea);
-      textArea.select();
-      try {
-        document.execCommand('copy');
-        alert('✅ 日报已复制成功，可直接去微信粘贴');
-      } catch (err) {
-        alert('❌ 复制失败，请手动长按全选复制');
-      }
-      document.body.removeChild(textArea);
-    }
-
-    function clearData() {
-      if (confirm('确定要清空所有数据吗？此操作不可恢复。')) {
-        inputIds.forEach(id => {
-          const el = document.getElementById(id);
-          if (el.tagName === 'SELECT') {
-            el.selectedIndex = 0;
-          } else {
-            el.value = '';
-          }
-        });
-        document.getElementById('author').dataset.modified = '';
-        document.getElementById('resultText').value = '';
-        document.getElementById('resultSection').style.display = 'none';
-        
-        localStorage.removeItem('evaDailyReportData');
-        initDate(); 
-        calculateAndValidate();
-        window.scrollTo(0, 0); 
-      }
-    }
-
-    // 页面初始化
-    window.onload = function() {
-      initStaffList();
-      loadFromLocal();
-    };
-  </script>
+    // 默认日期
+    document.getElementById('date').value = new Date().toISOString().slice(0,10);
+</script>
 </body>
 </html>
