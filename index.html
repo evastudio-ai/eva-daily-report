@@ -7,7 +7,6 @@
     <style>
         :root {
             --primary-color: #7C4DFF;
-            --primary-light: #F3EFFFF;
             --text-main: #333333;
             --text-muted: #666666;
             --border-color: #EAEAEA;
@@ -34,46 +33,41 @@
             max-width: 600px;
             margin: 0 auto;
             background: #ffffff;
-            border-radius: 12px;
+            border-radius: 8px;
             padding: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         h2 {
             text-align: center;
-            font-size: 18px;
+            font-size: 16px;
             margin-bottom: 16px;
-            color: var(--primary-color);
+            color: var(--text-main);
             font-weight: 600;
         }
 
         section {
-            margin-bottom: 16px;
-            background: #FDFAFF;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(124, 77, 255, 0.08);
+            margin-bottom: 14px;
+            background: #ffffff;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        section.kpi-section {
-            background: var(--primary-light);
-            border: 1px solid rgba(124, 77, 255, 0.15);
+        section:last-of-type {
+            border-bottom: none;
         }
 
         .section-title {
             font-size: 13px;
             font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            color: var(--text-main);
+            margin-bottom: 8px;
         }
 
         .form-row {
             display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 8px;
+            margin-bottom: 8px;
         }
 
         .form-row:last-child {
@@ -87,17 +81,17 @@
         }
 
         label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         input, select, textarea {
             width: 100%;
-            padding: 8px;
+            padding: 6px 8px;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 14px;
+            border-radius: 4px;
+            font-size: 13px;
             color: var(--text-main);
             background-color: #ffffff;
             outline: none;
@@ -105,34 +99,33 @@
         }
 
         input:focus, select:focus, textarea:focus {
-            border-color: var(--primary-color);
+            border-color: #999999;
         }
 
         input[readonly] {
-            background-color: #F1F1F1;
+            background-color: #F5F5F5;
             color: var(--text-muted);
         }
 
         textarea {
             resize: none;
-            height: 60px;
+            height: 54px;
         }
 
         .btn-group {
             display: flex;
-            gap: 10px;
-            margin-top: 16px;
+            gap: 8px;
+            margin-top: 14px;
         }
 
         button {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             border: none;
-            border-radius: 8px;
-            font-size: 15px;
+            border-radius: 6px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
-            transition: opacity 0.2s;
         }
 
         button:active {
@@ -142,45 +135,45 @@
         .btn-primary {
             background-color: var(--primary-color);
             color: #ffffff;
-            flex: 2;
+            flex: 1.5;
         }
 
         .btn-success {
             background-color: #2ECC71;
             color: #ffffff;
-            flex: 2;
+            flex: 1.5;
         }
 
         .btn-secondary {
-            background-color: #E0E0E0;
+            background-color: #EEEEEE;
             color: var(--text-main);
         }
 
         .output-section {
-            margin-top: 16px;
-            background: #F9F9F9;
-            border: 1px dashed var(--border-color);
-            padding: 12px;
-            border-radius: 8px;
+            margin-top: 14px;
+            background: #FAFAFA;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 6px;
         }
 
         .output-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--text-muted);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         #reportPreview {
             width: 100%;
-            height: 220px;
+            height: 200px;
             font-family: monospace;
             font-size: 13px;
-            line-height: 1.5;
+            line-height: 1.42;
             background: #ffffff;
-            padding: 10px;
+            padding: 8px;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 4px;
             white-space: pre-wrap;
             overflow-y: auto;
         }
@@ -190,11 +183,11 @@
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.75);
+            background: rgba(0,0,0,0.8);
             color: #fff;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 13px;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 12px;
             display: none;
             z-index: 999;
         }
@@ -203,7 +196,7 @@
 <body>
 
 <div class="container">
-    <h2>📊 EVA 日报生成器</h2>
+    <h2>EVA 日报生成器</h2>
 
     <section>
         <div class="form-row">
@@ -230,21 +223,21 @@
             </div>
             <div class="form-group">
                 <label>当班人员</label>
-                <input type="text" id="staff" placeholder="请输入姓名" oninput="syncReporter()">
+                <input type="text" id="staff" oninput="syncReporter()">
             </div>
         </div>
     </section>
 
-    <section class="kpi-section">
+    <section>
         <div class="section-title">核心 KPI</div>
         <div class="form-row">
             <div class="form-group">
-                <label>营业目标 (元)</label>
-                <input type="number" id="target" placeholder="0" oninput="calculateData()">
+                <label>目标</label>
+                <input type="number" id="target" oninput="calculateData()">
             </div>
             <div class="form-group">
-                <label>今日营业额 (元)</label>
-                <input type="number" id="turnover" placeholder="0" oninput="calculateData()">
+                <label>营业额</label>
+                <input type="number" id="turnover" oninput="calculateData()">
             </div>
             <div class="form-group">
                 <label>目标达成率</label>
@@ -257,12 +250,12 @@
         <div class="section-title">流量数据</div>
         <div class="form-row">
             <div class="form-group">
-                <label>来客新客 (人)</label>
-                <input type="number" id="trafficNew" placeholder="0" oninput="calculateData()">
+                <label>新客</label>
+                <input type="number" id="trafficNew" oninput="calculateData()">
             </div>
             <div class="form-group">
-                <label>来客老客 (人)</label>
-                <input type="number" id="trafficOld" placeholder="0" oninput="calculateData()">
+                <label>老客</label>
+                <input type="number" id="trafficOld" oninput="calculateData()">
             </div>
             <div class="form-group">
                 <label>来客总数</label>
@@ -271,5 +264,293 @@
         </div>
         <div class="form-row">
             <div class="form-group">
-                <label>试穿新客 (人)</label>
-                <input type="number" id="fittingNew" placeholder="0" oninput="calculateData()">
+                <label>试穿新客</label>
+                <input type="number" id="fittingNew" oninput="calculateData()">
+            </div>
+            <div class="form-group">
+                <label>试穿老客</label>
+                <input type="number" id="fittingOld" oninput="calculateData()">
+            </div>
+            <div class="form-group">
+                <label>试穿总数</label>
+                <input type="text" id="fittingTotal" readonly value="0">
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">成交数据</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>新客成交 (人)</label>
+                <input type="number" id="buyNewPeople" oninput="calculateData()">
+            </div>
+            <div class="form-group">
+                <label>新客成交 (件)</label>
+                <input type="number" id="buyNewCount" oninput="calculateData()">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>老客成交 (人)</label>
+                <input type="number" id="buyOldPeople" oninput="calculateData()">
+            </div>
+            <div class="form-group">
+                <label>老客成交 (件)</label>
+                <input type="number" id="buyOldCount" oninput="calculateData()">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>线上成交 (人)</label>
+                <input type="number" id="buyOnlinePeople" oninput="calculateData()">
+            </div>
+            <div class="form-group">
+                <label>线上成交 (件)</label>
+                <input type="number" id="buyOnlineCount" oninput="calculateData()">
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">收款结构</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>微信</label>
+                <input type="number" id="payWechat">
+            </div>
+            <div class="form-group">
+                <label>支付宝</label>
+                <input type="number" id="payAlipay">
+            </div>
+            <div class="form-group">
+                <label>银行卡</label>
+                <input type="number" id="payCard">
+            </div>
+            <div class="form-group">
+                <label>其他</label>
+                <input type="number" id="payOther">
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-title">新客来源</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>微信</label>
+                <input type="number" id="srcWechat">
+            </div>
+            <div class="form-group">
+                <label>小红书</label>
+                <input type="number" id="srcXhs">
+            </div>
+            <div class="form-group">
+                <label>抖音</label>
+                <input type="number" id="srcDouyin">
+            </div>
+            <div class="form-group">
+                <label>其他</label>
+                <input type="number" id="srcOther">
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="form-group" style="margin-bottom: 8px;">
+            <label>今日客户情况</label>
+            <textarea id="customerNote"></textarea>
+        </div>
+        <div class="form-group">
+            <label>交接事项及其他备注</label>
+            <textarea id="handoverNote"></textarea>
+        </div>
+    </section>
+
+    <section>
+        <div class="form-group">
+            <label>填表人</label>
+            <input type="text" id="reporter">
+        </div>
+    </section>
+
+    <div class="btn-group">
+        <button class="btn-secondary" onclick="clearForm()">清空</button>
+        <button class="btn-primary" onclick="generateReport()">生成日报</button>
+        <button class="btn-success" onclick="copyReport()">一键复制</button>
+    </div>
+
+    <div class="output-section">
+        <div class="output-title">日报预览：</div>
+        <div id="reportPreview">暂未生成内容</div>
+    </div>
+</div>
+
+<div class="toast" id="toast">复制成功</div>
+
+<script>
+    window.onload = function() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        document.getElementById('date').value = `${yyyy}-${mm}-${dd}`;
+    };
+
+    function syncReporter() {
+        document.getElementById('reporter').value = document.getElementById('staff').value;
+    }
+
+    function getNum(id) {
+        const val = parseFloat(document.getElementById(id).value);
+        return isNaN(val) ? 0 : val;
+    }
+
+    function calculateData() {
+        const target = getNum('target');
+        const turnover = getNum('turnover');
+        document.getElementById('achievementRate').value = target > 0 ? ((turnover / target) * 100).toFixed(1) + '%' : '0%';
+
+        const trafficNew = getNum('trafficNew');
+        const trafficOld = getNum('trafficOld');
+        document.getElementById('trafficTotal').value = trafficNew + trafficOld;
+
+        document.getElementById('fittingTotal').value = getNum('fittingNew') + getNum('fittingOld');
+    }
+
+    function generateReport() {
+        const dateRaw = document.getElementById('date').value;
+        let dateStr = "";
+        if(dateRaw) {
+            const d = new Date(dateRaw);
+            dateStr = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+        }
+
+        const store = document.getElementById('store').value;
+        const shift = document.getElementById('shift').value;
+        const staff = document.getElementById('staff').value || '—';
+        
+        const target = getNum('target');
+        const turnover = getNum('turnover');
+        const achRate = target > 0 ? ((turnover / target) * 100).toFixed(1) + '%' : '0%';
+
+        const trafficNew = getNum('trafficNew');
+        const trafficOld = getNum('trafficOld');
+        const trafficTotal = trafficNew + trafficOld;
+
+        const fittingNew = getNum('fittingNew');
+        const fittingOld = getNum('fittingOld');
+        const fittingTotal = fittingNew + fittingOld;
+
+        const buyNewPeople = getNum('buyNewPeople');
+        const buyNewCount = getNum('buyNewCount');
+        const buyOldPeople = getNum('buyOldPeople');
+        const buyOldCount = getNum('buyOldCount');
+        const buyOnlinePeople = getNum('buyOnlinePeople');
+        const buyOnlineCount = getNum('buyOnlineCount');
+
+        const totalPeople = buyNewPeople + buyOldPeople + buyOnlinePeople;
+        const totalCount = buyNewCount + buyOldCount + buyOnlineCount;
+
+        const cr = trafficTotal > 0 ? Math.round((totalPeople / trafficTotal) * 100) + '%' : '0%';
+        const upt = totalPeople > 0 ? (totalCount / totalPeople).toFixed(1) : '0';
+        const atp = totalCount > 0 ? Math.round(turnover / totalCount) + '元' : '0元';
+        
+        const newRate = totalPeople > 0 ? Math.round((buyNewPeople / totalPeople) * 100) + '%' : '0%';
+        const oldRate = totalPeople > 0 ? Math.round((buyOldPeople / totalPeople) * 100) + '%' : '0%';
+
+        const customerNote = document.getElementById('customerNote').value.trim() || '无';
+        const handoverNote = document.getElementById('handoverNote').value.trim() || '无';
+        const reporter = document.getElementById('reporter').value || staff;
+
+        const reportText = `💜 EVA【${store}】日报
+${dateStr}
+
+【班次】${shift}:${staff}
+
+【核心KPI】
+营业额：${turnover}元｜目标：${target}元｜达成：${achRate}
+
+【来客】新${trafficNew} 老${trafficOld} 共${trafficTotal}人
+【试穿】新${fittingNew} 老${fittingOld} 共${fittingTotal}人
+【成交】新${buyNewPeople}人${buyNewCount}件 | 老${buyOldPeople}人${buyOldCount}件 | 线上${buyOnlinePeople}人${buyOnlineCount}件
+
+【指标】CR ${cr} | UPT ${upt} | ATP ${atp}
+新客率${newRate} | 老客率${oldRate}
+
+【收款】微信${getNum('payWechat')} | 支付宝${getNum('payAlipay')} | 银行卡${getNum('payCard')} | 其他${getNum('payOther')}
+
+【新】微信${getNum('srcWechat')}人 | 小红书${getNum('srcXhs')}人 | 抖音${getNum('srcDouyin')}人 | 其他${getNum('srcOther')}人
+
+【今日客户情况】
+${customerNote}
+
+【交接事项及其他备注】
+${handoverNote}
+
+【填表人】${reporter}`;
+
+        document.getElementById('reportPreview').textContent = reportText;
+    }
+
+    function copyReport() {
+        const text = document.getElementById('reportPreview').textContent;
+        if (text === "暂未生成内容" || !text) {
+            showToast("请先生成日报再复制");
+            return;
+        }
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("复制成功");
+            }).catch(() => {
+                fallbackCopy(text);
+            });
+        } else {
+            fallbackCopy(text);
+        }
+    }
+
+    function fallbackCopy(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            showToast("复制成功");
+        } catch (err) {
+            showToast("复制失败，请手动选择预览框文本复制");
+        }
+        document.body.removeChild(textArea);
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2000);
+    }
+
+    function clearForm() {
+        if(confirm("确定要清空当前填写的全部数据吗？")) {
+            const inputs = document.querySelectorAll('input:not([readonly]), textarea');
+            inputs.forEach(input => input.value = '');
+            document.getElementById('achievementRate').value = '0%';
+            document.getElementById('trafficTotal').value = '0';
+            document.getElementById('fittingTotal').value = '0';
+            document.getElementById('reportPreview').textContent = '暂未生成内容';
+            
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('date').value = `${yyyy}-${mm}-${dd}`;
+        }
+    }
+</script>
+
+</body>
+</html>
