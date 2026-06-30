@@ -2,92 +2,274 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EVA STUDIO 日报系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EVA 日报生成器</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f4f9; padding: 20px; color: #333; line-height: 1.5; }
-        .container { max-width: 500px; margin: 0 auto; }
-        h2 { text-align: center; color: #7c3aed; margin-bottom: 20px; font-size: 20px; }
-        .card { background: #fff; padding: 16px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-        .card-title { font-weight: bold; color: #7c3aed; margin-bottom: 12px; border-left: 4px solid #7c3aed; padding-left: 8px; font-size: 15px; display: flex; align-items: center; }
-        
-        .row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .field { display: flex; align-items: center; gap: 6px; font-size: 14px; }
-        
-        input, select { padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; width: 100%; text-align: center; }
-        input:disabled { background: #f9fafb; color: #6b7280; }
-        
-        textarea { width: 100%; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; box-sizing: border-box; min-height: 80px; }
-        
-        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-        .btn { padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: #fff; font-size: 16px; }
-        .btn-gen { background: #7c3aed; }
-        .btn-copy { background: #a855f7; }
-        
-        #previewBox { background: #fff; border: 1px dashed #7c3aed; padding: 15px; border-radius: 8px; display: none; margin-top: 20px; white-space: pre-wrap; font-size: 14px; color: #374151; }
+        :root {
+            --primary-color: #7C4DFF;
+            --primary-light: #F3EFFFF;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --border-color: #EAEAEA;
+            --bg-color: #F8F9FA;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.4;
+            padding: 12px;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        section {
+            margin-bottom: 16px;
+            background: #FDFAFF;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(124, 77, 255, 0.08);
+        }
+
+        section.kpi-section {
+            background: var(--primary-light);
+            border: 1px solid rgba(124, 77, 255, 0.15);
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .form-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            color: var(--text-main);
+            background-color: #ffffff;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+        }
+
+        input[readonly] {
+            background-color: #F1F1F1;
+            color: var(--text-muted);
+        }
+
+        textarea {
+            resize: none;
+            height: 60px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:active {
+            opacity: 0.8;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            flex: 2;
+        }
+
+        .btn-success {
+            background-color: #2ECC71;
+            color: #ffffff;
+            flex: 2;
+        }
+
+        .btn-secondary {
+            background-color: #E0E0E0;
+            color: var(--text-main);
+        }
+
+        .output-section {
+            margin-top: 16px;
+            background: #F9F9F9;
+            border: 1px dashed var(--border-color);
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .output-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        #reportPreview {
+            width: 100%;
+            height: 220px;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            background: #ffffff;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            white-space: pre-wrap;
+            overflow-y: auto;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.75);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            display: none;
+            z-index: 999;
+        }
     </style>
 </head>
 <body>
+
 <div class="container">
-    <h2>EVA STUDIO 日报系统</h2>
-    
-    <div class="card" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-        <select id="store"><option>崇宁路店</option><option>永丰路店</option></select>
-        <select id="weather"><option>晴天</option><option>阴天</option><option>雨天</option></select>
-        <select id="sA"><option>A班:无</option><option>A:楠楠</option><option>A:萍萍</option></select>
-        <select id="sB"><option>B班:无</option><option>B:楠楠</option><option>B:萍萍</option></select>
-    </div>
+    <h2>📊 EVA 日报生成器</h2>
 
-    <div class="card">
-        <div class="card-title">本月大盘 (自动平摊)</div>
-        <div class="row">
-            <input type="number" id="mTar" placeholder="月目标">
-            <input type="number" id="mBeg" placeholder="已累计">
+    <section>
+        <div class="form-row">
+            <div class="form-group">
+                <label>日期</label>
+                <input type="date" id="date">
+            </div>
+            <div class="form-group">
+                <label>门店</label>
+                <select id="store">
+                    <option value="崇宁路店">崇宁路店</option>
+                    <option value="永丰路店">永丰路店</option>
+                </select>
+            </div>
         </div>
-        <div class="row">
-            <span style="font-size:13px; color:#666;">今日建议目标:</span>
-            <input type="number" id="tarAuto" disabled style="width:100px;">
+        <div class="form-row">
+            <div class="form-group">
+                <label>班次</label>
+                <select id="shift">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>当班人员</label>
+                <input type="text" id="staff" placeholder="请输入姓名" oninput="syncReporter()">
+            </div>
         </div>
-    </div>
+    </section>
 
-    <div class="card">
-        <div class="card-title">进店与成交</div>
-        <div class="row"><div class="field">新客<input type="number" id="nC"></div> <div class="field">老客<input type="number" id="oC"></div></div>
-        <div class="row"><div class="field">新成交<input type="number" id="ndP">人 <input type="number" id="ndI">件</div></div>
-        <div class="row"><div class="field">老成交<input type="number" id="odP">人 <input type="number" id="odI">件</div></div>
-    </div>
+    <section class="kpi-section">
+        <div class="section-title">核心 KPI</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>营业目标 (元)</label>
+                <input type="number" id="target" placeholder="0" oninput="calculateData()">
+            </div>
+            <div class="form-group">
+                <label>今日营业额 (元)</label>
+                <input type="number" id="turnover" placeholder="0" oninput="calculateData()">
+            </div>
+            <div class="form-group">
+                <label>目标达成率</label>
+                <input type="text" id="achievementRate" readonly value="0%">
+            </div>
+        </div>
+    </section>
 
-    <div class="card">
-        <div class="card-title">收款与私域</div>
-        <div class="row"><div class="field">微<input type="number" id="pW"></div> <div class="field">支<input type="number" id="pZ"></div></div>
-        <div class="row"><div class="field">改衣<input type="number" id="alt">件</div></div>
-    </div>
-
-    <textarea id="note" placeholder="今日情况与交接事项..."></textarea>
-
-    <div class="btn-group">
-        <button class="btn btn-gen" onclick="generate()">生成日报预览</button>
-        <button class="btn btn-copy" onclick="copy()">一键复制</button>
-    </div>
-
-    <div id="previewBox"></div>
-</div>
-
-<script>
-    const v = id => Number(document.getElementById(id).value || 0);
-    // 自动平摊逻辑
-    document.querySelectorAll('input').forEach(i => i.oninput = () => {
-        const days = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
-        const rem = days - new Date().getDate() + 1;
-        document.getElementById('tarAuto').value = Math.round((v('mTar') - v('mBeg')) / rem);
-    });
-
-    function generate() {
-        const text = `❤️【${document.getElementById('store').value}日报】\n📊 大盘完成:${((v('mBeg') + v('pW') + v('pZ'))/v('mTar')*100).toFixed(1)}%\n💰 营收:${v('pW')+v('pZ')} | 改衣:${v('alt')}件\n👥 新客:${v('nC')} | 新成交:${v('ndP')}人\n📝 备注:${document.getElementById('note').value}`;
-        const p = document.getElementById('previewBox');
-        p.innerText = text; p.style.display = 'block';
-    }
-    const copy = () => navigator.clipboard.writeText(document.getElementById('previewBox').innerText).then(() => alert('已复制！'));
-</script>
-</body>
-</html>
+    <section>
+        <div class="section-title">流量数据</div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>来客新客 (人)</label>
+                <input type="number" id="trafficNew" placeholder="0" oninput="calculateData()">
+            </div>
+            <div class="form-group">
+                <label>来客老客 (人)</label>
+                <input type="number" id="trafficOld" placeholder="0" oninput="calculateData()">
+            </div>
+            <div class="form-group">
+                <label>来客总数</label>
+                <input type="text" id="trafficTotal" readonly value="0">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group">
+                <label>试穿新客 (人)</label>
+                <input type="number" id="fittingNew" placeholder="0" oninput="calculateData()">
