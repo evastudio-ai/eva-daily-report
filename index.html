@@ -300,7 +300,7 @@
     const getStr = (id) => document.getElementById(id).value.trim();
     const setVal = (id, val) => document.getElementById(id).value = val;
 
-    // 所有需要监听和缓存的字段 (更新了 cumRevenue, todayRevenue)
+    // 所有需要监听和缓存的字段
     const inputIds = [
       'date', 'store', 'shift', 'staff', 'target', 'cumRevenue', 'todayRevenue',
       'trafficNew', 'trafficOld', 'tryNew', 'tryOld',
@@ -317,6 +317,15 @@
       const dd = String(today.getDate()).padStart(2, '0');
       document.getElementById('date').value = `${yyyy}-${mm}-${dd}`;
     }
+
+    // 填表人输入监听：一旦手动修改过，打上 modified 标记
+    document.getElementById('author').addEventListener('input', function() {
+      this.dataset.modified = 'true';
+      if (this.value.trim() === '') {
+        // 如果被手动清空，重新允许自动同步
+        this.dataset.modified = '';
+      }
+    });
 
     function calculateAndValidate() {
       const tar = getVal('target');
@@ -346,9 +355,7 @@
       setVal('dealTotalPeople', totalPeo);
       setVal('dealTotalItems', totalItem);
 
-      // 达成率基于累计营业额
       const targetRate = tar > 0 ? ((cumRev / tar) * 100).toFixed(1) + '%' : '0%';
-      // CR, UPT, ATP 等指标计算。注意：ATP 现基于【今日营业额】计算
       const cr = tfTotal > 0 ? Math.round((totalPeo / tfTotal) * 100) + '%' : '0%';
       const upt = totalPeo > 0 ? (totalItem / totalPeo).toFixed(1) : '0.0';
       const atp = totalItem > 0 ? Math.round(todayRev / totalItem) : '0';
@@ -362,7 +369,14 @@
       document.getElementById('metricNewRate').innerText = newRate;
       document.getElementById('metricOldRate').innerText = oldRate;
 
-      // 收款校验逻辑 (验证今日营业额)
+      // 填表人自动同步逻辑
+      const staffStr = getStr('staff');
+      const authorEl = document.getElementById('author');
+      if (!authorEl.dataset.modified) {
+        authorEl.value = staffStr;
+      }
+
+      // 收款校验
       const payTotal = getVal('payWx') + getVal('payAli') + getVal('payBank') + getVal('payOther');
       const payErrorEl = document.getElementById('payError');
       if (todayRev > 0 && Math.abs(todayRev - payTotal) > 0.1) {
@@ -371,7 +385,7 @@
         payErrorEl.style.display = 'none';
       }
 
-      // 新客来源校验逻辑
+      // 新客来源校验
       const srcTotal = getVal('srcWx') + getVal('srcRed') + getVal('srcDy') + getVal('srcOther');
       const srcErrorEl = document.getElementById('srcError');
       if (tfNew > 0 && srcTotal !== tfNew) {
@@ -384,26 +398,35 @@
     }
 
     function saveToLocal() {
-      const data = {};
+      const data = { _timestamp: new Date().toDateString() }; // 存入当天的日期字符串
       inputIds.forEach(id => {
         data[id] = document.getElementById(id).value;
       });
+      // 存储填表人的修改状态
+      data['_authorModified'] = document.getElementById('author').dataset.modified || '';
       localStorage.setItem('evaDailyReportData', JSON.stringify(data));
     }
 
     function loadFromLocal() {
+      initDate(); // 优先设置为当天日期
       const saved = localStorage.getItem('evaDailyReportData');
       if (saved) {
         try {
           const data = JSON.parse(saved);
+          const isTodayCache = data._timestamp === new Date().toDateString();
+
           inputIds.forEach(id => {
             if (data[id] !== undefined) {
+              // 除非缓存是今天的，否则不恢复被缓存的日期（跳过旧日期恢复）
+              if (id === 'date' && !isTodayCache) return; 
               document.getElementById(id).value = data[id];
             }
           });
+
+          if (data['_authorModified']) {
+            document.getElementById('author').dataset.modified = 'true';
+          }
         } catch (e) { console.error('读取缓存失败', e); }
-      } else {
-        initDate();
       }
       calculateAndValidate();
     }
@@ -532,6 +555,7 @@ ${notes}
             el.value = '';
           }
         });
+        document.getElementById('author').dataset.modified = '';
         document.getElementById('resultText').value = '';
         document.getElementById('resultSection').style.display = 'none';
         
