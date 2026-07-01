@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>EVA Daily</title>
+  <style>
+    :root {
+      --bg:#F2F2F7; --card:#FFF; --text:#1C1C1E; --text2:#636366; --text3:#8E8E93;
+      --border:#E5E5EA; --input-bg:#F5F5F7; --accent:#7C6BF0;
+      --accent-light:rgba(124,107,240,0.08); --danger:#FF3B30;
+      --green:#34C759; --orange:#FF9500; --blue:#007AFF;
+      --radius:12px; --radius-sm:8px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{
+      font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','PingFang SC','Helvetica Neue',sans-serif;
+      background:var(--bg);color:var(--text);font-size:14px;line-height:1.47;
+      -webkit-font-smoothing:antialiased;
+    }
+    .app{max-width:430px;margin:0 auto;padding:0 10px 32px}
+
+    /* Header */
+    .header{display:flex;align-items:baseline;justify-content:space-between;padding:10px 4px 4px}
+    .header h1{font-size:19px;font-weight:700;letter-spacing:.3px}
+    .header .meta{font-size:12px;color:var(--text3);font-weight:500;text-align:right;line-height:1.4}
+    .header .meta .wi{color:var(--text2)}
+
+    /* Card */
+    .card{background:var(--card);border-radius:var(--radius);padding:10px 12px;margin-bottom:3px}
+    .st{font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:.2px}
+    .sh{font-size:11px;color:var(--text3);margin-top:-2px;margin-bottom:5px;line-height:1.4}
+    .fl{font-size:11px;color:var(--text3);font-weight:500;margin-bottom:4px}
+
+    /* Select */
+    .sel{
+      width:100%;height:34px;border:1.5px solid var(--border);border-radius:8px;
+      background:var(--input-bg);font-size:14px;font-weight:500;color:var(--text);
+      padding:0 10px;font-family:inherit;
+      appearance:none;-webkit-appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238E8E93'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right 10px center;padding-right:26px;
+    }
+    .sel:focus{outline:none;border-color:var(--accent)}
+
+    /* Shift 3-col */
+    .shift-row{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+    .shift-col{background:var(--input-bg);border-radius:var(--radius-sm);padding:5px 4px}
+    .shift-col .sl{font-size:10px;font-weight:600;color:var(--text3);margin-bottom:3px;text-align:center}
+    .shift-col .ss{
+      width:100%;height:26px;border:1px solid var(--border);border-radius:5px;
+      background:#fff;font-size:11px;font-weight:600;color:var(--text);
+      text-align:center;font-family:inherit;
+      appearance:none;-webkit-appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%238E8E93'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right 5px center;padding-right:16px;
+      margin-bottom:4px;
+    }
+    .shift-col .ss:focus{outline:none;border-color:var(--accent)}
+    .sf{
+      width:100%;height:26px;border:1px solid var(--border);border-radius:5px;
+      background:#fff;font-size:11px;font-weight:600;color:var(--text);
+      text-align:center;font-family:inherit;
+      appearance:none;-webkit-appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%238E8E93'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right 5px center;padding-right:16px;
+    }
+    .sf:focus{outline:none;border-color:var(--accent)}
+
+    /* KPI bar */
+    .kpi{display:flex;background:var(--input-bg);border-radius:var(--radius-sm);overflow:hidden}
+    .kpi-c{flex:1;text-align:center;padding:6px 2px}
+    .kpi-c+.kpi-c{border-left:1px solid var(--border)}
+    .kpi-l{font-size:10px;color:var(--text3);font-weight:500;margin-bottom:1px}
+    .kpi-v{font-size:14px;font-weight:700;color:var(--text)}
+    .kpi-v.ac{color:var(--accent)}
+    .kpi-s{font-size:10px;color:var(--text3)}
+    .kpi-in{
+      border:none;background:transparent;text-align:center;width:100%;
+      font-size:14px;font-weight:700;color:var(--text);font-family:inherit;padding:0;
+    }
+    .kpi-in:focus{outline:none}
+    .kpi-in::placeholder{color:#C7C7CC;font-weight:500}
+
+    .btn-sm{
+      width:100%;height:30px;border-radius:var(--radius-sm);border:1.5px solid var(--border);
+      background:transparent;color:var(--text3);font-size:12px;font-weight:500;
+      cursor:pointer;font-family:inherit;margin-top:5px;
+    }
+    .btn-sm:active{background:var(--bg)}
+
+    .divider{height:1px;background:var(--border);margin:8px 0}
+
+    /* Revenue */
+    .rev-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+    .rev-in{
+      flex:1;height:40px;border:1.5px solid var(--border);border-radius:10px;
+      background:var(--input-bg);font-size:22px;font-weight:700;color:var(--text);
+      padding:0 10px;text-align:right;font-family:inherit;
+    }
+    .rev-in:focus{outline:none;border-color:var(--accent)}
+    .rev-in::placeholder{color:#C7C7CC;font-weight:500}
+    .rev-u{font-size:14px;color:var(--text3);font-weight:600}
+
+    /* Payment */
+    .pay-g{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:3px;overflow:hidden}
+    .pay-i{
+      display:flex;align-items:center;background:var(--input-bg);border-radius:6px;
+      padding:0 8px;height:30px;border:1.5px solid transparent;min-width:0;
+    }
+    .pay-i:focus-within{border-color:var(--accent);background:#fff}
+    .pay-i label{font-size:11px;color:var(--text3);white-space:nowrap;margin-right:4px;font-weight:500;flex-shrink:0}
+    .pay-i input{
+      flex:1;min-width:0;width:100%;height:100%;border:none;background:transparent;
+      font-size:14px;font-weight:600;color:var(--text);text-align:right;font-family:inherit;
+    }
+    .pay-i input:focus{outline:none}
+    .pay-w{
+      font-size:11px;color:var(--danger);font-weight:500;padding:3px 0 0;
+      display:none;align-items:center;gap:3px;
+    }
+    .pay-w.show{display:flex}
+    .pay-w svg{flex-shrink:0}
+
+    /* Matrix */
+    .mx{background:var(--input-bg);border-radius:var(--radius-sm);padding:2px;overflow:hidden}
+    .mx-h{display:grid;grid-template-columns:40px repeat(4,1fr);gap:2px;padding:4px 4px 2px}
+    .mx-h span{font-size:10px;font-weight:600;color:var(--text3);text-align:center}
+    .mx-h span:first-child{text-align:left}
+    .mx-r{display:grid;grid-template-columns:40px repeat(4,1fr);gap:2px;padding:3px 4px;border-radius:5px;align-items:center}
+    .mx-r:nth-child(odd){background:rgba(255,255,255,.7)}
+    .mx-r:nth-child(even){background:rgba(255,255,255,.35)}
+    .mx-l{font-size:11px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:3px}
+    .dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+    .d-n{background:var(--green)}.d-o{background:var(--orange)}.d-l{background:var(--blue)}
+    .mx-in{
+      width:100%;height:32px;border-radius:5px;border:1px solid var(--border);
+      background:var(--card);font-size:14px;font-weight:600;color:var(--text);
+      text-align:center;font-family:inherit;
+    }
+    .mx-in:focus{outline:none;border-color:var(--accent);background:#fff}
+    .mx-in::placeholder{color:#D1D1D6;font-weight:500}
+
+    /* Metrics (reuses .kpi, only overrides) */
+    .me-w{font-size:11px;color:var(--danger);font-weight:500;padding:3px 0 0;display:none;align-items:center;gap:3px}
+    .me-w.show{display:flex}
+
+    /* Platform compact */
+    .plat{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;overflow:hidden}
+    .plat-c{text-align:center}
+    .plat-c label{font-size:10px;color:var(--text3);display:block;margin-bottom:2px;font-weight:500}
+    .plat-c input{
+      width:100%;height:28px;border:1px solid var(--border);border-radius:6px;
+      background:var(--input-bg);font-size:14px;font-weight:600;color:var(--text);
+      text-align:center;font-family:inherit;
+    }
+    .plat-c input:focus{outline:none;border-color:var(--accent);background:#fff}
+
+    /* Textarea */
+    .note{
+      width:100%;min-height:32px;max-height:120px;border:1.5px solid var(--border);
+      border-radius:var(--radius-sm);background:var(--input-bg);font-size:13px;
+      color:var(--text);padding:8px 10px;font-family:inherit;line-height:1.5;
+      resize:none;overflow:hidden;
+    }
+    .note:focus{outline:none;border-color:var(--accent);background:#fff}
+    .note::placeholder{color:#C7C7CC}
+
+    /* Buttons */
+    .actions{display:flex;gap:5px;margin-top:5px}
+    .btn-p{
+      flex:2;height:42px;border-radius:var(--radius);border:none;
+      background:var(--accent);color:#fff;font-size:15px;font-weight:600;
+      cursor:pointer;font-family:inherit;
+    }
+    .btn-p:active{opacity:.75}
+    .btn-s{
+      flex:1;height:42px;border-radius:var(--radius);border:1.5px solid var(--accent);
+      background:transparent;color:var(--accent);font-size:13px;font-weight:600;
+      cursor:pointer;font-family:inherit;
+    }
+    .btn-s:active{background:var(--accent-light)}
+    .btn-g{
+      flex:1;height:42px;border-radius:var(--radius);border:1.5px solid var(--border);
+      background:transparent;color:var(--text3);font-size:13px;font-weight:500;
+      cursor:pointer;font-family:inherit;
+    }
+    .btn-g:active{background:var(--bg)}
+
+    /* Report */
+    .rpt{margin-top:5px;background:var(--card);border-radius:var(--radius);overflow:hidden;display:none}
+    .rpt.show{display:block}
+    .rpt-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border)}
+    .rpt-bar span{font-size:13px;font-weight:600}
+    .rpt-copy{font-size:12px;color:var(--accent);font-weight:600;background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 8px;border-radius:6px}
+    .rpt-copy:active{background:var(--accent-light)}
+    .rpt-body{padding:10px 12px;font-size:13px;line-height:1.75;color:var(--text2);white-space:pre-wrap;word-break:break-all;background:var(--bg);max-height:50vh;overflow-y:auto}
+
+    .footer{text-align:center;padding:10px 0 6px;font-size:11px;color:#C7C7CC}
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+    input[type=number]{-moz-appearance:textfield}
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>EVA Daily</h1>
+    <div class="meta" id="dateWeather"></div>
+  </div>
+
+  <!-- ① 今日信息 -->
+  <div class="card">
+    <div class="st">今日信息</div>
+    <div class="fl">门店</div>
+    <select class="sel" id="storeSelect">
+      <option value="">请选择门店</option>
+      <option value="永丰路店">永丰路店</option>
+      <option value="崇宁路店">崇宁路店</option>
+    </select>
+    <div class="fl" style="margin-top:8px">天气</div>
+    <select class="sel" id="weatherSelect">
+      <option value="">请选择天气</option>
+      <option value="☀️晴">☀️ 晴</option>
+      <option value="⛅多云">⛅ 多云</option>
+      <option value="☁️阴">☁️ 阴</option>
+      <option value="🌦️阵雨">🌦️ 阵雨</option>
+      <option value="🌧️雨">🌧️ 雨</option>
+      <option value="🌨️雪">🌨️ 雪</option>
+      <option value="🌪️大风">🌪️ 大风</option>
+      <option value="🌫️雾">🌫️ 雾</option>
+    </select>
+    <div class="fl" style="margin-top:8px">班次</div>
+    <div class="shift-row" id="shiftRow">
+      <div class="shift-col">
+        <div class="sl">班次①</div>
+        <select class="ss" data-st="0">
+          <option value="空">空</option>
+          <option value="A班" selected>A班</option>
+          <option value="B班">B班</option>
+          <option value="C班">C班</option>
+        </select>
+        <select class="sf" data-sf="0">
+          <option value="">请选择</option>
+          <option value="楠楠">楠楠</option>
+          <option value="萍萍">萍萍</option>
+          <option value="丽丽">丽丽</option>
+          <option value="EVA">EVA</option>
+        </select>
+      </div>
+      <div class="shift-col">
+        <div class="sl">班次②</div>
+        <select class="ss" data-st="1">
+          <option value="空">空</option>
+          <option value="A班">A班</option>
+          <option value="B班" selected>B班</option>
+          <option value="C班">C班</option>
+        </select>
+        <select class="sf" data-sf="1">
+          <option value="">请选择</option>
+          <option value="楠楠">楠楠</option>
+          <option value="萍萍">萍萍</option>
+          <option value="丽丽">丽丽</option>
+          <option value="EVA">EVA</option>
+        </select>
+      </div>
+      <div class="shift-col">
+        <div class="sl">班次③</div>
+        <select class="ss" data-st="2">
+          <option value="空">空</option>
+          <option value="A班">A班</option>
+          <option value="B班">B班</option>
+          <option value="C班" selected>C班</option>
+        </select>
+        <select class="sf" data-sf="2">
+          <option value="">请选择</option>
+          <option value="楠楠">楠楠</option>
+          <option value="萍萍">萍萍</option>
+          <option value="丽丽">丽丽</option>
+          <option value="EVA">EVA</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ② 经营目标 -->
+  <div class="card">
+    <div class="st">经营概况</div>
+    <div class="kpi">
+      <div class="kpi-c">
+        <div class="kpi-l">目标营业额</div>
+        <input class="kpi-in" type="number" id="inTarget" placeholder="设置">
+        <div class="kpi-s">元</div>
+      </div>
+      <div class="kpi-c">
+        <div class="kpi-l">累计营业额</div>
+        <input class="kpi-in" type="number" id="inCumul" placeholder="0">
+        <div class="kpi-s">元</div>
+      </div>
+      <div class="kpi-c">
+        <div class="kpi-l">完成率</div>
+        <div class="kpi-v ac" id="vRate">0.0%</div>
+        <div class="kpi-s">本月</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 今日销售 -->
+  <div class="card">
+    <div class="st">今日销售</div>
+    <div class="rev-row">
+      <input class="rev-in" type="number" id="inRev" placeholder="0" inputmode="decimal">
+      <span class="rev-u">元</span>
+    </div>
+    <div class="fl" style="margin-bottom:4px">收款方式</div>
+    <div class="pay-g">
+      <div class="pay-i"><label>微信</label><input type="number" data-k="pay_wx" placeholder="0" inputmode="decimal"></div>
+      <div class="pay-i"><label>支付宝</label><input type="number" data-k="pay_alipay" placeholder="0" inputmode="decimal"></div>
+      <div class="pay-i"><label>银行卡</label><input type="number" data-k="pay_card" placeholder="0" inputmode="decimal"></div>
+      <div class="pay-i"><label>其他</label><input type="number" data-k="pay_other" placeholder="0" inputmode="decimal"></div>
+    </div>
+    <div class="pay-w" id="payWarn">
+      <svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5.5" stroke="currentColor" fill="none"/><path d="M6 3v3.5M6 8h.01" stroke="currentColor" stroke-linecap="round"/></svg>
+      <span>收款金额与营业额不一致</span>
+    </div>
+    <button class="btn-sm" id="btnAdd">↑ 计入本月累计</button>
+  </div>
+
+  <!-- ④ 客流与成交 + ⑤ 数据分析 -->
+  <div class="card">
+    <div class="st">客流与成交</div>
+    <div class="mx">
+      <div class="mx-h"><span></span><span>来客</span><span>试穿</span><span>成交</span><span>件数</span></div>
+      <div class="mx-r">
+        <div class="mx-l"><span class="dot d-n"></span>新客</div>
+        <input class="mx-in" type="number" data-k="visitor_new" placeholder="0" inputmode="numeric">
+        <input class="mx-in" type="number" data-k="try_new" placeholder="0" inputmode="numeric">
+        <input class="mx-in" type="number" data-k="deal_new" placeholder="0" inputmode="numeric">
+        <input class="mx-in" type="number" data-k="items_new" placeholder="0" inputmode="numeric">
+      </div>
+      <div class="mx-r">
+        <div class="mx-l"><span class="dot d-o"></span>老客</div>
+        <input class="mx-in" type="number" data-k="visitor_old" placeholder="0" inputmode="numeric">
+        <input class="mx-in" type="number" data-k="try_old" placeholder="0" inputmode="numeric">
+        <input class="mx-in" type="number" data-k="deal_old" placeholder="0" inputmode="numeric">
+        <input class="mx-in" type="number" data-k="items_old" placeholder="0" inputmode="numeric">
+      </div>
+      <div class="mx-r">
+        <div class="mx-l"><span class="dot d-l"></span>线上</div>
+        <input class="mx-in" type="number" data-k="visitor_online" placeholder="0" inputmode="numeric">
+        <input class="mx-in" type="number" data-k="try_online" placeholder="0" inputmode="numeric">
+        <input class="mx-in" type="number" data-k="deal_online" placeholder="0" inputmode="numeric">
+        <input class="mx-in" type="number" data-k="items_online" placeholder="0" inputmode="numeric">
+      </div>
+    </div>
+    <div class="kpi" id="metricsBar" style="margin-top:6px">
+      <div class="kpi-c"><div class="kpi-l">CR（成交率）</div><div class="kpi-v" id="mCR">--</div></div>
+      <div class="kpi-c"><div class="kpi-l">UPT（客件数）</div><div class="kpi-v" id="mUPT">--</div></div>
+      <div class="kpi-c"><div class="kpi-l">ATP（客单价）</div><div class="kpi-v" id="mATP">--</div><div class="kpi-s">元</div></div>
+    </div>
+    <div class="me-w" id="metricsWarn">
+      <svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5.5" stroke="currentColor" fill="none"/><path d="M6 3v3.5M6 8h.01" stroke="currentColor" stroke-linecap="round"/></svg>
+      <span>成交人数大于0但成交件数为0，请检查</span>
+    </div>
+  </div>
+
+  <!-- ⑥ 平台获客 -->
+  <div class="card">
+    <div class="st">平台获客</div>
+    <div class="plat">
+      <div class="plat-c"><label>微信</label><input type="number" data-k="src_wx" placeholder="0" inputmode="numeric"></div>
+      <div class="plat-c"><label>小红书</label><input type="number" data-k="src_xhs" placeholder="0" inputmode="numeric"></div>
+      <div class="plat-c"><label>抖音</label><input type="number" data-k="src_douyin" placeholder="0" inputmode="numeric"></div>
+      <div class="plat-c"><label>其他</label><input type="number" data-k="src_other" placeholder="0" inputmode="numeric"></div>
+    </div>
+  </div>
+
+  <!-- ⑦ 今日总结 -->
+  <div class="card">
+    <div class="st">今日总结</div>
+    <div class="sh">请记录今天值得记录的事情：• 客户情况 • 成交亮点 • 特殊事件 • 异常情况 • 明日交接</div>
+    <textarea class="note" id="inSummary" placeholder="今天发生了什么..." rows="1"></textarea>
+  </div>
+
+  <!-- ⑧ 填表人 -->
+  <div class="card" style="display:flex;align-items:center;gap:8px;padding:8px 12px">
+    <span style="font-size:12px;color:var(--text3);font-weight:500;white-space:nowrap">填表人</span>
+    <select class="sel" id="reporterSelect" style="flex:1">
+      <option value="">请选择</option>
+      <option value="楠楠">楠楠</option>
+      <option value="萍萍">萍萍</option>
+      <option value="丽丽">丽丽</option>
+      <option value="EVA">EVA</option>
+    </select>
+  </div>
+
+  <!-- ⑨ Buttons -->
+  <div class="actions">
+    <button class="btn-p" id="btnGen">生成日报</button>
+    <button class="btn-s" id="btnCopy">复制</button>
+    <button class="btn-g" id="btnClear">清空</button>
+  </div>
+
+  <!-- Report -->
+  <div class="rpt" id="rptPanel">
+    <div class="rpt-bar"><span>日报预览</span><button class="rpt-copy" id="btnCopyRpt">复制</button></div>
+    <div class="rpt-body" id="rptBody"></div>
+  </div>
+
+  <div class="footer">EVA STUDIO © 2026</div>
+</div>
+
+<script>
+// ─── Global State ───
+var report='';
+var dateStr_global,weekStr_global,todayKey;
+var shiftData=[{type:'A班',staff:''},{type:'B班',staff:''},{type:'C班',staff:''}];
+
+// ─── LocalStorage: full daily snapshot ───
+function getTodayKey(){return 'eva_daily_'+todayKey}
+function saveAll(){
+  var data={
+    store:document.getElementById('storeSelect').value,
+    weather:document.getElementById('weatherSelect').value,
+    shifts:shiftData.map(function(s){return{type:s.type,staff:s.staff}}),
+    target:document.getElementById('inTarget').value,
+    cumul:document.getElementById('inCumul').value,
+    rev:document.getElementById('inRev').value,
+    pay_wx:gv('pay_wx'),pay_alipay:gv('pay_alipay'),pay_card:gv('pay_card'),pay_other:gv('pay_other'),
+    visitor_new:gv('visitor_new'),visitor_old:gv('visitor_old'),visitor_online:gv('visitor_online'),
+    try_new:gv('try_new'),try_old:gv('try_old'),try_online:gv('try_online'),
+    deal_new:gv('deal_new'),deal_old:gv('deal_old'),deal_online:gv('deal_online'),
+    items_new:gv('items_new'),items_old:gv('items_old'),items_online:gv('items_online'),
+    src_wx:gv('src_wx'),src_xhs:gv('src_xhs'),src_douyin:gv('src_douyin'),src_other:gv('src_other'),
+    summary:document.getElementById('inSummary').value,
+    reporter:document.getElementById('reporterSelect').value
+  };
+  try{localStorage.setItem(getTodayKey(),JSON.stringify(data))}catch(e){}
+}
+function restoreData(){
+  var raw=localStorage.getItem(getTodayKey());
+  if(!raw)return false;
+  try{
+    var d=JSON.parse(raw);
+    if(d.store)document.getElementById('storeSelect').value=d.store;
+    if(d.weather)document.getElementById('weatherSelect').value=d.weather;
+    if(d.shifts&&d.shifts.length===3){
+      for(var i=0;i<3;i++){
+        shiftData[i].type=d.shifts[i].type||'空';
+        shiftData[i].staff=d.shifts[i].staff||'';
+      }
+      document.querySelectorAll('.ss').forEach(function(sel,i){sel.value=shiftData[i].type});
+      document.querySelectorAll('.sf').forEach(function(sel,i){sel.value=shiftData[i].staff});
+    }
+    document.getElementById('inTarget').value=d.target||'';
+    document.getElementById('inCumul').value=d.cumul||'';
+    document.getElementById('inRev').value=d.rev||'';
+    ['pay_wx','pay_alipay','pay_card','pay_other',
+     'visitor_new','visitor_old','visitor_online',
+     'try_new','try_old','try_online',
+     'deal_new','deal_old','deal_online',
+     'items_new','items_old','items_online',
+     'src_wx','src_xhs','src_douyin','src_other'].forEach(function(k){
+      var el=document.querySelector('[data-k="'+k+'"]');
+      if(el&&d[k]!=null)el.value=d[k];
+    });
+    if(d.summary)document.getElementById('inSummary').value=d.summary;
+    if(d.reporter)document.getElementById('reporterSelect').value=d.reporter;
+    return true;
+  }catch(e){return false}
+}
+
+// ─── Weather ───
+function getWeather(){return document.getElementById('weatherSelect').value||''}
+function updateDateDisplay(){
+  var w=getWeather();
+  var s=dateStr_global+' 周'+weekStr_global;
+  if(w)s+=' '+w;
+  document.getElementById('dateWeather').textContent=s;
+}
+
+// ─── Helpers ───
+function gv(k){var e=document.querySelector('[data-k="'+k+'"]');return e?(Number(e.value)||0):0}
+function updateRate(){
+  var cumul=Number(document.getElementById('inCumul').value)||0;
+  var target=Number(document.getElementById('inTarget').value)||0;
+  document.getElementById('vRate').textContent=target>0?(cumul/target*100).toFixed(1)+'%':'0.0%';
+}
+function checkPay(){
+  var rev=Number(document.getElementById('inRev').value)||0;
+  if(rev<=0){document.getElementById('payWarn').classList.remove('show');return}
+  var s=gv('pay_wx')+gv('pay_alipay')+gv('pay_card')+gv('pay_other');
+  if(s>0&&s!==rev)document.getElementById('payWarn').classList.add('show');
+  else document.getElementById('payWarn').classList.remove('show');
+}
+function updateMetrics(){
+  var tv=gv('visitor_new')+gv('visitor_old')+gv('visitor_online');
+  var td=gv('deal_new')+gv('deal_old')+gv('deal_online');
+  var ti=gv('items_new')+gv('items_old')+gv('items_online');
+  var rev=Number(document.getElementById('inRev').value)||0;
+  if(td>0){
+    document.getElementById('mCR').textContent=tv>0?(td/tv*100).toFixed(1)+'%':'--';
+    document.getElementById('mUPT').textContent=(ti/td).toFixed(1);
+    document.getElementById('mATP').textContent=rev>0?Math.round(rev/td):'--';
+  }else{
+    document.getElementById('mCR').textContent='--';
+    document.getElementById('mUPT').textContent='--';
+    document.getElementById('mATP').textContent='--';
+  }
+  var w=document.getElementById('metricsWarn');
+  if(td>0&&ti===0)w.classList.add('show');else w.classList.remove('show');
+}
+function copyText(t){
+  return new Promise(function(r){
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(r).catch(function(){fallback(t);r()});
+    }else{fallback(t);r()}
+  });
+}
+function fallback(t){
+  var a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';
+  document.body.appendChild(a);a.select();document.execCommand('copy');document.body.removeChild(a);
+}
+
+// ─── Init ───
+function init(){
+  // Date
+  var now=new Date(),wd=['日','一','二','三','四','五','六'];
+  var y=now.getFullYear(),mo=String(now.getMonth()+1).padStart(2,'0'),d=String(now.getDate()).padStart(2,'0');
+  dateStr_global=y+'/'+mo+'/'+d;
+  weekStr_global=wd[now.getDay()];
+  todayKey=y+'/'+mo+'/'+d;
+  updateDateDisplay();
+
+  // Restore from localStorage (if today's data exists)
+  var restored=restoreData();
+
+  // Shift listeners
+  document.querySelectorAll('.ss').forEach(function(sel){
+    var idx=Number(sel.dataset.st);
+    sel.addEventListener('change',function(){shiftData[idx].type=this.value;saveAll()});
+  });
+  document.querySelectorAll('.sf').forEach(function(sel){
+    var idx=Number(sel.dataset.sf);
+    sel.addEventListener('change',function(){shiftData[idx].staff=this.value;saveAll()});
+  });
+
+  // Weather
+  document.getElementById('weatherSelect').addEventListener('change',function(){updateDateDisplay();saveAll()});
+
+  // Store & reporter
+  document.getElementById('storeSelect').addEventListener('change',function(){saveAll()});
+  document.getElementById('reporterSelect').addEventListener('change',function(){saveAll()});
+
+  updateRate();
+  if(!restored){
+    // migrate old monthly keys if present
+    var oldT=Number(localStorage.getItem('eva_monthly_target'))||0;
+    var oldR=Number(localStorage.getItem('eva_monthly_revenue'))||0;
+    if(oldT>0){document.getElementById('inTarget').value=oldT}
+    if(oldR>0){document.getElementById('inCumul').value=oldR}
+    updateRate();
+  }
+
+  // Revenue - auto-sum from payments unless manually edited
+  var revManual=false;
+  var revInput=document.getElementById('inRev');
+  revInput.addEventListener('input',function(){revManual=true;updateRate();checkPay();saveAll()});
+  function autoSumPayments(){
+    if(revManual)return;
+    var sum=gv('pay_wx')+gv('pay_alipay')+gv('pay_card')+gv('pay_other');
+    if(sum>0){revInput.value=sum;updateRate();}
+  }
+
+  // Payment inputs
+  document.querySelectorAll('.pay-i input').forEach(function(inp){
+    inp.addEventListener('input',function(){autoSumPayments();checkPay();saveAll()});
+  });
+
+  // Target & cumulative
+  document.getElementById('inTarget').addEventListener('input',function(){updateRate();saveAll()});
+  document.getElementById('inCumul').addEventListener('input',function(){updateRate();saveAll()});
+
+  // 计入本月
+  document.getElementById('btnAdd').addEventListener('click',function(){
+    var rev=Number(document.getElementById('inRev').value)||0;
+    if(rev<=0){alert('请先输入今日营业额');return}
+    var cur=Number(document.getElementById('inCumul').value)||0;
+    var next=cur+rev;
+    document.getElementById('inCumul').value=next;
+    updateRate();saveAll();
+    alert('已计入：本月累计 '+next+' 元');
+  });
+
+  // Matrix inputs
+  var mxIn=document.querySelectorAll('.mx-in');
+  mxIn.forEach(function(inp,idx){
+    inp.addEventListener('input',function(){
+      if(this.value.length>=1&&idx<mxIn.length-1){
+        clearTimeout(this._t);var self=this;
+        self._t=setTimeout(function(){mxIn[idx+1].focus()},600);
+      }
+      updateMetrics();saveAll();
+    });
+    inp.addEventListener('blur',function(){clearTimeout(this._t)});
+  });
+
+  // Platform inputs
+  var pIn=document.querySelectorAll('[data-k^="src_"]');
+  pIn.forEach(function(inp,idx){
+    inp.addEventListener('input',function(){
+      if(this.value.length>=1&&idx<pIn.length-1){
+        clearTimeout(this._t);var self=this;
+        self._t=setTimeout(function(){pIn[idx+1].focus()},600);
+      }
+      saveAll();
+    });
+    inp.addEventListener('blur',function(){clearTimeout(this._t)});
+  });
+
+  // Payment auto-skip
+  var payIn=document.querySelectorAll('[data-k^="pay_"]');
+  payIn.forEach(function(inp,idx){
+    inp.addEventListener('input',function(){
+      if(this.value.length>=1&&idx<payIn.length-1){
+        clearTimeout(this._t);var self=this;
+        self._t=setTimeout(function(){payIn[idx+1].focus()},600);
+      }
+    });
+    inp.addEventListener('blur',function(){clearTimeout(this._t)});
+  });
+
+  // Textarea
+  document.querySelectorAll('.note').forEach(function(ta){
+    ta.addEventListener('input',function(){
+      this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px';
+      saveAll();
+    });
+  });
+
+  // Buttons
+  document.getElementById('btnGen').addEventListener('click',function(){
+    report=buildReport();
+    var p=document.getElementById('rptPanel');
+    document.getElementById('rptBody').textContent=report;
+    p.classList.add('show');p.scrollIntoView({behavior:'smooth',block:'nearest'});
+    copyText(report).then(function(){alert('日报已生成并复制')});
+    // 不删除数据，员工可继续修改
+  });
+  document.getElementById('btnCopy').addEventListener('click',function(){
+    if(!report)report=buildReport();
+    copyText(report).then(function(){alert('已复制')});
+  });
+  document.getElementById('btnCopyRpt').addEventListener('click',function(){
+    if(report)copyText(report).then(function(){alert('已复制')});
+  });
+  document.getElementById('btnClear').addEventListener('click',function(){
+    if(!confirm('确定清空今日全部数据？'))return;
+    // Clear form
+    document.getElementById('storeSelect').value='';
+    document.getElementById('weatherSelect').value='';
+    document.getElementById('inRev').value='';
+    document.getElementById('inTarget').value='';
+    document.getElementById('inCumul').value='';
+    document.getElementById('inSummary').value='';
+    document.getElementById('reporterSelect').value='';
+    document.querySelectorAll('.note').forEach(function(ta){ta.style.height='auto'});
+    document.querySelectorAll('.mx-in').forEach(function(i){i.value=''});
+    document.querySelectorAll('[data-k^="pay_"],[data-k^="src_"]').forEach(function(i){i.value=''});
+    shiftData=[{type:'A班',staff:''},{type:'B班',staff:''},{type:'C班',staff:''}];
+    document.querySelectorAll('.ss').forEach(function(s,i){s.selectedIndex=i===0?1:0});
+    document.querySelectorAll('.sf').forEach(function(s){s.selectedIndex=0});
+    // Clear localStorage for today
+    localStorage.removeItem(getTodayKey());
+    // Also clean old keys
+    localStorage.removeItem('eva_monthly_target');
+    localStorage.removeItem('eva_monthly_revenue');
+    document.getElementById('rptPanel').classList.remove('show');
+    report='';updateRate();updateMetrics();checkPay();updateDateDisplay();
+  });
+}
+
+// ─── Report Builder ───
+function buildReport(){
+  var now=new Date(),wd=['日','一','二','三','四','五','六'];
+  var y=now.getFullYear(),m=String(now.getMonth()+1).padStart(2,'0'),d=String(now.getDate()).padStart(2,'0');
+  var dateStr=y+'/'+m+'/'+d,week=wd[now.getDay()];
+
+  var store=document.getElementById('storeSelect').value||'-';
+  var rev=Number(document.getElementById('inRev').value)||0;
+  var cumul=Number(document.getElementById('inCumul').value)||0;
+  var target=Number(document.getElementById('inTarget').value)||0;
+  var rate;
+  if(target>0){var rp=cumul/target*100;rate=rp%1===0?String(Math.round(rp)):rp.toFixed(1);}else{rate='0';}
+  var weatherStr=document.getElementById('weatherSelect').value||'';
+  var summary=document.getElementById('inSummary').value||'-';
+
+  // Shifts (only output shifts with staff)
+  var parts=[];
+  shiftData.forEach(function(s){
+    if(s.type==='空'||!s.staff)return;
+    parts.push(s.type+'：'+s.staff);
+  });
+  var shiftStr=parts.length>0?parts.join(' '):'-';
+
+  // Matrix
+  var vN=gv('visitor_new'),vO=gv('visitor_old'),vL=gv('visitor_online');
+  var tN=gv('try_new'),tO=gv('try_old'),tL=gv('try_online');
+  var dN=gv('deal_new'),dO=gv('deal_old'),dL=gv('deal_online');
+  var iN=gv('items_new'),iO=gv('items_old'),iL=gv('items_online');
+
+  // Metrics
+  var tv=vN+vO+vL,td=dN+dO+dL,ti=iN+iO+iL;
+  var cr,upt,atp;
+  if(td>0&&tv>0){var pct=td/tv*100;cr=(pct%1===0?Math.round(pct):pct.toFixed(1))+'%';}else{cr='--';}
+  upt=td>0?(ti/td).toFixed(1):'--';
+  atp=td>0&&rev>0?String(Math.round(rev/td)):'--';
+
+  // Payment
+  var pW=gv('pay_wx'),pA=gv('pay_alipay'),pC=gv('pay_card'),pO=gv('pay_other');
+  // Platform
+  var sW=gv('src_wx'),sX=gv('src_xhs'),sD=gv('src_douyin'),sO2=gv('src_other');
+
+  var pad=function(s,n){s=String(s);while(s.length<n)s+=' ';return s};
+
+  var lines=[];
+  // ① 标题+天气（同一行）
+  var line1='💜 EVA日报｜'+dateStr+' 周'+week;
+  if(weatherStr)line1+='｜'+weatherStr;
+  lines.push(line1);
+  // ② 门店+班次
+  lines.push('📍'+store+'｜'+shiftStr);
+  // ③ 经营目标
+  lines.push('🎯 目标'+target+'｜累计'+cumul+'｜完成'+rate+'%');
+  // ④ 今日销售
+  lines.push('💰 营业额'+rev+'元');
+  lines.push('收款：微信'+pW+'｜支付宝'+pA+'｜银行卡'+pC+'｜其他'+pO);
+  // ⑤ 客流与成交（保留表格）
+  lines.push('      '+pad('新客',4)+' '+pad('老客',4)+' 线上');
+  lines.push('来客    '+pad(vN,4)+' '+pad(vO,4)+' '+vL);
+  lines.push('试穿    '+pad(tN,4)+' '+pad(tO,4)+' '+tL);
+  lines.push('成交    '+pad(dN+'人',5)+' '+pad(dO+'人',5)+' '+dL+'人');
+  lines.push('件数    '+pad(iN+'件',5)+' '+pad(iO+'件',5)+' '+iL+'件');
+  // ⑥ 数据分析
+  lines.push('📊 CR '+cr+'｜UPT '+upt+'｜ATP '+atp+'元');
+  // ⑦ 平台获客
+  lines.push('📱 微信'+sW+'｜小红书'+sX+'｜抖音'+sD+'｜其他'+sO2);
+  // ⑧ 今日总结
+  lines.push('📝 今日总结：'+summary);
+  return lines.join('\n');
+}
+
+init();
+</script>
+</body>
+</html>
