@@ -103,7 +103,7 @@
     .rev-u{font-size:14px;color:var(--text3);font-weight:600}
 
     /* Payment */
-    .pay-g{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:3px;overflow:hidden}
+    .pay-g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:3px;overflow:hidden}
     .pay-i{
       display:flex;align-items:center;background:var(--input-bg);border-radius:6px;
       padding:0 8px;height:30px;border:1.5px solid transparent;min-width:0;
@@ -320,6 +320,8 @@
       <div class="pay-i"><label>微信</label><input type="number" data-k="pay_wx" placeholder="0" inputmode="decimal"></div>
       <div class="pay-i"><label>支付宝</label><input type="number" data-k="pay_alipay" placeholder="0" inputmode="decimal"></div>
       <div class="pay-i"><label>银行卡</label><input type="number" data-k="pay_card" placeholder="0" inputmode="decimal"></div>
+      <div class="pay-i"><label>现金</label><input type="number" data-k="pay_cash" placeholder="0" inputmode="decimal"></div>
+      <div class="pay-i"><label>卡销</label><input type="number" data-k="pay_pos" placeholder="0" inputmode="decimal"></div>
       <div class="pay-i"><label>其他</label><input type="number" data-k="pay_other" placeholder="0" inputmode="decimal"></div>
     </div>
     <div class="pay-w" id="payWarn">
@@ -429,7 +431,7 @@ function saveAll(){
     target:document.getElementById('inTarget').value,
     cumul:document.getElementById('inCumul').value,
     rev:document.getElementById('inRev').value,
-    pay_wx:gv('pay_wx'),pay_alipay:gv('pay_alipay'),pay_card:gv('pay_card'),pay_other:gv('pay_other'),
+    pay_wx:gv('pay_wx'),pay_alipay:gv('pay_alipay'),pay_card:gv('pay_card'),pay_cash:gv('pay_cash'),pay_pos:gv('pay_pos'),pay_other:gv('pay_other'),
     visitor_new:gv('visitor_new'),visitor_old:gv('visitor_old'),visitor_online:gv('visitor_online'),
     try_new:gv('try_new'),try_old:gv('try_old'),try_online:gv('try_online'),
     deal_new:gv('deal_new'),deal_old:gv('deal_old'),deal_online:gv('deal_online'),
@@ -458,7 +460,7 @@ function restoreData(){
     document.getElementById('inTarget').value=d.target||'';
     document.getElementById('inCumul').value=d.cumul||'';
     document.getElementById('inRev').value=d.rev||'';
-    ['pay_wx','pay_alipay','pay_card','pay_other',
+    ['pay_wx','pay_alipay','pay_card','pay_cash','pay_pos','pay_other',
      'visitor_new','visitor_old','visitor_online',
      'try_new','try_old','try_online',
      'deal_new','deal_old','deal_online',
@@ -487,12 +489,12 @@ function gv(k){var e=document.querySelector('[data-k="'+k+'"]');return e?(Number
 function updateRate(){
   var cumul=Number(document.getElementById('inCumul').value)||0;
   var target=Number(document.getElementById('inTarget').value)||0;
-  document.getElementById('vRate').textContent=target>0?(cumul/target*100).toFixed(1)+'%':'0.0%';
+  document.getElementById('vRate').textContent=target>0?Math.round(cumul/target*100)+'%':'0%';
 }
 function checkPay(){
   var rev=Number(document.getElementById('inRev').value)||0;
   if(rev<=0){document.getElementById('payWarn').classList.remove('show');return}
-  var s=gv('pay_wx')+gv('pay_alipay')+gv('pay_card')+gv('pay_other');
+  var s=gv('pay_wx')+gv('pay_alipay')+gv('pay_card')+gv('pay_cash')+gv('pay_pos')+gv('pay_other');
   if(s>0&&s!==rev)document.getElementById('payWarn').classList.add('show');
   else document.getElementById('payWarn').classList.remove('show');
 }
@@ -502,7 +504,7 @@ function updateMetrics(){
   var ti=gv('items_new')+gv('items_old')+gv('items_online');
   var rev=Number(document.getElementById('inRev').value)||0;
   if(td>0){
-    document.getElementById('mCR').textContent=tv>0?(td/tv*100).toFixed(1)+'%':'--';
+    document.getElementById('mCR').textContent=tv>0?Math.round(td/tv*100)+'%':'--';
     document.getElementById('mUPT').textContent=(ti/td).toFixed(1);
     document.getElementById('mATP').textContent=rev>0?Math.round(rev/td):'--';
   }else{
@@ -571,7 +573,7 @@ function init(){
   revInput.addEventListener('input',function(){revManual=true;updateRate();checkPay();saveAll()});
   function autoSumPayments(){
     if(revManual)return;
-    var sum=gv('pay_wx')+gv('pay_alipay')+gv('pay_card')+gv('pay_other');
+    var sum=gv('pay_wx')+gv('pay_alipay')+gv('pay_card')+gv('pay_cash')+gv('pay_pos')+gv('pay_other');
     if(sum>0){revInput.value=sum;updateRate();}
   }
 
@@ -679,32 +681,49 @@ function init(){
     localStorage.removeItem('eva_monthly_target');
     localStorage.removeItem('eva_monthly_revenue');
     document.getElementById('rptPanel').classList.remove('show');
+    revManual=false;
     report='';updateRate();updateMetrics();checkPay();updateDateDisplay();
   });
+}
+
+// ─── Smart Number Format (万) ───
+function fmtWan(n){
+  if(n===0)return '0';
+  var w=n/10000;
+  var s=w.toFixed(2);
+  // strip trailing zeros after decimal
+  if(s.indexOf('.')!==-1){s=s.replace(/0+$/,'');s=s.replace(/\.$/,'');}
+  return s+'万';
 }
 
 // ─── Report Builder ───
 function buildReport(){
   var now=new Date(),wd=['日','一','二','三','四','五','六'];
-  var y=now.getFullYear(),m=String(now.getMonth()+1).padStart(2,'0'),d=String(now.getDate()).padStart(2,'0');
-  var dateStr=y+'/'+m+'/'+d,week=wd[now.getDay()];
+  var m=String(now.getMonth()+1).padStart(2,'0'),d=String(now.getDate()).padStart(2,'0');
+  var dateStr=m+'/'+d,week=wd[now.getDay()];
 
   var store=document.getElementById('storeSelect').value||'-';
   var rev=Number(document.getElementById('inRev').value)||0;
   var cumul=Number(document.getElementById('inCumul').value)||0;
   var target=Number(document.getElementById('inTarget').value)||0;
-  var rate;
-  if(target>0){var rp=cumul/target*100;rate=rp%1===0?String(Math.round(rp)):rp.toFixed(1);}else{rate='0';}
   var weatherStr=document.getElementById('weatherSelect').value||'';
-  var summary=document.getElementById('inSummary').value||'-';
+  var summary=document.getElementById('inSummary').value||'';
 
-  // Shifts (only output shifts with staff)
+  // Rate (integer)
+  var rate=target>0?Math.round(cumul/target*100):0;
+
+  // Remaining days in month
+  var lastDay=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  var remainDays=lastDay-now.getDate();
+  var dailyAvg=(target>0&&remainDays>0)?((target-cumul)/remainDays):0;
+
+  // Shifts (only output shifts with staff, separator ｜)
   var parts=[];
   shiftData.forEach(function(s){
     if(s.type==='空'||!s.staff)return;
     parts.push(s.type+'：'+s.staff);
   });
-  var shiftStr=parts.length>0?parts.join(' '):'-';
+  var shiftStr=parts.length>0?parts.join('｜'):'-';
 
   // Matrix
   var vN=gv('visitor_new'),vO=gv('visitor_old'),vL=gv('visitor_online');
@@ -714,42 +733,42 @@ function buildReport(){
 
   // Metrics
   var tv=vN+vO+vL,td=dN+dO+dL,ti=iN+iO+iL;
-  var cr,upt,atp;
-  if(td>0&&tv>0){var pct=td/tv*100;cr=(pct%1===0?Math.round(pct):pct.toFixed(1))+'%';}else{cr='--';}
-  upt=td>0?(ti/td).toFixed(1):'--';
-  atp=td>0&&rev>0?String(Math.round(rev/td)):'--';
+  var cr=td>0&&tv>0?Math.round(td/tv*100)+'%':'--';
+  var upt=td>0?(ti/td).toFixed(1):'--';
+  var atp=td>0&&rev>0?String(Math.round(rev/td)):'--';
 
-  // Payment
-  var pW=gv('pay_wx'),pA=gv('pay_alipay'),pC=gv('pay_card'),pO=gv('pay_other');
+  // Payment (6 types)
+  var pW=gv('pay_wx'),pA=gv('pay_alipay'),pC=gv('pay_card');
+  var pCash=gv('pay_cash'),pPos=gv('pay_pos'),pO=gv('pay_other');
   // Platform
   var sW=gv('src_wx'),sX=gv('src_xhs'),sD=gv('src_douyin'),sO2=gv('src_other');
 
-  var pad=function(s,n){s=String(s);while(s.length<n)s+=' ';return s};
-
   var lines=[];
-  // ① 标题+天气（同一行）
-  var line1='💜 EVA日报｜'+dateStr+' 周'+week;
-  if(weatherStr)line1+='｜'+weatherStr;
+  // ① 日期+星期+天气+门店（全部第一行，无年份，无标题，无📍）
+  var line1=dateStr+' 周'+week;
+  if(weatherStr)line1+=' '+weatherStr;
+  line1+='｜'+store;
   lines.push(line1);
-  // ② 门店+班次
-  lines.push('📍'+store+'｜'+shiftStr);
-  // ③ 经营目标
-  lines.push('🎯 目标'+target+'｜累计'+cumul+'｜完成'+rate+'%');
-  // ④ 今日销售
-  lines.push('💰 营业额'+rev+'元');
-  lines.push('收款：微信'+pW+'｜支付宝'+pA+'｜银行卡'+pC+'｜其他'+pO);
-  // ⑤ 客流与成交（保留表格）
-  lines.push('      '+pad('新客',4)+' '+pad('老客',4)+' 线上');
-  lines.push('来客    '+pad(vN,4)+' '+pad(vO,4)+' '+vL);
-  lines.push('试穿    '+pad(tN,4)+' '+pad(tO,4)+' '+tL);
-  lines.push('成交    '+pad(dN+'人',5)+' '+pad(dO+'人',5)+' '+dL+'人');
-  lines.push('件数    '+pad(iN+'件',5)+' '+pad(iO+'件',5)+' '+iL+'件');
-  // ⑥ 数据分析
-  lines.push('📊 CR '+cr+'｜UPT '+upt+'｜ATP '+atp+'元');
-  // ⑦ 平台获客
-  lines.push('📱 微信'+sW+'｜小红书'+sX+'｜抖音'+sD+'｜其他'+sO2);
-  // ⑧ 今日总结
-  lines.push('📝 今日总结：'+summary);
+  // ② 班次（仅有人班次，无📍）
+  lines.push(shiftStr);
+  // ③ 营业额
+  lines.push('💰营业额'+rev+'元');
+  // ④ 收款（两行，无前缀）
+  lines.push('微信'+pW+'｜支付宝'+pA+'｜银行卡'+pC);
+  lines.push('现金'+pCash+'｜卡销'+pPos+'｜其他'+pO);
+  // ⑤ 经营目标（两行，智能数字）
+  lines.push('🎯目标'+fmtWan(target)+'｜累计'+fmtWan(cumul));
+  lines.push('完成'+rate+'%｜剩余日均'+fmtWan(dailyAvg));
+  // ⑥ 客流与成交（按客户类型展示，数字+单位）
+  lines.push('新客：'+vN+'人｜'+tN+'试｜'+dN+'成｜'+iN+'件');
+  lines.push('老客：'+vO+'人｜'+tO+'试｜'+dO+'成｜'+iO+'件');
+  lines.push('线上：'+vL+'人｜'+tL+'试｜'+dL+'成｜'+iL+'件');
+  // ⑦ 数据分析（CR整数，无空格）
+  lines.push('📊CR'+cr+'｜UPT'+upt+'｜ATP'+atp+'元');
+  // ⑧ 平台获客
+  lines.push('📱微信'+sW+'｜小红书'+sX+'｜抖音'+sD+'｜其他'+sO2);
+  // ⑨ 今日总结（仅📝，无标题文字）
+  if(summary)lines.push('📝'+summary);
   return lines.join('\n');
 }
 
