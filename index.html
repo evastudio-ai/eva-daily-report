@@ -690,7 +690,6 @@ function buildReport(){
   var dateStr=y+'/'+m+'/'+d,week=wd[now.getDay()];
 
   var store=document.getElementById('storeSelect').value||'-';
-  var reporter=document.getElementById('reporterSelect').value||'-';
   var rev=Number(document.getElementById('inRev').value)||0;
   var cumul=Number(document.getElementById('inCumul').value)||0;
   var target=Number(document.getElementById('inTarget').value)||0;
@@ -751,9 +750,6 @@ function buildReport(){
   lines.push('📱 微信'+sW+'｜小红书'+sX+'｜抖音'+sD+'｜其他'+sO2);
   // ⑧ 今日总结
   lines.push('📝 今日总结：'+summary);
-  // ⑨ 填表人
-  lines.push('填表：'+reporter);
-
   return lines.join('\n');
 }
 
