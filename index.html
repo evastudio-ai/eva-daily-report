@@ -328,7 +328,6 @@
       <svg width="12" height="12" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5.5" stroke="currentColor" fill="none"/><path d="M6 3v3.5M6 8h.01" stroke="currentColor" stroke-linecap="round"/></svg>
       <span>收款金额与营业额不一致</span>
     </div>
-    <button class="btn-sm" id="btnAdd">↑ 计入本月累计</button>
   </div>
 
   <!-- ④ 客流与成交 + ⑤ 数据分析 -->
@@ -419,6 +418,7 @@
 // ─── Global State ───
 var report='';
 var dateStr_global,weekStr_global,todayKey;
+var todayCounted=false; // 今日营业额是否已计入累计
 var shiftData=[{type:'A班',staff:''},{type:'B班',staff:''},{type:'C班',staff:''}];
 
 // ─── LocalStorage: full daily snapshot ───
@@ -540,6 +540,9 @@ function init(){
   // Restore from localStorage (if today's data exists)
   var restored=restoreData();
 
+  // Check if today's revenue already counted into cumulative
+  todayCounted=localStorage.getItem(getTodayKey()+'_counted')==='1';
+
   // Shift listeners
   document.querySelectorAll('.ss').forEach(function(sel){
     var idx=Number(sel.dataset.st);
@@ -585,17 +588,6 @@ function init(){
   // Target & cumulative
   document.getElementById('inTarget').addEventListener('input',function(){updateRate();saveAll()});
   document.getElementById('inCumul').addEventListener('input',function(){updateRate();saveAll()});
-
-  // 计入本月
-  document.getElementById('btnAdd').addEventListener('click',function(){
-    var rev=Number(document.getElementById('inRev').value)||0;
-    if(rev<=0){alert('请先输入今日营业额');return}
-    var cur=Number(document.getElementById('inCumul').value)||0;
-    var next=cur+rev;
-    document.getElementById('inCumul').value=next;
-    updateRate();saveAll();
-    alert('已计入：本月累计 '+next+' 元');
-  });
 
   // Matrix inputs
   var mxIn=document.querySelectorAll('.mx-in');
@@ -645,12 +637,20 @@ function init(){
 
   // Buttons
   document.getElementById('btnGen').addEventListener('click',function(){
+    // 自动将今日营业额计入本月累计（防重复）
+    var rev=Number(document.getElementById('inRev').value)||0;
+    if(rev>0&&!todayCounted){
+      var cur=Number(document.getElementById('inCumul').value)||0;
+      document.getElementById('inCumul').value=cur+rev;
+      todayCounted=true;
+      try{localStorage.setItem(getTodayKey()+'_counted','1')}catch(e){}
+      updateRate();saveAll();
+    }
     report=buildReport();
     var p=document.getElementById('rptPanel');
     document.getElementById('rptBody').textContent=report;
     p.classList.add('show');p.scrollIntoView({behavior:'smooth',block:'nearest'});
     copyText(report).then(function(){alert('日报已生成并复制')});
-    // 不删除数据，员工可继续修改
   });
   document.getElementById('btnCopy').addEventListener('click',function(){
     if(!report)report=buildReport();
@@ -677,11 +677,13 @@ function init(){
     document.querySelectorAll('.sf').forEach(function(s){s.selectedIndex=0});
     // Clear localStorage for today
     localStorage.removeItem(getTodayKey());
+    localStorage.removeItem(getTodayKey()+'_counted');
     // Also clean old keys
     localStorage.removeItem('eva_monthly_target');
     localStorage.removeItem('eva_monthly_revenue');
     document.getElementById('rptPanel').classList.remove('show');
     revManual=false;
+    todayCounted=false;
     report='';updateRate();updateMetrics();checkPay();updateDateDisplay();
   });
 }
